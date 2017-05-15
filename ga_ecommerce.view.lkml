@@ -72,7 +72,7 @@ view: ga_ecommerce {
       quarter,
       year
     ]
-    sql: ${TABLE}.hitTime ;;
+    sql: DATETIME(${TABLE}.hitTime, "America/New_York")  ;;
   }
 
   dimension: hit_type {
@@ -180,6 +180,11 @@ view: ga_ecommerce {
     sql: ${TABLE}.webPagePath ;;
   }
 
+  dimension: transactionId {
+    type: string
+    sql: ${TABLE}.transactionId ;;
+  }
+
   dimension_group: partition {
     type: time
     timeframes: [
@@ -234,9 +239,41 @@ view: ga_ecommerce {
     ]
   }
 
-  measure: count {
-    type: count
-    approximate_threshold: 100000
-    drill_fields: [app_screen_name, product_name, dealer_name, product_list_name]
+#   measure: count {
+#     type: count
+#     approximate_threshold: 100000
+#     drill_fields: [app_screen_name, product_name, dealer_name, product_list_name]
+#   }
+
+  dimension: sessionid {
+    type: string
+    sql: CONCAT(${full_visitor_id},CAST(${visit_id} AS STRING),CAST(${hit_date} AS STRING));;
+  }
+
+  measure: sessions_with_transaction {
+    type: count_distinct
+    sql: ${sessionid} ;;
+    filters: {
+      field: ecom_action_type
+      value: "completed_purchase"
+    }
+  }
+
+  measure: transactions_count {
+    type: count_distinct
+    sql: ${transactionId} ;;
+    filters: {
+      field: ecom_action_type
+      value: "completed_purchase"
+    }
+  }
+
+  measure: sessions_with_pdp_view{
+    type: count_distinct
+    sql: ${sessionid} ;;
+    filters: {
+      field: ecom_action_type
+      value: "product_detail_view"
+    }
   }
 }

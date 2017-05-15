@@ -199,9 +199,15 @@ view: ga_events {
     sql: ${TABLE}._PARTITIONTIME ;;
   }
 
-  measure: count {
-    type: count
-    approximate_threshold: 100000
-    drill_fields: [app_screen_name, dealer_name]
+  # measure: count {
+  #   type: count
+  #   approximate_threshold: 100000
+  #   drill_fields: [app_screen_name, dealer_name]
+  # }
+
+  dimension: sessionid {
+    type: string
+    sql: CONCAT(${full_visitor_id},CAST(${visit_id} AS STRING),CAST(${hit_date} AS STRING));;
+    hidden: yes
   }
 }

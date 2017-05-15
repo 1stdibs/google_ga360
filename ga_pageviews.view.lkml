@@ -202,10 +202,48 @@ view: ga_pageviews {
       year
     ]
     sql: ${TABLE}._PARTITIONTIME ;;
+    hidden: yes
   }
-  measure: count {
-    type: count
-    approximate_threshold: 100000
-    drill_fields: [app_screen_name, hostname, dealer_name]
+  # measure: count {
+  #   type: count
+  #   # approximate_threshold: 100000
+  # }
+
+  dimension: sessionid {
+      type: string
+      # sql: ${full_visitor_id}||${visit_id}||${hit_date};;
+      sql: CONCAT(${full_visitor_id},CAST(${visit_id} AS STRING),CAST(${ga_date} AS STRING));;
   }
+
+  dimension: isPDP {
+    type: yesno
+    sql:  REGEXP_CONTAINS(${web_page_path}, '/vpv/pdp');;
+  }
+
+  dimension: is_searchbrowse{
+    type: yesno
+    description: "Looker is reporting lower numbers than GA - needs further review"
+    sql: REGEXP_CONTAINS(${web_page_path}, '/(search|furniture|art|fashion|jewelry|creators|dealers|collections|locations|sale|contemporary|associations|recognized|shopping-with|buy|(vpv/designers/.+/collections))') AND not REGEXP_CONTAINS(${web_page_path}, '/vpv/pdp');;
+  }
+
+  measure: searchbrowse_sessions{
+    type: count_distinct
+    sql: ${sessionid} ;;
+    filters: {
+      field: is_searchbrowse
+      value: "Yes"
+    }
+    filters: {
+      field: isPDP
+      value: "No"
+    }
+  }
+
+  measure: sessions_count{
+    type: count_distinct
+    sql: ${sessionid} ;;
+
+  }
+
+
 }

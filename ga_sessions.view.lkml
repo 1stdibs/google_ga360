@@ -209,6 +209,7 @@ view: ga_sessions {
   dimension: ga_date {
     type: string
     sql: ${TABLE}.gaDate ;;
+    hidden: yes
   }
 
   dimension: guest_id {
@@ -287,8 +288,8 @@ view: ga_sessions {
   }
 
   dimension_group: session_start {
+    label: "Session"
     type: time
-    convert_tz: yes
     timeframes: [
       raw,
       time,
@@ -298,7 +299,7 @@ view: ga_sessions {
       quarter,
       year
     ]
-    sql: ${TABLE}.sessionStartTime ;;
+    sql: DATETIME(${TABLE}.sessionStartTime, "America/New_York")  ;;
   }
 
   dimension: source {
@@ -314,6 +315,7 @@ view: ga_sessions {
   dimension: total_hits {
     type: number
     sql: ${TABLE}.totalHits ;;
+    hidden: yes
   }
 
   dimension: total_pageviews {
@@ -362,6 +364,8 @@ view: ga_sessions {
   }
 
   dimension_group: partition {
+    hidden: yes
+    label: "Session"
     type: time
     timeframes: [
       raw,
@@ -377,7 +381,15 @@ view: ga_sessions {
 
   measure: count {
     label: "Total Session Count"
-    type: count
-    approximate_threshold: 100000
+    type: count_distinct
+    sql: ${sessionid} ;;
+    # approximate_threshold: 100000
   }
+
+  dimension: sessionid {
+    type: string
+    sql: CONCAT(${full_visitor_id},CAST(${visit_id} AS STRING),${ga_date});;
+    primary_key: yes
+  }
+
 }
