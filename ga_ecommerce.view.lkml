@@ -70,6 +70,7 @@ view: ga_ecommerce {
       week,
       month,
       quarter,
+      hour_of_day,
       year
     ]
     sql: DATETIME(${TABLE}.hitTime, "America/New_York")  ;;

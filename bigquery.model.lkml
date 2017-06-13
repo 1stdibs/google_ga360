@@ -105,3 +105,7 @@ explore: ga_transactions {
     }
   }
 }
+
+explore: test {
+   view_name: trafficbudget
+}

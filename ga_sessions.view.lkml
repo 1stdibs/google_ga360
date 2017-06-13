@@ -379,12 +379,19 @@ view: ga_sessions {
     sql: ${TABLE}._PARTITIONTIME ;;
   }
 
-  measure: count {
-    label: "Total Session Count"
+  measure: count_distinct {
+    label: "Total Distinct Session Count"
     type: count_distinct
     sql: ${sessionid} ;;
     # approximate_threshold: 100000
   }
+
+
+  measure: count {
+    label: "Total Session Count"
+    type: count
+  }
+
 
   dimension: sessionid {
     type: string

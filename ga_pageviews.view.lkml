@@ -63,15 +63,7 @@ view: ga_pageviews {
 
   dimension_group: hit {
     type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
+    convert_tz: yes
     sql: ${TABLE}.hitTime ;;
   }
 
