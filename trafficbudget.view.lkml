@@ -12,7 +12,7 @@ view: trafficbudget {
 
   dimension: primary {
     type: string
-    sql: ${TABLE}.Date} ;;
+    sql: ${TABLE}.Date ;;
     hidden: yes
   }
 
