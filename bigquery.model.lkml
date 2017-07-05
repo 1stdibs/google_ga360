@@ -106,9 +106,10 @@ explore: ga_transactions {
   }
 }
 
-explore: test {
+explore: traffic_budget {
    view_name: trafficbudget
 }
+
 explore: gmv_revenue_budget {
   view_name: bq_budget_gmv_rev
   view_label: "Orders Budget Projections"
