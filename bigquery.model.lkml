@@ -10,6 +10,7 @@ include: "*.dashboard"
 #   extends: [ga_sessions_block]
 # }
 
+
 explore: ga_sessions {
   always_filter:  {
     filters: {
@@ -119,3 +120,70 @@ explore: gmv_revenue_budget {
 explore: ga_sessions_20170805 {
   view_name: ga_sessions_20170805
 }
+
+
+################## @YJ test table structure ##################
+
+### Table Name: Google Analytics Sessions Full
+### Explanation: this table has all columns in ga_sessions
+### Author: @YJ
+### Create Date: 2017-08-29
+
+explore: Google_Analytics_sessions_full{
+  # define the
+  view_name: ga_sessions_full
+  view_label: "Google Analytics Sessions"
+
+  # join with the __custom_dimensions RECORD
+  join: ga_sessions_full__custom_dimensions {
+    view_label: "Google Analytics Sessions: Custom Dimensions"
+    sql: LEFT JOIN UNNEST([${ga_sessions_full.custom_dimensions}]) AS ga_sessions_20170423__custom_dimensions ;;
+    relationship: one_to_many
+  }
+
+  # join with the __totals RECORD
+  join: ga_sessions_full__totals {
+    view_label: "Google Analytics Sessions: Totals"
+    sql: LEFT JOIN UNNEST([${ga_sessions_full.totals}]) AS ga_sessions_20170423__totals ;;
+    relationship: one_to_many
+  }
+
+  # join with the __traffic_source RECORD
+  join: ga_sessions_full__traffic_source {
+    view_label: "Google Analytics Sessions: Traffic Source"
+    sql: LEFT JOIN UNNEST([${ga_sessions_full.traffic_source}]) AS ga_sessions_20170423__traffic_source;;
+    relationship: one_to_many
+  }
+
+  # join with the __device RECORD
+  join: ga_sessions_full__device {
+    view_label: "Google Analytics Sessions: Device"
+    sql: LEFT JOIN UNNEST([${ga_sessions_full.device}]) AS ga_sessions_20170423__device;;
+    relationship: one_to_many
+  }
+
+  # join with the __geo_network RECORD
+  join: ga_sessions_full__geo_network{
+    view_label: "Google Analytics Sessions: Geo-network"
+    sql:  LEFT JOIN UNNEST([${ga_sessions_full.geo_network}]) AS ga_sessions_20170423__geo_network ;;
+    relationship:  one_to_many
+  }
+}
+##############################################################
+
+################## @YJ test table structure ##################
+
+### Table Name: Google Analytics Pageview Full
+### Explanation: this table has all columns in ga_pageviews
+### Author: @YJ
+### Create Date: 2017-08-31
+
+
+explore: ga_sessions_test {
+  # define the
+  view_name: ga_sessions_test
+  view_label: "GA Sessions Test"
+
+}
+
+##############################################################
