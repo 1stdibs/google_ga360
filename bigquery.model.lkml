@@ -137,35 +137,35 @@ explore: Google_Analytics_sessions_full{
   # join with the __custom_dimensions RECORD
   join: ga_sessions_full__custom_dimensions {
     view_label: "Google Analytics Sessions: Custom Dimensions"
-    sql: LEFT JOIN UNNEST([${ga_sessions_full.custom_dimensions}]) AS ga_sessions_20170423__custom_dimensions ;;
+    sql: LEFT JOIN UNNEST([${ga_sessions_full.custom_dimensions}]) AS ga_sessions_full__custom_dimensions ;;
     relationship: one_to_many
   }
 
   # join with the __totals RECORD
   join: ga_sessions_full__totals {
     view_label: "Google Analytics Sessions: Totals"
-    sql: LEFT JOIN UNNEST([${ga_sessions_full.totals}]) AS ga_sessions_20170423__totals ;;
+    sql: LEFT JOIN UNNEST([${ga_sessions_full.totals}]) AS ga_sessions_full__totals ;;
     relationship: one_to_many
   }
 
   # join with the __traffic_source RECORD
   join: ga_sessions_full__traffic_source {
     view_label: "Google Analytics Sessions: Traffic Source"
-    sql: LEFT JOIN UNNEST([${ga_sessions_full.traffic_source}]) AS ga_sessions_20170423__traffic_source;;
+    sql: LEFT JOIN UNNEST([${ga_sessions_full.traffic_source}]) AS ga_sessions_full__traffic_source;;
     relationship: one_to_many
   }
 
   # join with the __device RECORD
   join: ga_sessions_full__device {
     view_label: "Google Analytics Sessions: Device"
-    sql: LEFT JOIN UNNEST([${ga_sessions_full.device}]) AS ga_sessions_20170423__device;;
+    sql: LEFT JOIN UNNEST([${ga_sessions_full.device}]) AS ga_sessions_full__device;;
     relationship: one_to_many
   }
 
   # join with the __geo_network RECORD
   join: ga_sessions_full__geo_network{
     view_label: "Google Analytics Sessions: Geo-network"
-    sql:  LEFT JOIN UNNEST([${ga_sessions_full.geo_network}]) AS ga_sessions_20170423__geo_network ;;
+    sql:  LEFT JOIN UNNEST([${ga_sessions_full.geo_network}]) AS ga_sessions_full__geo_network ;;
     relationship:  one_to_many
   }
 }
