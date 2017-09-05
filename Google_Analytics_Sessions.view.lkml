@@ -23,6 +23,12 @@ view: ga_sessions_full {
     sql: ${TABLE}.date ;;
   }
 
+  dimension_group: ga_date {
+    type: time
+    timeframes: [date, week, month]
+    sql: cast(PARSE_DATE('%Y%m%d', ${date}) as TIMESTAMP) ;;
+  }
+
   dimension: device {
     hidden: yes
     sql: ${TABLE}.device ;;
@@ -83,14 +89,18 @@ view: ga_sessions_full {
     sql: ${TABLE}.visitorId ;;
   }
 
-  measure: count {
-    type: count
-    drill_fields: []
-  }
 }
 
 view: ga_sessions_full__custom_dimensions {
   # Edited custom dimensions ###############
+
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: concat(${ga_sessions_full.date},
+        cast(${ga_sessions_full.visit_id} AS string),
+        ${ga_sessions_full.full_visitor_id}) ;;
+  }
 
   ### user id
   dimension: user_id {
@@ -156,9 +166,23 @@ view: ga_sessions_full__custom_dimensions {
 }
 
 view: ga_sessions_full__totals {
+
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: concat(${ga_sessions_full.date},
+        cast(${ga_sessions_full.visit_id} AS string),
+        ${ga_sessions_full.full_visitor_id}) ;;
+  }
+
   dimension: bounces {
     type: number
     sql: ${TABLE}.bounces ;;
+  }
+
+  measure: bounced_sessions {
+    type: sum
+    sql: ${bounces} ;;
   }
 
   dimension: hits {
@@ -179,6 +203,17 @@ view: ga_sessions_full__totals {
   dimension: screenviews {
     type: number
     sql: ${TABLE}.screenviews ;;
+  }
+
+  dimension: pageviewsandscreenviews {
+    type: number
+    sql: case when ${pageviews} is null then ${screenviews}
+          else ${pageviews} end;;
+  }
+
+  measure: pageviewsandscreenviews_measure {
+    type: sum
+    sql:  ${pageviewsandscreenviews};;
   }
 
   dimension: time_on_screen {
@@ -206,6 +241,11 @@ view: ga_sessions_full__totals {
     sql: ${TABLE}.transactions ;;
   }
 
+  measure: num_transactions {
+    type: sum
+    sql: ${transactions} ;;
+  }
+
   measure: transactions_measure {
     type: sum
     sql: ${TABLE}.transactions ;;
@@ -220,9 +260,24 @@ view: ga_sessions_full__totals {
     type: number
     sql: ${TABLE}.visits ;;
   }
+
+  measure: total_sessions {
+    type: sum
+    sql: ${visits} ;;
+  }
+
 }
 
 view: ga_sessions_full__geo_network {
+
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: concat(${ga_sessions_full.date},
+        cast(${ga_sessions_full.visit_id} AS string),
+        ${ga_sessions_full.full_visitor_id}) ;;
+  }
+
   dimension: city {
     type: string
     sql: ${TABLE}.city ;;
@@ -281,6 +336,15 @@ view: ga_sessions_full__geo_network {
 }
 
 view: ga_sessions_full__traffic_source {
+
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: concat(${ga_sessions_full.date},
+        cast(${ga_sessions_full.visit_id} AS string),
+        ${ga_sessions_full.full_visitor_id}) ;;
+  }
+
   dimension: ad_content {
     type: string
     sql: ${TABLE}.adContent ;;
@@ -328,6 +392,15 @@ view: ga_sessions_full__traffic_source {
 }
 
 view: ga_sessions_full__device {
+
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: concat(${ga_sessions_full.date},
+        cast(${ga_sessions_full.visit_id} AS string),
+        ${ga_sessions_full.full_visitor_id}) ;;
+  }
+
   dimension: browser {
     type: string
     sql: ${TABLE}.browser ;;

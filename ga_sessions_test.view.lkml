@@ -10,7 +10,7 @@ view: ga_sessions_test{
       FROM
         `api-project-1065928543184.96922533.ga_sessions*`
       WHERE
-        {% condition date_filter %} DATETIME(date, "America/New_York") {% endcondition %};;
+        {% condition date_filter %} TIMESTAMP(date, "America/New_York") {% endcondition %};;
   }
 
   filter: date_filter {
@@ -18,7 +18,8 @@ view: ga_sessions_test{
     }
 
   dimension: ga_date {
-    type: string
+    type: date
+    convert_tz: yes
     sql: PARSE_DATE('%Y%m%d', ${TABLE}.ga_date);;
   }
 
