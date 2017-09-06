@@ -2,20 +2,12 @@ view: ga_sessions_full {
   sql_table_name: `api-project-1065928543184.96922533.ga_sessions*`
     ;;
 
+  # ADDED FIELD: a primary key ########
+  # Author: YJ
   dimension: primary {
     primary_key: yes
     type: string
-    sql: concat(${date}, cast(${visit_id} AS string), ${full_visitor_id}) ;;
-  }
-
-  dimension: channel_grouping {
-    type: string
-    sql: ${TABLE}.channelGrouping ;;
-  }
-
-  dimension: custom_dimensions {
-    hidden: yes
-    sql: ${TABLE}.customDimensions ;;
+    sql:concat(${date}, cast(${visit_id} AS string), ${full_visitor_id}) ;;
   }
 
   dimension: date {
@@ -23,50 +15,17 @@ view: ga_sessions_full {
     sql: ${TABLE}.date ;;
   }
 
-  dimension_group: ga_date {
+  # ADDED FIELD: the Timeframes dimension group ########
+  # Author: YJ
+  dimension_group: sessions_date {
     type: time
     timeframes: [date, week, month]
     sql: cast(PARSE_DATE('%Y%m%d', ${date}) as TIMESTAMP) ;;
   }
 
-  dimension: device {
-    hidden: yes
-    sql: ${TABLE}.device ;;
-  }
-
   dimension: full_visitor_id {
     type: string
     sql: ${TABLE}.fullVisitorId ;;
-  }
-
-  dimension: geo_network {
-    hidden: yes
-    sql: ${TABLE}.geoNetwork ;;
-  }
-
-  dimension: hits {
-    hidden: yes
-    sql: ${TABLE}.hits ;;
-  }
-
-  dimension: social_engagement_type {
-    type: string
-    sql: ${TABLE}.socialEngagementType ;;
-  }
-
-  dimension: totals {
-    hidden: yes
-    sql: ${TABLE}.totals ;;
-  }
-
-  dimension: traffic_source {
-    hidden: yes
-    sql: ${TABLE}.trafficSource ;;
-  }
-
-  dimension: user_id {
-    type: string
-    sql: ${TABLE}.userId ;;
   }
 
   dimension: visit_id {
@@ -79,22 +38,111 @@ view: ga_sessions_full {
     sql: ${TABLE}.visitNumber ;;
   }
 
-  dimension: visit_start_time {
-    type: number
-    sql: ${TABLE}.visitStartTime ;;
+  # FORMATED FIELD: interprets number of seconds since 1970-01-01 00:00:00 UTC
+  # Author: YJ
+  # Status: needs QA
+  dimension: session_start_time {
+    type: date_time
+    sql: TIMESTAMP_SECONDS(${TABLE}.visitStartTime) ;;
   }
 
-  dimension: visitor_id {
-    type: number
-    sql: ${TABLE}.visitorId ;;
+  dimension: channel_grouping {
+    type: string
+    sql: ${TABLE}.channelGrouping ;;
   }
+
+  dimension: totals {
+    hidden: yes
+    sql: ${TABLE}.totals ;;
+  }
+
+  dimension: custom_dimensions {
+    hidden: yes
+    sql: ${TABLE}.customDimensions ;;
+  }
+
+  dimension: device {
+    hidden: yes
+    sql: ${TABLE}.device ;;
+  }
+
+  dimension: geo_network {
+    hidden: yes
+    sql: ${TABLE}.geoNetwork ;;
+  }
+
+  dimension: hits {
+    hidden: yes
+    sql: ${TABLE}.hits ;;
+  }
+
+  dimension: traffic_source {
+    hidden: yes
+    sql: ${TABLE}.trafficSource ;;
+  }
+
+#  dimension: social_engagement_type {
+#    type: string
+#    sql: ${TABLE}.socialEngagementType ;;
+#  }
+
+#  dimension: user_id {
+#    type: string
+#    sql: ${TABLE}.userId ;;
+#  }
+
+
+#   dimension: user_id {
+#     type: string
+#     sql:
+#       (SELECT
+#         MAX(IF(${ga_sessions_full.custom_dimensions}.index = 33,
+#               ${ga_sessions_full.custom_dimensions}.value,
+#               NULL)) AS user_id_temp
+#       FROM
+#         UNNEST(${TABLE}.customDimensions));;
+#   }
+#
+# #  dimension: guest_id {
+# #    type: string
+# #    sql:
+# #      (SELECT
+# #        MAX(IF(${TABLE}.index = 32, ${TABLE}.value, NULL)) AS guest_id_temp
+# #      FROM
+# #        UNNEST(${ga_sessions_full.custom_dimensions})) ;;
+# #  }
+#
+# #  dimension: login_status {
+# #    type: string
+# #    sql:
+# #      (SELECT
+# #        MAX(IF(${TABLE}.index = 29, ${TABLE}.value, NULL)) AS login_status_temp
+# #      FROM
+# #        UNNEST(${ga_sessions_full.custom_dimensions}));;
+# #  }
 
 }
 
+# SUB-VIEW: CUSTOM DIMENSIONS ########
+# Type: STRUC (2-level ARRAY)
 view: ga_sessions_full__custom_dimensions {
-  # Edited custom dimensions ###############
+
+  # hide this variable in the explore
+  dimension: index {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.index ;;
+  }
+
+  # hide this variable in the explore
+  dimension: value {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.value ;;
+  }
 
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: concat(${ga_sessions_full.date},
@@ -102,69 +150,128 @@ view: ga_sessions_full__custom_dimensions {
         ${ga_sessions_full.full_visitor_id}) ;;
   }
 
-  ### user id
   dimension: user_id {
-    type: number
-    sql: IF(${TABLE}.index = 33, ${TABLE}.value, NULL) ;;
+    type: string
+    sql:
+      (SELECT
+        MAX(IF(index = 33, value, NULL))
+      FROM
+        UNNEST(${ga_sessions_full.custom_dimensions}));;
   }
 
-  ### guest id
   dimension: guest_id {
     type: string
-    sql: IF(${TABLE}.index = 32, ${TABLE}.value, NULL) ;;
+    sql:
+      (SELECT
+        MAX(IF(index = 32, value, NULL))
+      FROM
+        UNNEST(${ga_sessions_full.custom_dimensions})) ;;
   }
 
-  ### login status
-  dimension: login_status{
+  dimension: login_status {
     type: string
-    sql: IF(${TABLE}.index = 29, ${TABLE}.value, NULL);;
+    sql:
+      (SELECT
+        MAX(IF(index = 29, value, NULL))
+      FROM
+        UNNEST(${ga_sessions_full.custom_dimensions}));;
   }
 
-  ### registration status
   dimension: registration_status {
     type: string
-    sql: IF(${TABLE}.index = 30, ${TABLE}.value, NULL) ;;
+    sql:
+      (SELECT
+        MAX(IF(index = 30, value, NULL))
+      FROM
+        UNNEST(${ga_sessions_full.custom_dimensions}));;
   }
 
-  ### customer type
   dimension: customer_type {
     type: string
-    sql: IF(${TABLE}.index = 34, ${TABLE}.value, NULL) ;;
+    sql:
+      (SELECT
+        MAX(IF(index = 34, value, NULL))
+      FROM
+        UNNEST(${ga_sessions_full.custom_dimensions}));;
   }
 
-  ### buyer status
   dimension: buyer_status {
     type: string
-    sql: IF(${TABLE}.index = 24, ${TABLE}.value, NULL) ;;
+    sql:
+      (SELECT
+        MAX(IF(index = 24, value, NULL))
+      FROM
+        UNNEST(${ga_sessions_full.custom_dimensions}));;
   }
 
-  ### trade status
   dimension: trade_status {
     type: string
-    sql: IF(${TABLE}.index = 6, ${TABLE}.value, NULL) ;;
+    sql:
+      (SELECT
+        MAX(IF(index = 6, value, NULL))
+      FROM
+        UNNEST(${ga_sessions_full.custom_dimensions}));;
   }
 
-  ### default currency
   dimension: default_currency {
     type: string
-    sql: IF(${TABLE}.index = 23, ${TABLE}.value, NULL) ;;
+    sql:
+      (SELECT
+        MAX(IF(index = 23, value, NULL))
+      FROM
+        UNNEST(${ga_sessions_full.custom_dimensions}));;
   }
-
-
-  ##########################################
-
-  #dimension: index {
-  #  type: number
-  #  sql: ${TABLE}.index ;;
-  #}
-
-  #dimension: value {
-  #  type: string
-  #  sql: ${TABLE}.value ;;
-  #}
 
 }
 
+# view: custom_dimensions {
+#   derived_table: {
+#     sql:
+#     SELECT
+#       concat(date, cast(visitId AS string), fullVisitorId) AS primary_key,
+#       (SELECT
+#         MAX(IF(index = 33, value, NULL)) AS cd_user_id
+#       FROM
+#         UNNEST(customDimensions)) AS cd_user_id,
+#       (SELECT
+#         MAX(IF(index = 32, value, NULL)) AS cd_guest_id
+#       FROM
+#         UNNEST(customDimensions)) AS cd_guest_id,
+#       (SELECT
+#         MAX(IF(index = 29, value, NULL)) AS cd_login_status
+#       FROM
+#         UNNEST(customDimensions)) AS cd_login_status
+#       FROM
+#         `api-project-1065928543184.96922533.ga_sessions_*`
+#     ;;
+#   }
+
+#   dimension: primary {
+#     primary_key: yes
+#     type: string
+#     sql: ${TABLE}.primary_key ;;
+#   }
+
+#   dimension: cd_user_id {
+#     type: string
+#     sql: ${TABLE}.cd_user_id ;;
+#   }
+
+#   dimension: cd_guest_id {
+#     type: string
+#     sql: ${TABLE}.cd_guest_id ;;
+#   }
+
+#   dimension: cd_login_status {
+#     type: string
+#     sql: ${TABLE}.cd_login_status ;;
+#   }
+# }
+
+# SUB-VIEW:
+
+
+# SUB-VIEW: TOTALS ########
 view: ga_sessions_full__totals {
 
   dimension: primary {
@@ -178,11 +285,6 @@ view: ga_sessions_full__totals {
   dimension: bounces {
     type: number
     sql: ${TABLE}.bounces ;;
-  }
-
-  measure: bounced_sessions {
-    type: sum
-    sql: ${bounces} ;;
   }
 
   dimension: hits {
@@ -205,15 +307,10 @@ view: ga_sessions_full__totals {
     sql: ${TABLE}.screenviews ;;
   }
 
-  dimension: pageviewsandscreenviews {
+  dimension: pageviews_and_screenviews {
     type: number
     sql: case when ${pageviews} is null then ${screenviews}
           else ${pageviews} end;;
-  }
-
-  measure: pageviewsandscreenviews_measure {
-    type: sum
-    sql:  ${pageviewsandscreenviews};;
   }
 
   dimension: time_on_screen {
@@ -241,16 +338,6 @@ view: ga_sessions_full__totals {
     sql: ${TABLE}.transactions ;;
   }
 
-  measure: num_transactions {
-    type: sum
-    sql: ${transactions} ;;
-  }
-
-  measure: transactions_measure {
-    type: sum
-    sql: ${TABLE}.transactions ;;
-  }
-
   dimension: unique_screenviews {
     type: number
     sql: ${TABLE}.uniqueScreenviews ;;
@@ -261,13 +348,33 @@ view: ga_sessions_full__totals {
     sql: ${TABLE}.visits ;;
   }
 
-  measure: total_sessions {
+  # ADDED MEASURE: count total number of pageviews and screenviews ########
+  measure: total_pageviews_and_screenviews_count {
+    type: sum
+    sql:  ${pageviews_and_screenviews};;
+  }
+
+  # ADDED MESAURE: count total number of transactions ########
+  measure: total_transactions_count {
+    type: sum
+    sql: ${transactions} ;;
+  }
+
+  # ADDED MEASURE: count total number of bounced sessions ########
+  measure: total_bounced_sessions_count {
+    type: sum
+    sql: ${bounces} ;;
+  }
+
+  # ADDED MESAURE: count total number of (valid) sessions ########
+  measure: total_sessions_count {
     type: sum
     sql: ${visits} ;;
   }
 
 }
 
+# SUB-VIEW: GEO NETWORK ########
 view: ga_sessions_full__geo_network {
 
   dimension: primary {
@@ -335,6 +442,7 @@ view: ga_sessions_full__geo_network {
   }
 }
 
+# SUB-VIEW: TRAFFIC SOURCE ########
 view: ga_sessions_full__traffic_source {
 
   dimension: primary {

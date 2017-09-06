@@ -129,16 +129,18 @@ explore: ga_sessions_20170805 {
 ### Author: @YJ
 ### Create Date: 2017-08-29
 
-explore: Google_Analytics_sessions_full{
+explore: ga_sessions_version_2{
   # define the
   view_name: ga_sessions_full
   view_label: "Google Analytics Sessions"
 
-  # join with the __custom_dimensions RECORD
+  # join with the drived table
   join: ga_sessions_full__custom_dimensions {
     view_label: "Google Analytics Sessions: Custom Dimensions"
-    sql: LEFT JOIN UNNEST([${ga_sessions_full.custom_dimensions}]) AS ga_sessions_full__custom_dimensions ;;
-    relationship: one_to_many
+    #sql:
+    # INNER JOIN ${ga_sessions_full.custom_dimensions};;
+    #relationship: one_to_one
+
   }
 
   # join with the __totals RECORD
@@ -171,12 +173,6 @@ explore: Google_Analytics_sessions_full{
 }
 ##############################################################
 
-################## @YJ test table structure ##################
-
-### Table Name: Google Analytics Pageview Full
-### Explanation: this table has all columns in ga_pageviews
-### Author: @YJ
-### Create Date: 2017-08-31
 
 
 explore: ga_sessions_test {
@@ -185,5 +181,3 @@ explore: ga_sessions_test {
   view_label: "GA Sessions Test"
 
 }
-
-##############################################################
