@@ -134,14 +134,20 @@ explore: ga_sessions_version_2{
   view_name: ga_sessions_full
   view_label: "Google Analytics Sessions"
 
-  # join with the drived table
+  # join with the __custom_dimensions STRUC
   join: ga_sessions_full__custom_dimensions {
     view_label: "Google Analytics Sessions: Custom Dimensions"
-    #sql:
-    # INNER JOIN ${ga_sessions_full.custom_dimensions};;
-    #relationship: one_to_one
-
   }
+
+  # join with the __hits STRUC
+  join: ga_sessions_full__hits {
+    view_label: "Google Analytics Sessions: Hits"
+  }
+
+  # join: ga_sessions_full__hits {
+  #   view_label: "Google Analytics Sessions: Hits"
+  #   sql: CROSS JOIN UNNEST(${ga_sessions_full.hits}) AS ga_sessions_full__hits ;;
+  # }
 
   # join with the __totals RECORD
   join: ga_sessions_full__totals {

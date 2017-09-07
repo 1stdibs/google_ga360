@@ -124,7 +124,7 @@ view: ga_sessions_full {
 }
 
 # SUB-VIEW: CUSTOM DIMENSIONS ########
-# Type: STRUC (2-level ARRAY)
+# TYPE: STRUC (2-level ARRAY)
 view: ga_sessions_full__custom_dimensions {
 
   # hide this variable in the explore
@@ -154,72 +154,72 @@ view: ga_sessions_full__custom_dimensions {
     type: string
     sql:
       (SELECT
-        MAX(IF(index = 33, value, NULL))
+        MAX(IF(temp.index = 33, temp.value, NULL))
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}));;
+        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
   }
 
   dimension: guest_id {
     type: string
     sql:
       (SELECT
-        MAX(IF(index = 32, value, NULL))
+        MAX(IF(temp.index = 32, temp.value, NULL))
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions})) ;;
+        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
   }
 
   dimension: login_status {
     type: string
     sql:
       (SELECT
-        MAX(IF(index = 29, value, NULL))
+        MAX(IF(temp.index = 29, temp.value, NULL))
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}));;
+        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
   }
 
   dimension: registration_status {
     type: string
     sql:
       (SELECT
-        MAX(IF(index = 30, value, NULL))
+        MAX(IF(temp.index = 30, temp.value, NULL))
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}));;
+        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
   }
 
   dimension: customer_type {
     type: string
     sql:
       (SELECT
-        MAX(IF(index = 34, value, NULL))
+        MAX(IF(temp.index = 34, temp.value, NULL))
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}));;
+        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
   }
 
   dimension: buyer_status {
     type: string
     sql:
       (SELECT
-        MAX(IF(index = 24, value, NULL))
+        MAX(IF(temp.index = 24, temp.value, NULL))
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}));;
+        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
   }
 
   dimension: trade_status {
     type: string
     sql:
       (SELECT
-        MAX(IF(index = 6, value, NULL))
+        MAX(IF(temp.index = 6, temp.value, NULL))
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}));;
+        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
   }
 
   dimension: default_currency {
     type: string
     sql:
       (SELECT
-        MAX(IF(index = 23, value, NULL))
+        MAX(IF(temp.index = 23, temp.value, NULL))
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}));;
+        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
   }
 
 }
@@ -269,9 +269,48 @@ view: ga_sessions_full__custom_dimensions {
 # }
 
 # SUB-VIEW:
+# TYPE: STRUC (2-level ARRAY)
+view: ga_sessions_full__hits {
+  dimension: app_info {
+    hidden: yes
+    sql: ${TABLE}.appInfo ;;
+  }
 
+  # build measure to count how many Events
+  # @Vicky: what is the difference between Events and hits
+  dimension: events {
+    type: number
+    sql: (
+    SELECT SUM(IF(temp.type = "EVENT", 1, 0))
+    FROM
+        UNNEST(${ga_sessions_full.hits}) AS temp
+      ) ;;
+  }
+
+  # dimension: events {
+  #   type: number
+  #   sql: SUM(IF(${TABLE}.type = "EVENT", 1, 0)) ;;
+  # }
+
+  # ADDED MESAURE: count total number of transactions ########
+  measure: total_events_count {
+    type: sum
+    sql: ${events} ;;
+  }
+
+  # dimension: is_exit {
+  #   type: yesno
+  #   sql: ${TABLE}.isExit ;;
+  # }
+
+  # dimension: is_entrance {
+  #   type: yesno
+  #   sql: ${TABLE}.isEntrance ;;
+  # }
+}
 
 # SUB-VIEW: TOTALS ########
+# TYPE: ARRAY
 view: ga_sessions_full__totals {
 
   dimension: primary {
@@ -325,12 +364,7 @@ view: ga_sessions_full__totals {
 
   dimension: total_transaction_revenue {
     type: number
-    sql: ${TABLE}.totalTransactionRevenue ;;
-  }
-
-  dimension: transaction_revenue {
-    type: number
-    sql: ${TABLE}.transactionRevenue ;;
+    sql: ROUND(${TABLE}.totalTransactionRevenue/1000000, 3) ;;
   }
 
   dimension: transactions {
@@ -372,9 +406,15 @@ view: ga_sessions_full__totals {
     sql: ${visits} ;;
   }
 
+  # ADDED MEASURE: the total value of transaction revenue  ########
+  measure: total_gmv {
+    type: sum
+    sql: ROUND(${total_transaction_revenue}, 3) ;;
+  }
 }
 
 # SUB-VIEW: GEO NETWORK ########
+# TYPE: ARRAY
 view: ga_sessions_full__geo_network {
 
   dimension: primary {
@@ -443,6 +483,7 @@ view: ga_sessions_full__geo_network {
 }
 
 # SUB-VIEW: TRAFFIC SOURCE ########
+# TYPE: ARRAY
 view: ga_sessions_full__traffic_source {
 
   dimension: primary {
@@ -499,6 +540,8 @@ view: ga_sessions_full__traffic_source {
   }
 }
 
+# SUB-VIEW: DEVICE ########
+# TYPE: ARRAY
 view: ga_sessions_full__device {
 
   dimension: primary {
