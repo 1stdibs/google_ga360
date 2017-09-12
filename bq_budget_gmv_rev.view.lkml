@@ -1,14 +1,14 @@
 view: bq_budget_gmv_rev {
   sql_table_name: testing.bq_budget_gmv_rev ;;
 
-  measure: consumer_confirmed_gmv {
+  measure: Budget_Total_Confirmed_Orders {
     type: sum
-    sql: ${TABLE}.consumer_confirmed_gmv ;;
+    sql: ${TABLE}.Budget_Total_Confirmed_Orders ;;
   }
 
-  measure: consumer_confirmed_orders {
+  measure: Budget_Consumer_Confirmed_Orders {
     type: sum
-    sql: ${TABLE}.consumer_confirmed_orders ;;
+    sql: ${TABLE}.Budget_Consumer_Confirmed_Orders ;;
   }
 
   dimension_group: date {
@@ -24,19 +24,74 @@ view: bq_budget_gmv_rev {
     hidden: yes
   }
 
-  measure: trade_confirmed_gmv {
+  measure: Budget_Trade_Confirmed_Orders {
     type: sum
-    sql: ${TABLE}.trade_confirmed_gmv ;;
+    sql: ${TABLE}.Budget_Trade_Confirmed_Orders ;;
   }
 
-  measure: trade_confirmed_orders {
+  measure: Budget_Off_Platform_Confirmed_Orders {
     type: sum
-    sql: ${TABLE}.trade_confirmed_orders ;;
+    sql: ${TABLE}.Budget_Off_Platform_Confirmed_Orders ;;
   }
 
-  measure: transactional_revenue {
+  measure: Budget_Total_Confirmed_GMV {
     type: sum
-    sql: ${TABLE}.transactional_revenue ;;
+    sql: ${TABLE}.Budget_Total_Confirmed_GMV ;;
+  }
+
+  measure: Budget_Consumer_Confirmed_GMV {
+    type: sum
+    sql: ${TABLE}.Budget_Consumer_Confirmed_GMV ;;
+  }
+
+  measure: Budget_Trade_Confirmed_GMV {
+    type: sum
+    sql: ${TABLE}.Budget_Trade_Confirmed_GMV ;;
+  }
+
+  measure: Budget_Off_Platform_Confirmed_GMV {
+    type: sum
+    sql: ${TABLE}.Budget_Off_Platform_Confirmed_GMV ;;
+  }
+
+  measure: Reforecast_Total_Confirmed_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Total_Confirmed_Orders ;;
+  }
+
+  measure: Reforecast_Consumer_Confirmed_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Consumer_Confirmed_Orders ;;
+  }
+
+  measure: Reforecast_Trade_Confirmed_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Trade_Confirmed_Orders ;;
+  }
+
+  measure: Reforecast_Off_Platform_Confirmed_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Off_Platform_Confirmed_Orders ;;
+  }
+
+  measure: Reforecast_Total_Confirmed_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Total_Confirmed_GMV ;;
+  }
+
+  measure: Reforecast_Consumer_Confirmed_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Consumer_Confirmed_GMV ;;
+  }
+
+  measure: Reforecast_Trade_Confirmed_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Trade_Confirmed_GMV ;;
+  }
+
+  measure: Reforecast_Off_Platform_Confirmed_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Off_Platform_Confirmed_GMV ;;
   }
 
   measure: count {
