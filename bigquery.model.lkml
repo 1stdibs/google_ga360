@@ -181,9 +181,9 @@ explore: ga_sessions_version_2{
 
 
 
-explore: ga_sessions_test {
+explore: funnel_report_21_c {
   # define the
-  view_name: ga_sessions_test
-  view_label: "GA Sessions Test"
+  view_name: funnel_report_21_c
+  view_label: "Funnel Report 21 Century"
 
 }
