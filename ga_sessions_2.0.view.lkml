@@ -33,6 +33,11 @@ view: ga_sessions_full {
     sql: ${TABLE}.visitId ;;
   }
 
+  measure: total_user_count {
+    type: count_distinct
+    sql: ${full_visitor_id}  ;;
+  }
+
   dimension: visit_number {
     type: number
     sql: ${TABLE}.visitNumber ;;

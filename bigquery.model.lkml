@@ -187,3 +187,8 @@ explore: funnel_report_21_c {
   view_label: "Funnel Report 21 Century"
 
 }
+
+explore: order_attribution_base {
+  view_name: order_attribution_base_data
+  view_label: "Order Attribution Base"
+}
