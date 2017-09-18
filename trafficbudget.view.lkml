@@ -17,42 +17,42 @@ view: trafficbudget {
   measure: budget_total_sessions {
     type: sum
     sql: ${TABLE}.Budget_total_sessions ;;
-    group_label: "Budget"
-    label: "Sessions"
+    view_label: "Budget"
+    label: "Budget Sessions"
   }
 
   measure: budget_organic_sources {
     type: sum
     sql: ${TABLE}.Budget_organic_sources ;;
-    group_label: "Budget"
+    view_label: "Budget"
     label: "Organic Sources"
   }
 
   measure: budget_paid_sources {
     type: sum
     sql: ${TABLE}.Budget_paid_sources ;;
-    group_label: "Budget"
+    view_label: "Budget"
     label: "Paid Sources"
   }
 
   measure: reforecast_total_sessions {
     type: sum
     sql: ${TABLE}.Reforecast_total_sessions ;;
-    group_label: "Reforecast"
+    view_label: "Reforecast"
     label: "Sessions"
   }
 
   measure: reforecast_organic_sources {
     type: sum
     sql: ${TABLE}.Reforecast_organic_sources ;;
-    group_label: "Reforecast"
+    view_label: "Reforecast"
     label: "Organic Sources"
   }
 
   measure: reforecast_paid_sources {
     type: sum
     sql: ${TABLE}.Reforecast_paid_sources ;;
-    group_label: "Reforecast"
+    view_label: "Reforecast"
     label: "Paid Sources"
   }
 
