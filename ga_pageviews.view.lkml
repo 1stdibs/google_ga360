@@ -218,6 +218,34 @@ view: ga_pageviews {
     sql: REGEXP_CONTAINS(${web_page_path}, '/(search|furniture|art|fashion|jewelry|creators|dealers|collections|locations|sale|contemporary|associations|recognized|shopping-with|buy|(vpv/designers/.+/collections))') AND not REGEXP_CONTAINS(${web_page_path}, '/vpv/pdp');;
   }
 
+  dimension: contentGroup1 {
+    type: string
+    sql: ${TABLE}.contentGroup1 ;;
+    label: "Page Type (Content Group)"
+  }
+
+  dimension: page_is_pdp {
+    type: yesno
+    sql: ${contentGroup1} = 'Products' ;;
+    hidden:  yes
+  }
+
+  dimension: page_is_results {
+    type: yesno
+    sql: ${contentGroup1} = 'Results' ;;
+    hidden:  yes
+  }
+
+  measure: pdp_pageviews {
+    type: number
+    sql: SUM(IF(${page_is_pdp}, 1, 0)) ;;
+  }
+
+  measure: results_pageviews {
+    type: number
+    sql: SUM(IF(${page_is_results}, 1, 0)) ;;
+  }
+
   measure: searchbrowse_sessions{
     type: count_distinct
     sql: ${sessionid} ;;
