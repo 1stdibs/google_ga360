@@ -195,6 +195,12 @@ explore: ga_events_version_2 {
   # define the
   view_name: ga_events_full
   view_label: "Google Analytics Events"
+  always_filter: {
+    filters: {
+      field: ga_events_full__hits.type
+      value: "EVENT"
+    }
+  }
 
   # join with the __custom_dimensions STRUC
   join: ga_events_full__custom_dimensions {

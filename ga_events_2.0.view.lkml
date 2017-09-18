@@ -1136,6 +1136,43 @@ view: ga_events_full__hits__event_info {
     type: number
     sql: ${ga_events_full__hits.event_info}.eventValue;;
   }
+
+
+  ##### BEGINNING OF EVENT BUSINESS LOGIC ############
+
+  measure: contact_dealer_clicked {
+    type: number
+    sql: SUM(IF(${event_action} IN  ('contact dealer clicked', 'call dealer clicked','call dealer initiated', 'request shipping quote clicked','request hold clicked', 'request net price clicked' ), 1, 0)) ;;
+  }
+
+  measure: contact_dealer_submitted {
+    type: number
+    sql:SUM(IF(${event_action} IN  ('contact dealer submitted','request shipping quote submitted', 'request hold submitted', 'request net price submitted', 'offer inquiry submitted' ), 1, 0))  ;;
+  }
+
+  measure: registration_entries {
+    type: number
+    sql: SUM(IF(${event_action} = 'registration entry', 1, 0)) ;;
+  }
+
+  measure: registration_completes {
+    type: number
+    sql: SUM(IF(${event_action} =  'registration complete', 1, 0)) ;;
+  }
+
+  measure: purchase_clicks {
+    type: number
+    sql: SUM(IF(${event_category} = 'purchase click', 1, 0)) ;;
+    drill_fields: [event_action]
+  }
+
+  measure: make_offer_clicks {
+    type: number
+    sql: SUM(IF(${event_category} = 'make offer click', 1, 0)) ;;
+    drill_fields: [event_action]
+  }
+
+  ##### END OF BUSINESS LOGIC FOR EVENTS ################
 }
 
 view: ga_events_full__hits__latency_tracking {
