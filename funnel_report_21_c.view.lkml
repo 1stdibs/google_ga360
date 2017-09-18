@@ -1,6 +1,14 @@
 view: funnel_report_21_c {
   sql_table_name: looker.funnel_report_21C ;;
 
+#   measure: percent_test
+#   {
+#     type: number
+#     sql: ${all_confirmed_orders}/${contact_dealer} ;;
+#     group_label: "Order Fields"
+#   }
+
+
   measure: all_confirmed_orders {
     type: sum
     sql: ${TABLE}.all_confirmed_orders ;;
