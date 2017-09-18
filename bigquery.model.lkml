@@ -117,10 +117,6 @@ explore: gmv_revenue_budget {
 }
 
 
-explore: ga_sessions_20170805 {
-  view_name: ga_sessions_20170805
-}
-
 
 ################## @YJ test table structure ##################
 
@@ -191,4 +187,28 @@ explore: funnel_report_21_c {
 explore: order_attribution_base {
   view_name: order_attribution_base_data
   view_label: "Order Attribution Base"
+}
+
+
+
+explore: ga_events_version_2 {
+  # define the
+  view_name: ga_events_full
+  view_label: "Google Analytics Events"
+
+  # join with the __custom_dimensions STRUC
+  join: ga_events_full__custom_dimensions {
+    view_label: "Events: Custom Dimensions"
+  }
+
+  # join with the __custom_dimensions STRUC
+  join: ga_events_full__hits {
+    view_label: "Events: Hits"
+    sql: CROSS JOIN UNNEST(${ga_events_full.hits}) AS ga_events_full__hits;;
+    relationship: one_to_many
+  }
+
+  join: ga_events_full__hits__event_info {
+    view_label: "Events: Event Info"
+  }
 }

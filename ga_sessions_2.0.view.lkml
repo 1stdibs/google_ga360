@@ -232,6 +232,15 @@ view: ga_sessions_full__custom_dimensions {
 # SUB-VIEW: HITS ########
 # TYPE: STRUC (2-level ARRAY)
 view: ga_sessions_full__hits {
+  dimension: primary {
+    hidden: yes
+    primary_key: yes
+    type: string
+    sql: concat(${ga_sessions_full.date},
+        cast(${ga_sessions_full.visit_id} AS string),
+        ${ga_sessions_full.full_visitor_id}) ;;
+  }
+
   dimension: app_info {
     hidden: yes
     sql: ${TABLE}.appInfo ;;
@@ -604,24 +613,24 @@ view: ga_sessions_full__device {
 
 
 # view: custom_dimensions {
-#   derived_table: {
-#     sql:
-#     SELECT
-#       concat(date, cast(visitId AS string), fullVisitorId) AS primary_key,
-#       (SELECT
-#         MAX(IF(index = 33, value, NULL)) AS cd_user_id
-#       FROM
-#         UNNEST(customDimensions)) AS cd_user_id,
-#       (SELECT
-#         MAX(IF(index = 32, value, NULL)) AS cd_guest_id
-#       FROM
-#         UNNEST(customDimensions)) AS cd_guest_id,
-#       (SELECT
-#         MAX(IF(index = 29, value, NULL)) AS cd_login_status
-#       FROM
-#         UNNEST(customDimensions)) AS cd_login_status
-#       FROM
-#         `api-project-1065928543184.96922533.ga_sessions_*`
+  # derived_table: {
+  #   sql:
+  #   SELECT
+  #     concat(date, cast(visitId AS string), fullVisitorId) AS primary_key,
+  #     (SELECT
+  #       MAX(IF(index = 33, value, NULL)) AS cd_user_id
+  #     FROM
+  #       UNNEST(customDimensions)) AS cd_user_id,
+  #     (SELECT
+  #       MAX(IF(index = 32, value, NULL)) AS cd_guest_id
+  #     FROM
+  #       UNNEST(customDimensions)) AS cd_guest_id,
+  #     (SELECT
+  #       MAX(IF(index = 29, value, NULL)) AS cd_login_status
+  #     FROM
+  #       UNNEST(customDimensions)) AS cd_login_status
+  #     FROM
+  #       `api-project-1065928543184.96922533.ga_sessions_*`
 #     ;;
 #   }
 
