@@ -1,8 +1,6 @@
 view: trafficbudget {
   sql_table_name: testing.trafficbudget ;;
 
-
-
   dimension_group: date {
     type: time
     timeframes: [date, week, month]
@@ -16,48 +14,47 @@ view: trafficbudget {
     hidden: yes
   }
 
-  measure: organicsearch {
+  measure: budget_total_sessions {
     type: sum
-    sql: ${TABLE}.organicsearch ;;
+    sql: ${TABLE}.Budget_total_sessions ;;
+    view_label: "Budget"
+    label: "Budget Sessions"
   }
 
-  measure: paidSearch {
+  measure: budget_organic_sources {
     type: sum
-    sql: ${TABLE}.paidSearch ;;
+    sql: ${TABLE}.Budget_organic_sources ;;
+    view_label: "Budget"
+    label: "Organic Sources"
   }
 
-  measure: direct {
+  measure: budget_paid_sources {
     type: sum
-    sql: ${TABLE}.direct ;;
+    sql: ${TABLE}.Budget_paid_sources ;;
+    view_label: "Budget"
+    label: "Paid Sources"
   }
 
-  measure: referrals {
+  measure: reforecast_total_sessions {
     type: sum
-    sql: ${TABLE}.referrals ;;
+    sql: ${TABLE}.Reforecast_total_sessions ;;
+    view_label: "Reforecast"
+    label: "Sessions"
   }
 
-  measure: email {
+  measure: reforecast_organic_sources {
     type: sum
-    sql: ${TABLE}.email ;;
-  }
-  measure: paidDisplayAd {
-    type: sum
-    sql: ${TABLE}.paidDisplayAds ;;
+    sql: ${TABLE}.Reforecast_organic_sources ;;
+    view_label: "Reforecast"
+    label: "Organic Sources"
   }
 
-  measure: productListing {
+  measure: reforecast_paid_sources {
     type: sum
-    sql: ${TABLE}.productListingAds ;;
+    sql: ${TABLE}.Reforecast_paid_sources ;;
+    view_label: "Reforecast"
+    label: "Paid Sources"
   }
 
-  measure: appSessions {
-    type: sum
-    sql: ${TABLE}.appSessions ;;
-  }
-
-  measure: unattributed {
-    type: sum
-    sql: ${TABLE}.unattributed ;;
-  }
 
 }
