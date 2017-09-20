@@ -425,6 +425,7 @@ view: ga_events_full__hits__content_group {
 #   }
 }
 
+#
 view: ga_events_full__hits__custom_dimensions {
 
   # copy/build the parimary key
@@ -452,67 +453,102 @@ view: ga_events_full__hits__custom_dimensions {
   dimension: item_condition {
     type: string
     sql:
-      (SELECT
-        MAX(IF(ic.index = 4, ic.value, NULL))
-      FROM
-        UNNEST(${ga_events_full__hits.custom_dimensions}) AS ic);;
+      (SELECT MAX(IF(ic.index = 4, ic.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ic);;
   }
 
   dimension: page_sort {
     type: string
     sql:
-      (SELECT
-        MAX(IF(ps.index = 5, ps.value, NULL))
-      FROM
-        UNNEST(${ga_events_full__hits.custom_dimensions}) AS ps);;
+      (SELECT MAX(IF(ps.index = 5, ps.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ps);;
   }
 
   # ?@YJ: should we keep this in ITEM level?
   dimension: purchase_status {
     type: string
     sql:
-      (SELECT
-        MAX(IF(pst.index = 7, pst.value, NULL))
-      FROM
-        UNNEST(${ga_events_full__hits.custom_dimensions}) AS pst);;
+      (SELECT MAX(IF(pst.index = 7, pst.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS pst);;
   }
 
   dimension: view_mode {
     type: string
     sql:
-        (SELECT
-          MAX(IF(vm.index = 8, vm.value, NULL))
-        FROM
-          UNNEST(${ga_events_full__hits.custom_dimensions}) AS vm);;
+      (SELECT MAX(IF(vm.index = 8, vm.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS vm);;
   }
 
   # ?@YJ: should we keep this in ITEM level?
   dimension: item_date {
     type: string
     sql:
-      (SELECT
-        MAX(IF(id.index = 10, id.value, NULL))
-      FROM
-        UNNEST(${ga_events_full__hits.custom_dimensions}) AS id);;
+      (SELECT MAX(IF(id.index = 10, id.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS id);;
   }
 
   dimension: number_of_images {
     type: string
     sql:
-      (SELECT
-        MAX(IF(noi.index = 14, noi.value, NULL))
-      FROM
-        UNNEST(${ga_events_full__hits.custom_dimensions}) AS noi);;
+      (SELECT MAX(IF(noi.index = 14, noi.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS noi);;
   }
 
   # ?@YJ: should we keep this in ITEM level?
   dimension: item_id {
     type: string
     sql:
-      (SELECT
-        MAX(IF(ii.index = 15, ii.value, NULL))
-      FROM
-        UNNEST(${ga_events_full__hits.custom_dimensions})  AS ii) ;;
+      (SELECT MAX(IF(ii.index = 15, ii.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions})  AS ii) ;;
+  }
+
+  dimension: page_number_viewed {
+    type: string
+    sql:
+      (SELECT MAX(IF(pnv.index = 16, pnv.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS pnv) ;;
+  }
+
+  dimension: item_count {
+    type: number
+    sql:
+      (SELECT MAX(IF(ic.index = 17, ic.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ic) ;;
+  }
+
+  dimension: content_module {
+    type: string
+    sql:
+      (SELECT MAX(IF(cm.index = 18, cm.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS cm) ;;
+  }
+
+  dimension: asking_price {
+    type: string
+    sql:
+      (SELECT MAX(IF(ap.index = 21, ap.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ap) ;;
+  }
+
+  dimension: dealer_name {
+    type: string
+    sql:
+      (SELECT MAX(IF(dn.index = 22, dn.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS dn) ;;
+  }
+
+  dimension: creator {
+    type: string
+    sql:
+      (SELECT MAX(IF(c.index = 43, c.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS c);;
+  }
+
+  dimension: dealer_id {
+    type: string
+    sql:
+      (SELECT MAX(IF(di.index = 44, di.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS di);;
   }
 
 }
