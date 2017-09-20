@@ -530,6 +530,7 @@ view: ga_events_full__hits__custom_dimensions {
       FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ap) ;;
   }
 
+  # ?@YJ: should we keep this in ITEM level?
   dimension: dealer_name {
     type: string
     sql:
@@ -537,6 +538,7 @@ view: ga_events_full__hits__custom_dimensions {
       FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS dn) ;;
   }
 
+  # ?@YJ: should we keep this in ITEM level?
   dimension: creator {
     type: string
     sql:
@@ -551,6 +553,42 @@ view: ga_events_full__hits__custom_dimensions {
       FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS di);;
   }
 
+  # ?@YJ: should we keep this in ITEM level?
+  dimension: item_posting_location {
+    type: string
+    sql:
+      (SELECT MAX(IF(ipl.index = 45, ipl.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ipl);;
+  }
+
+  dimension: price_type {
+    type: string
+    sql:
+      (SELECT MAX(IF(pt.index = 67, pt.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS pt);;
+  }
+
+  dimension: order_type {
+    type: string
+    sql:
+      (SELECT MAX(IF(ot.index = 68, ot.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ot);;
+  }
+
+  dimension: shipping_status {
+    type: string
+    sql:
+      (SELECT MAX(IF(ss.index = 61, ss.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ss);;
+  }
+
+  # ?@YJ: can we replace this by landWebPagePath
+  dimension: first_page_of_session {
+    type: string
+    sql:
+      (SELECT MAX(IF(fps.index = 75, fps.value, NULL))
+      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS fps);;
+  }
 }
 
 view: ga_events_full__hits__experiment {
