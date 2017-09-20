@@ -145,83 +145,6 @@ view: ga_events_full__custom_dimensions {
   }
 }
 
-view: ga_events_full__totals {
-
-  # build primary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: concat(${ga_events_full.date},
-                cast(${ga_events_full.visit_id} AS string),
-                ${ga_events_full.full_visitor_id}) ;;
-  }
-
-  dimension: bounces {
-    type: number
-    sql: ${TABLE}.bounces ;;
-  }
-
-  dimension: hits {
-    type: number
-    sql: ${TABLE}.hits ;;
-  }
-
-  dimension: new_visits {
-    type: number
-    sql: ${TABLE}.newVisits ;;
-  }
-
-  dimension: pageviews {
-    type: number
-    sql: ${TABLE}.pageviews ;;
-  }
-
-  dimension: screenviews {
-    type: number
-    sql: ${TABLE}.screenviews ;;
-  }
-
-  dimension: session_quality_dim {
-    type: number
-    sql: ${TABLE}.sessionQualityDim ;;
-  }
-
-  dimension: time_on_screen {
-    type: number
-    sql: ${TABLE}.timeOnScreen ;;
-  }
-
-  dimension: time_on_site {
-    type: number
-    sql: ${TABLE}.timeOnSite ;;
-  }
-
-  dimension: total_transaction_revenue {
-    type: number
-    sql: ${TABLE}.totalTransactionRevenue ;;
-  }
-
-  dimension: transaction_revenue {
-    type: number
-    sql: ${TABLE}.transactionRevenue ;;
-  }
-
-  dimension: transactions {
-    type: number
-    sql: ${TABLE}.transactions ;;
-  }
-
-  dimension: unique_screenviews {
-    type: number
-    sql: ${TABLE}.uniqueScreenviews ;;
-  }
-
-  dimension: visits {
-    type: number
-    sql: ${TABLE}.visits ;;
-  }
-}
-
 view: ga_events_full__hits {
 
   # copy/build the parimary key
@@ -233,30 +156,9 @@ view: ga_events_full__hits {
                 ${ga_events_full.full_visitor_id});;
   }
 
-#   # build a hit level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 CAST(${TABLE}.hit_number AS STRING));;
-#   }
-
-
-  dimension: app_info {
-    hidden: yes
-    sql: ${TABLE}.appInfo ;;
-  }
-
   dimension: content_group {
     hidden: yes
     sql: ${TABLE}.contentGroup ;;
-  }
-
-  dimension: content_info {
-    hidden: yes
-    sql: ${TABLE}.contentInfo ;;
   }
 
   dimension: custom_dimensions {
@@ -264,17 +166,7 @@ view: ga_events_full__hits {
     sql: ${TABLE}.customDimensions ;;
   }
 
-  dimension: custom_metrics {
-    hidden: yes
-    sql: ${TABLE}.customMetrics ;;
-  }
-
-  dimension: custom_variables {
-    hidden: yes
-    sql: ${TABLE}.customVariables ;;
-  }
-
-  dimension: data_source {
+  dimension: platform{
     type: string
     sql: ${TABLE}.dataSource ;;
   }
@@ -284,14 +176,10 @@ view: ga_events_full__hits {
     sql: ${TABLE}.eCommerceAction ;;
   }
 
+  # when hitType == "EVENT"
   dimension: event_info {
     hidden: yes
     sql: ${TABLE}.eventInfo;;
-  }
-
-  dimension: exception_info {
-    hidden: yes
-    sql: ${TABLE}.exceptionInfo ;;
   }
 
   dimension: experiment {
@@ -329,10 +217,6 @@ view: ga_events_full__hits {
     sql: ${TABLE}.isSecure ;;
   }
 
-  dimension: item {
-    hidden: yes
-    sql: ${TABLE}.item ;;
-  }
 
   dimension: latency_tracking {
     hidden: yes
@@ -344,25 +228,21 @@ view: ga_events_full__hits {
     sql: ${TABLE}.minute ;;
   }
 
-  dimension: page {
-    hidden: yes
-    sql: ${TABLE}.page ;;
-  }
 
-  dimension: product {
-    hidden: yes
-    sql: ${TABLE}.product ;;
-  }
-
-  dimension: promotion {
-    hidden: yes
-    sql: ${TABLE}.promotion ;;
-  }
-
-  dimension: promotion_action_info {
-    hidden: yes
-    sql: ${TABLE}.promotionActionInfo ;;
-  }
+#   dimension: product {
+#     hidden: yes
+#     sql: ${TABLE}.product ;;
+#   }
+#
+#   dimension: promotion {
+#     hidden: yes
+#     sql: ${TABLE}.promotion ;;
+#   }
+#
+#   dimension: promotion_action_info {
+#     hidden: yes
+#     sql: ${TABLE}.promotionActionInfo ;;
+#   }
 
   dimension: publisher {
     hidden: yes
@@ -374,35 +254,137 @@ view: ga_events_full__hits {
     sql: ${TABLE}.referer ;;
   }
 
-  dimension: refund {
-    hidden: yes
-    sql: ${TABLE}.refund ;;
-  }
-
-  dimension: social {
-    hidden: yes
-    sql: ${TABLE}.social ;;
-  }
-
-  dimension: source_property_info {
-    hidden: yes
-    sql: ${TABLE}.sourcePropertyInfo ;;
-  }
-
   dimension: time {
     type: number
     sql: ${TABLE}.time ;;
   }
 
-  dimension: transaction {
-    hidden: yes
-    sql: ${TABLE}.transaction ;;
-  }
 
   dimension: type {
     type: string
     sql: ${TABLE}.type ;;
   }
+}
+
+# DONE: Event Info dimension
+view: ga_events_full__hits__event_info {
+
+  # copy/build the parimary key
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_events_full.date},
+                CAST(${ga_events_full.visit_id} AS STRING),
+                ${ga_events_full.full_visitor_id});;
+  }
+
+  dimension: event_action {
+    type: string
+    sql: ${ga_events_full__hits.event_info}.eventAction;;
+  }
+
+  dimension: event_category {
+    type: string
+    sql: ${ga_events_full__hits.event_info}.eventCategory;;
+  }
+
+  dimension: event_label {
+    type: string
+    sql: ${ga_events_full__hits.event_info}.eventLabel;;
+  }
+
+  dimension: event_value {
+    type: number
+    sql: ${ga_events_full__hits.event_info}.eventValue;;
+  }
+}
+
+# DONE: Content Group dimension
+view: ga_events_full__hits__content_group {
+
+  # copy/build the parimary key
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_events_full.date},
+                CAST(${ga_events_full.visit_id} AS STRING),
+                ${ga_events_full.full_visitor_id});;
+  }
+
+  dimension: content_group1 {
+    type: string
+    sql: ${ga_events_full__hits.content_group}.contentGroup1 ;;
+  }
+
+  dimension: content_group2 {
+    type: string
+    sql: ${ga_events_full__hits.content_group}.contentGroup2 ;;
+  }
+
+  dimension: content_group3 {
+    type: string
+    sql: ${ga_events_full__hits.content_group}.contentGroup3 ;;
+  }
+
+  dimension: content_group4 {
+    type: string
+    sql: ${ga_events_full__hits.content_group}.contentGroup4 ;;
+  }
+
+  dimension: content_group5 {
+    type: string
+    sql: ${ga_events_full__hits.content_group}.contentGroup5 ;;
+  }
+#
+#   dimension: content_group_unique_views1 {
+#     type: number
+#     sql: ${TABLE}.contentGroupUniqueViews1 ;;
+#   }
+#
+#   dimension: content_group_unique_views2 {
+#     type: number
+#     sql: ${TABLE}.contentGroupUniqueViews2 ;;
+#   }
+#
+#   dimension: content_group_unique_views3 {
+#     type: number
+#     sql: ${TABLE}.contentGroupUniqueViews3 ;;
+#   }
+#
+#   dimension: content_group_unique_views4 {
+#     type: number
+#     sql: ${TABLE}.contentGroupUniqueViews4 ;;
+#   }
+#
+#   dimension: content_group_unique_views5 {
+#     type: number
+#     sql: ${TABLE}.contentGroupUniqueViews5 ;;
+#   }
+#
+#   dimension: previous_content_group1 {
+#     type: string
+#     sql: ${TABLE}.previousContentGroup1 ;;
+#   }
+#
+#   dimension: previous_content_group2 {
+#     type: string
+#     sql: ${TABLE}.previousContentGroup2 ;;
+#   }
+#
+#   dimension: previous_content_group3 {
+#     type: string
+#     sql: ${TABLE}.previousContentGroup3 ;;
+#   }
+#
+#   dimension: previous_content_group4 {
+#     type: string
+#     sql: ${TABLE}.previousContentGroup4 ;;
+#   }
+#
+#   dimension: previous_content_group5 {
+#     type: string
+#     sql: ${TABLE}.previousContentGroup5 ;;
+#   }
 }
 
 view: ga_events_full__hits__custom_dimensions {
@@ -416,302 +398,85 @@ view: ga_events_full__hits__custom_dimensions {
                 ${ga_events_full.full_visitor_id});;
   }
 
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
   dimension: index {
+    hidden: yes
     type: number
     sql: ${TABLE}.index ;;
   }
 
   dimension: value {
+    hidden: yes
     type: string
     sql: ${TABLE}.value ;;
   }
-}
 
-view: ga_events_full__hits__app_info {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
+  # ?@YJ: should we keep this in ITEM level?
+  dimension: item_condition {
     type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
+    sql:
+      (SELECT
+        MAX(IF(ic.index = 4, ic.value, NULL))
+      FROM
+        UNNEST(${ga_events_full__hits.custom_dimensions}) AS ic);;
   }
 
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-  dimension: id {
-    primary_key: yes
+  dimension: page_sort {
     type: string
-    sql: ${TABLE}.id ;;
+    sql:
+      (SELECT
+        MAX(IF(ps.index = 5, ps.value, NULL))
+      FROM
+        UNNEST(${ga_events_full__hits.custom_dimensions}) AS ps);;
   }
 
-  dimension: app_id {
+  # ?@YJ: should we keep this in ITEM level?
+  dimension: purchase_status {
     type: string
-    sql: ${TABLE}.appId ;;
+    sql:
+      (SELECT
+        MAX(IF(pst.index = 7, pst.value, NULL))
+      FROM
+        UNNEST(${ga_events_full__hits.custom_dimensions}) AS pst);;
   }
 
-  dimension: app_installer_id {
+  dimension: view_mode {
     type: string
-    sql: ${TABLE}.appInstallerId ;;
+    sql:
+        (SELECT
+          MAX(IF(vm.index = 8, vm.value, NULL))
+        FROM
+          UNNEST(${ga_events_full__hits.custom_dimensions}) AS vm);;
   }
 
-  dimension: app_name {
+  # ?@YJ: should we keep this in ITEM level?
+  dimension: item_date {
     type: string
-    sql: ${TABLE}.appName ;;
+    sql:
+      (SELECT
+        MAX(IF(id.index = 10, id.value, NULL))
+      FROM
+        UNNEST(${ga_events_full__hits.custom_dimensions}) AS id);;
   }
 
-  dimension: app_version {
+  dimension: number_of_images {
     type: string
-    sql: ${TABLE}.appVersion ;;
+    sql:
+      (SELECT
+        MAX(IF(noi.index = 14, noi.value, NULL))
+      FROM
+        UNNEST(${ga_events_full__hits.custom_dimensions}) AS noi);;
   }
 
-  dimension: exit_screen_name {
+  # ?@YJ: should we keep this in ITEM level?
+  dimension: item_id {
     type: string
-    sql: ${TABLE}.exitScreenName ;;
+    sql:
+      (SELECT
+        MAX(IF(ii.index = 15, ii.value, NULL))
+      FROM
+        UNNEST(${ga_events_full__hits.custom_dimensions})  AS ii) ;;
   }
 
-  dimension: installer_id {
-    type: string
-    sql: ${TABLE}.installerId ;;
-  }
-
-  dimension: landing_screen_name {
-    type: string
-    sql: ${TABLE}.landingScreenName ;;
-  }
-
-  dimension: name {
-    type: string
-    sql: ${TABLE}.name ;;
-  }
-
-  dimension: screen_depth {
-    type: string
-    sql: ${TABLE}.screenDepth ;;
-  }
-
-  dimension: screen_name {
-    type: string
-    sql: ${TABLE}.screenName ;;
-  }
-
-  dimension: version {
-    type: string
-    sql: ${TABLE}.version ;;
-  }
-}
-
-view: ga_events_full__hits__content_group {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-  dimension: content_group1 {
-    type: string
-    sql: ${TABLE}.contentGroup1 ;;
-  }
-
-  dimension: content_group2 {
-    type: string
-    sql: ${TABLE}.contentGroup2 ;;
-  }
-
-  dimension: content_group3 {
-    type: string
-    sql: ${TABLE}.contentGroup3 ;;
-  }
-
-  dimension: content_group4 {
-    type: string
-    sql: ${TABLE}.contentGroup4 ;;
-  }
-
-  dimension: content_group5 {
-    type: string
-    sql: ${TABLE}.contentGroup5 ;;
-  }
-
-  dimension: content_group_unique_views1 {
-    type: number
-    sql: ${TABLE}.contentGroupUniqueViews1 ;;
-  }
-
-  dimension: content_group_unique_views2 {
-    type: number
-    sql: ${TABLE}.contentGroupUniqueViews2 ;;
-  }
-
-  dimension: content_group_unique_views3 {
-    type: number
-    sql: ${TABLE}.contentGroupUniqueViews3 ;;
-  }
-
-  dimension: content_group_unique_views4 {
-    type: number
-    sql: ${TABLE}.contentGroupUniqueViews4 ;;
-  }
-
-  dimension: content_group_unique_views5 {
-    type: number
-    sql: ${TABLE}.contentGroupUniqueViews5 ;;
-  }
-
-  dimension: previous_content_group1 {
-    type: string
-    sql: ${TABLE}.previousContentGroup1 ;;
-  }
-
-  dimension: previous_content_group2 {
-    type: string
-    sql: ${TABLE}.previousContentGroup2 ;;
-  }
-
-  dimension: previous_content_group3 {
-    type: string
-    sql: ${TABLE}.previousContentGroup3 ;;
-  }
-
-  dimension: previous_content_group4 {
-    type: string
-    sql: ${TABLE}.previousContentGroup4 ;;
-  }
-
-  dimension: previous_content_group5 {
-    type: string
-    sql: ${TABLE}.previousContentGroup5 ;;
-  }
-}
-
-view: ga_events_full__hits__content_info {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-  dimension: content_description {
-    type: string
-    sql: ${TABLE}.contentDescription ;;
-  }
-}
-
-view: ga_events_full__hits__custom_variables {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-  dimension: custom_var_name {
-    type: string
-    sql: ${TABLE}.customVarName ;;
-  }
-
-  dimension: custom_var_value {
-    type: string
-    sql: ${TABLE}.customVarValue ;;
-  }
-
-  dimension: index {
-    type: number
-    sql: ${TABLE}.index ;;
-  }
-}
-
-view: ga_events_full__hits__custom_metrics {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-
-  dimension: index {
-    type: number
-    sql: ${TABLE}.index ;;
-  }
-
-  dimension: value {
-    type: number
-    sql: ${TABLE}.value ;;
-  }
 }
 
 view: ga_events_full__hits__experiment {
@@ -724,17 +489,6 @@ view: ga_events_full__hits__experiment {
                 CAST(${ga_events_full.visit_id} AS STRING),
                 ${ga_events_full.full_visitor_id});;
   }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
 
   dimension: experiment_id {
     type: string
@@ -758,17 +512,6 @@ view: ga_events_full__hits__e_commerce_action {
                 ${ga_events_full.full_visitor_id});;
   }
 
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-
   dimension: action_type {
     type: string
     sql: ${TABLE}.action_type ;;
@@ -785,358 +528,39 @@ view: ga_events_full__hits__e_commerce_action {
   }
 }
 
-view: ga_events_full__hits__promotion_action_info {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
+# view: ga_events_full__hits__promotion_action_info {
+#
+#   # copy/build the parimary key
+#   dimension: primary {
 #     primary_key: yes
 #     type: string
 #     sql: CONCAT(${ga_events_full.date},
 #                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
+#                 ${ga_events_full.full_visitor_id});;
 #   }
-
-
-  dimension: promo_is_click {
-    type: yesno
-    sql: ${TABLE}.promoIsClick ;;
-  }
-
-  dimension: promo_is_view {
-    type: yesno
-    sql: ${TABLE}.promoIsView ;;
-  }
-}
-
-view: ga_events_full__hits__source_property_info {
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-
-  dimension: source_property_display_name {
-    type: string
-    sql: ${TABLE}.sourcePropertyDisplayName ;;
-  }
-
-  dimension: source_property_tracking_id {
-    type: string
-    sql: ${TABLE}.sourcePropertyTrackingId ;;
-  }
-}
-
-view: ga_events_full__hits__item {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-
-  dimension: currency_code {
-    type: string
-    sql: ${TABLE}.currencyCode ;;
-  }
-
-  dimension: item_quantity {
-    type: number
-    sql: ${TABLE}.itemQuantity ;;
-  }
-
-  dimension: item_revenue {
-    type: number
-    sql: ${TABLE}.itemRevenue ;;
-  }
-
-  dimension: local_item_revenue {
-    type: number
-    sql: ${TABLE}.localItemRevenue ;;
-  }
-
-  dimension: product_category {
-    type: string
-    sql: ${TABLE}.productCategory ;;
-  }
-
-  dimension: product_name {
-    type: string
-    sql: ${TABLE}.productName ;;
-  }
-
-  dimension: product_sku {
-    type: string
-    sql: ${TABLE}.productSku ;;
-  }
-
-  dimension: transaction_id {
-    type: string
-    sql: ${TABLE}.transactionId ;;
-  }
-}
-
-# view: ga_events_full__hits__product__custom_dimensions {
-#   dimension: index {
-#     type: number
-#     sql: ${TABLE}.index ;;
-#   }
-
-#   dimension: value {
-#     type: string
-#     sql: ${TABLE}.value ;;
-#   }
-# }
-
-# view: ga_events_full__hits__product {
-#   dimension: custom_dimensions {
-#     hidden: yes
-#     sql: ${TABLE}.customDimensions ;;
-#   }
-
-#   dimension: custom_metrics {
-#     hidden: yes
-#     sql: ${TABLE}.customMetrics ;;
-#   }
-
-#   dimension: is_click {
+#
+#
+# #   # build/copy a hits level primary
+# #   dimension: hits_primary {
+# #     primary_key: yes
+# #     type: string
+# #     sql: CONCAT(${ga_events_full.date},
+# #                 CAST(${ga_events_full.visit_id} AS STRING),
+# #                 ${ga_events_full.full_visitor_id},
+# #                 ${ga_events_full__hits.hit_number}) ;;
+# #   }
+#
+#
+#   dimension: promo_is_click {
 #     type: yesno
-#     sql: ${TABLE}.isClick ;;
+#     sql: ${TABLE}.promoIsClick ;;
 #   }
-
-#   dimension: is_impression {
+#
+#   dimension: promo_is_view {
 #     type: yesno
-#     sql: ${TABLE}.isImpression ;;
-#   }
-
-#   dimension: local_product_price {
-#     type: number
-#     sql: ${TABLE}.localProductPrice ;;
-#   }
-
-#   dimension: local_product_refund_amount {
-#     type: number
-#     sql: ${TABLE}.localProductRefundAmount ;;
-#   }
-
-#   dimension: local_product_revenue {
-#     type: number
-#     sql: ${TABLE}.localProductRevenue ;;
-#   }
-
-#   dimension: product_brand {
-#     type: string
-#     sql: ${TABLE}.productBrand ;;
-#   }
-
-#   dimension: product_list_name {
-#     type: string
-#     sql: ${TABLE}.productListName ;;
-#   }
-
-#   dimension: product_list_position {
-#     type: number
-#     sql: ${TABLE}.productListPosition ;;
-#   }
-
-#   dimension: product_price {
-#     type: number
-#     sql: ${TABLE}.productPrice ;;
-#   }
-
-#   dimension: product_quantity {
-#     type: number
-#     sql: ${TABLE}.productQuantity ;;
-#   }
-
-#   dimension: product_refund_amount {
-#     type: number
-#     sql: ${TABLE}.productRefundAmount ;;
-#   }
-
-#   dimension: product_revenue {
-#     type: number
-#     sql: ${TABLE}.productRevenue ;;
-#   }
-
-#   dimension: product_sku {
-#     type: string
-#     sql: ${TABLE}.productSKU ;;
-#   }
-
-#   dimension: product_variant {
-#     type: string
-#     sql: ${TABLE}.productVariant ;;
-#   }
-
-#   dimension: v2_product_category {
-#     type: string
-#     sql: ${TABLE}.v2ProductCategory ;;
-#   }
-
-#   dimension: v2_product_name {
-#     type: string
-#     sql: ${TABLE}.v2ProductName ;;
+#     sql: ${TABLE}.promoIsView ;;
 #   }
 # }
-
-# view: ga_events_full__hits__product__custom_metrics {
-#   dimension: index {
-#     type: number
-#     sql: ${TABLE}.index ;;
-#   }
-
-#   dimension: value {
-#     type: number
-#     sql: ${TABLE}.value ;;
-#   }
-# }
-
-view: ga_events_full__hits__social {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-
-  dimension: has_social_source_referral {
-    type: string
-    sql: ${TABLE}.hasSocialSourceReferral ;;
-  }
-
-  dimension: social_interaction_action {
-    type: string
-    sql: ${TABLE}.socialInteractionAction ;;
-  }
-
-  dimension: social_interaction_network {
-    type: string
-    sql: ${TABLE}.socialInteractionNetwork ;;
-  }
-
-  dimension: social_interaction_network_action {
-    type: string
-    sql: ${TABLE}.socialInteractionNetworkAction ;;
-  }
-
-  dimension: social_interaction_target {
-    type: string
-    sql: ${TABLE}.socialInteractionTarget ;;
-  }
-
-  dimension: social_interactions {
-    type: number
-    sql: ${TABLE}.socialInteractions ;;
-  }
-
-  dimension: social_network {
-    type: string
-    sql: ${TABLE}.socialNetwork ;;
-  }
-
-  dimension: unique_social_interactions {
-    type: number
-    sql: ${TABLE}.uniqueSocialInteractions ;;
-  }
-}
-
-view: ga_events_full__hits__event_info {
-
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-
-  dimension: event_action {
-    type: string
-    sql: ${ga_events_full__hits.event_info}.eventAction;;
-  }
-
-  dimension: event_category {
-    type: string
-    sql: ${ga_events_full__hits.event_info}.eventCategory;;
-  }
-
-  dimension: event_label {
-    type: string
-    sql: ${ga_events_full__hits.event_info}.eventLabel;;
-  }
-
-  dimension: event_value {
-    type: number
-    sql: ${ga_events_full__hits.event_info}.eventValue;;
-  }
-}
 
 view: ga_events_full__hits__latency_tracking {
 
@@ -1494,265 +918,81 @@ view: ga_events_full__hits__publisher {
   }
 }
 
-view: ga_events_full__hits__page {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
+# view: ga_events_full__hits__promotion {
+#
+#   # copy/build the parimary key
+#   dimension: primary {
 #     primary_key: yes
 #     type: string
 #     sql: CONCAT(${ga_events_full.date},
 #                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
+#                 ${ga_events_full.full_visitor_id});;
 #   }
+#
+# #   # build/copy a hits level primary
+# #   dimension: hits_primary {
+# #     primary_key: yes
+# #     type: string
+# #     sql: CONCAT(${ga_events_full.date},
+# #                 CAST(${ga_events_full.visit_id} AS STRING),
+# #                 ${ga_events_full.full_visitor_id},
+# #                 ${ga_events_full__hits.hit_number}) ;;
+# #   }
+#
+#
+#   dimension: promo_creative {
+#     type: string
+#     sql: ${TABLE}.promoCreative ;;
+#   }
+#
+#   dimension: promo_id {
+#     type: string
+#     sql: ${TABLE}.promoId ;;
+#   }
+#
+#   dimension: promo_name {
+#     type: string
+#     sql: ${TABLE}.promoName ;;
+#   }
+#
+#   dimension: promo_position {
+#     type: string
+#     sql: ${TABLE}.promoPosition ;;
+#   }
+# }
 
-
-  dimension: hostname {
-    type: string
-    sql: ${TABLE}.hostname ;;
-  }
-
-  dimension: page_path {
-    type: string
-    sql: ${TABLE}.pagePath ;;
-  }
-
-  dimension: page_path_level1 {
-    type: string
-    sql: ${TABLE}.pagePathLevel1 ;;
-  }
-
-  dimension: page_path_level2 {
-    type: string
-    sql: ${TABLE}.pagePathLevel2 ;;
-  }
-
-  dimension: page_path_level3 {
-    type: string
-    sql: ${TABLE}.pagePathLevel3 ;;
-  }
-
-  dimension: page_path_level4 {
-    type: string
-    sql: ${TABLE}.pagePathLevel4 ;;
-  }
-
-  dimension: page_title {
-    type: string
-    sql: ${TABLE}.pageTitle ;;
-  }
-
-  dimension: search_category {
-    type: string
-    sql: ${TABLE}.searchCategory ;;
-  }
-
-  dimension: search_keyword {
-    type: string
-    sql: ${TABLE}.searchKeyword ;;
-  }
-}
-
-view: ga_events_full__hits__transaction {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
+# view: ga_events_full__hits__refund {
+#
+#   # copy/build the parimary key
+#   dimension: primary {
 #     primary_key: yes
 #     type: string
 #     sql: CONCAT(${ga_events_full.date},
 #                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
+#                 ${ga_events_full.full_visitor_id});;
 #   }
-
-
-  dimension: affiliation {
-    type: string
-    sql: ${TABLE}.affiliation ;;
-  }
-
-  dimension: currency_code {
-    type: string
-    sql: ${TABLE}.currencyCode ;;
-  }
-
-  dimension: local_transaction_revenue {
-    type: number
-    sql: ${TABLE}.localTransactionRevenue ;;
-  }
-
-  dimension: local_transaction_shipping {
-    type: number
-    sql: ${TABLE}.localTransactionShipping ;;
-  }
-
-  dimension: local_transaction_tax {
-    type: number
-    sql: ${TABLE}.localTransactionTax ;;
-  }
-
-  dimension: transaction_coupon {
-    type: string
-    sql: ${TABLE}.transactionCoupon ;;
-  }
-
-  dimension: transaction_id {
-    type: string
-    sql: ${TABLE}.transactionId ;;
-  }
-
-  dimension: transaction_revenue {
-    type: number
-    sql: ${TABLE}.transactionRevenue ;;
-  }
-
-  dimension: transaction_shipping {
-    type: number
-    sql: ${TABLE}.transactionShipping ;;
-  }
-
-  dimension: transaction_tax {
-    type: number
-    sql: ${TABLE}.transactionTax ;;
-  }
-}
-
-view: ga_events_full__hits__exception_info {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
+#
+# #   # build/copy a hits level primary
+# #   dimension: hits_primary {
+# #     primary_key: yes
+# #     type: string
+# #     sql: CONCAT(${ga_events_full.date},
+# #                 CAST(${ga_events_full.visit_id} AS STRING),
+# #                 ${ga_events_full.full_visitor_id},
+# #                 ${ga_events_full__hits.hit_number}) ;;
+# #   }
+#
+#
+#   dimension: local_refund_amount {
+#     type: number
+#     sql: ${TABLE}.localRefundAmount ;;
 #   }
-
-
-  dimension: description {
-    type: string
-    sql: ${TABLE}.description ;;
-  }
-
-  dimension: exceptions {
-    type: number
-    sql: ${TABLE}.exceptions ;;
-  }
-
-  dimension: fatal_exceptions {
-    type: number
-    sql: ${TABLE}.fatalExceptions ;;
-  }
-
-  dimension: is_fatal {
-    type: yesno
-    sql: ${TABLE}.isFatal ;;
-  }
-}
-
-view: ga_events_full__hits__promotion {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
+#
+#   dimension: refund_amount {
+#     type: number
+#     sql: ${TABLE}.refundAmount ;;
 #   }
-
-
-  dimension: promo_creative {
-    type: string
-    sql: ${TABLE}.promoCreative ;;
-  }
-
-  dimension: promo_id {
-    type: string
-    sql: ${TABLE}.promoId ;;
-  }
-
-  dimension: promo_name {
-    type: string
-    sql: ${TABLE}.promoName ;;
-  }
-
-  dimension: promo_position {
-    type: string
-    sql: ${TABLE}.promoPosition ;;
-  }
-}
-
-view: ga_events_full__hits__refund {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-
-  dimension: local_refund_amount {
-    type: number
-    sql: ${TABLE}.localRefundAmount ;;
-  }
-
-  dimension: refund_amount {
-    type: number
-    sql: ${TABLE}.refundAmount ;;
-  }
-}
+# }
 
 view: ga_events_full__geo_network {
 
