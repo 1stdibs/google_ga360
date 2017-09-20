@@ -561,6 +561,165 @@ view: ga_events_full__hits__e_commerce_action {
 #     sql: ${TABLE}.promoIsView ;;
 #   }
 # }
+<<<<<<< HEAD
+=======
+
+# view: ga_events_full__hits__product__custom_metrics {
+#   dimension: index {
+#     type: number
+#     sql: ${TABLE}.index ;;
+#   }
+
+#   dimension: value {
+#     type: number
+#     sql: ${TABLE}.value ;;
+#   }
+# }
+
+view: ga_events_full__hits__social {
+
+  # copy/build the parimary key
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_events_full.date},
+                CAST(${ga_events_full.visit_id} AS STRING),
+                ${ga_events_full.full_visitor_id});;
+  }
+
+#   # build/copy a hits level primary
+#   dimension: hits_primary {
+#     primary_key: yes
+#     type: string
+#     sql: CONCAT(${ga_events_full.date},
+#                 CAST(${ga_events_full.visit_id} AS STRING),
+#                 ${ga_events_full.full_visitor_id},
+#                 ${ga_events_full__hits.hit_number}) ;;
+#   }
+
+
+  dimension: has_social_source_referral {
+    type: string
+    sql: ${TABLE}.hasSocialSourceReferral ;;
+  }
+
+  dimension: social_interaction_action {
+    type: string
+    sql: ${TABLE}.socialInteractionAction ;;
+  }
+
+  dimension: social_interaction_network {
+    type: string
+    sql: ${TABLE}.socialInteractionNetwork ;;
+  }
+
+  dimension: social_interaction_network_action {
+    type: string
+    sql: ${TABLE}.socialInteractionNetworkAction ;;
+  }
+
+  dimension: social_interaction_target {
+    type: string
+    sql: ${TABLE}.socialInteractionTarget ;;
+  }
+
+  dimension: social_interactions {
+    type: number
+    sql: ${TABLE}.socialInteractions ;;
+  }
+
+  dimension: social_network {
+    type: string
+    sql: ${TABLE}.socialNetwork ;;
+  }
+
+  dimension: unique_social_interactions {
+    type: number
+    sql: ${TABLE}.uniqueSocialInteractions ;;
+  }
+}
+
+view: ga_events_full__hits__event_info {
+
+
+  # copy/build the parimary key
+  dimension: primary {
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_events_full.date},
+                CAST(${ga_events_full.visit_id} AS STRING),
+                ${ga_events_full.full_visitor_id});;
+  }
+
+#   # build/copy a hits level primary
+#   dimension: hits_primary {
+#     primary_key: yes
+#     type: string
+#     sql: CONCAT(${ga_events_full.date},
+#                 CAST(${ga_events_full.visit_id} AS STRING),
+#                 ${ga_events_full.full_visitor_id},
+#                 ${ga_events_full__hits.hit_number}) ;;
+#   }
+
+
+  dimension: event_action {
+    type: string
+    sql: ${ga_events_full__hits.event_info}.eventAction;;
+  }
+
+  dimension: event_category {
+    type: string
+    sql: ${ga_events_full__hits.event_info}.eventCategory;;
+  }
+
+  dimension: event_label {
+    type: string
+    sql: ${ga_events_full__hits.event_info}.eventLabel;;
+  }
+
+  dimension: event_value {
+    type: number
+    sql: ${ga_events_full__hits.event_info}.eventValue;;
+  }
+
+
+  ##### BEGINNING OF EVENT BUSINESS LOGIC ############
+
+  measure: contact_dealer_clicked {
+    type: number
+    sql: SUM(IF(${event_action} IN  ('contact dealer clicked', 'call dealer clicked','call dealer initiated', 'request shipping quote clicked','request hold clicked', 'request net price clicked' ), 1, 0)) ;;
+  }
+
+  measure: contact_dealer_submitted {
+    type: number
+    sql:SUM(IF(${event_action} IN  ('contact dealer submitted','request shipping quote submitted', 'request hold submitted', 'request net price submitted', 'offer inquiry submitted' ), 1, 0))  ;;
+  }
+
+  measure: registration_entries {
+    type: number
+    sql: SUM(IF(${event_action} = 'registration entry', 1, 0)) ;;
+  }
+
+  measure: registration_completes {
+    type: number
+    sql: SUM(IF(${event_action} =  'registration complete', 1, 0)) ;;
+  }
+
+  measure: purchase_clicks {
+    type: number
+    sql: SUM(IF(${event_category} = 'purchase click', 1, 0)) ;;
+    drill_fields: [event_action]
+  }
+
+  measure: make_offer_clicks {
+    type: number
+    sql: SUM(IF(${event_category} = 'make offer click', 1, 0)) ;;
+    drill_fields: [event_action]
+  }
+
+  ##### END OF BUSINESS LOGIC FOR EVENTS ################
+}
+>>>>>>> branch 'master' of git@github.com:1stdibs/google_ga360.git
 
 view: ga_events_full__hits__latency_tracking {
 
