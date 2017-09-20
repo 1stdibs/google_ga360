@@ -108,7 +108,15 @@ explore: ga_transactions {
 }
 
 explore: traffic_budget {
-   view_name: trafficbudget
+  view_name: trafficbudget
+  join: bq_budget_gmv_rev {
+    type: left_outer
+    relationship: one_to_one
+    sql_on: ${trafficbudget.date_date}=${bq_budget_gmv_rev.date_date} ;;
+    view_label: "Orders Projections"
+  }
+  label: "Budget and Reforecast"
+  view_label: "Budget"
 }
 
 explore: gmv_revenue_budget {
