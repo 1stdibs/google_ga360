@@ -190,6 +190,7 @@ explore: funnel_report_21_c {
   view_name: funnel_report_21_c
   view_label: "Funnel Report 21 Century"
 
+
 }
 
 explore: order_attribution_base {
@@ -212,7 +213,7 @@ explore: ga_events_version_2 {
 
   # join with the __custom_dimensions STRUC
   join: ga_events_full__custom_dimensions {
-    view_label: "Events: Custom Dimensions"
+    view_label: "Custom Dimensions"
   }
 
   # join with the __custom_dimensions STRUC
@@ -224,5 +225,18 @@ explore: ga_events_version_2 {
 
   join: ga_events_full__hits__event_info {
     view_label: "Events: Event Info"
+    #sql: WHERE ${ga_events_full__hits.type} = 'EVENT';;
   }
+
+  join: ga_events_full__hits__content_group {
+    view_label: "Events: Content Group"
+  }
+
+  join: ga_events_full__hits__custom_dimensions {
+    view_label: "Events: Custom Dimensions"
+#     sql: CROSS JOIN UNNEST(${ga_events_full__hits.custom_dimensions})
+#          AS ga_events_full__hits__custom_dimensions ;;
+  }
+
+
 }
