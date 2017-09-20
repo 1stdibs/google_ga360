@@ -1,6 +1,12 @@
 view: ga_events_full {
-  sql_table_name: `api-project-1065928543184.96922533.ga_sessions_20170701`;;
+  sql_table_name: `api-project-1065928543184.96922533.ga_sessions_*`;;
+  #sql: {% condition date_filter %} _TABLE_SUFFIX {% endcondition %} ;;
 
+  # added time partitioned filter
+  filter: ga_session_date {
+    type: string
+    sql: {% condition %} _TABLE_SUFFIX {% endcondition %} ;;
+  }
 
   # Create a primary key
   dimension: primary {
@@ -14,11 +20,13 @@ view: ga_events_full {
   dimension: date {
     type: string
     sql: PARSE_DATE('%Y%m%d', ${TABLE}.date) ;;
+    #sql: {% condition ${TABLE}.date %} _TABLE_SUFFIX {% endcondition %} ;;
   }
 
   dimension_group: ga_date {
     type: time
     timeframes: [date, week, month]
+    #sql: {% condition ${TABLE}.date %} _TABLE_SUFFIX {% endcondition %} ;;
     sql: cast(${date} as TIMESTAMP) ;;
   }
 

@@ -211,6 +211,13 @@ explore: ga_events_version_2 {
     }
   }
 
+  # conditionally_filter: {
+  #   filters: {
+  #     field: ga_events_full.date
+  #     value: "7 days"
+  #   }
+  # }
+
   # join with the __custom_dimensions STRUC
   join: ga_events_full__custom_dimensions {
     view_label: "Custom Dimensions"
