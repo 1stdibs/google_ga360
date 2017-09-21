@@ -211,13 +211,6 @@ explore: ga_events_version_2 {
     }
   }
 
-  # conditionally_filter: {
-  #   filters: {
-  #     field: ga_events_full.date
-  #     value: "7 days"
-  #   }
-  # }
-
   # join with the __custom_dimensions STRUC
   join: ga_events_full__custom_dimensions {
     view_label: "Custom Dimensions"
@@ -232,7 +225,6 @@ explore: ga_events_version_2 {
 
   join: ga_events_full__hits__event_info {
     view_label: "Events: Event Info"
-    #sql: WHERE ${ga_events_full__hits.type} = 'EVENT';;
   }
 
   join: ga_events_full__hits__content_group {
@@ -241,8 +233,10 @@ explore: ga_events_version_2 {
 
   join: ga_events_full__hits__custom_dimensions {
     view_label: "Events: Custom Dimensions"
-#     sql: CROSS JOIN UNNEST(${ga_events_full__hits.custom_dimensions})
-#          AS ga_events_full__hits__custom_dimensions ;;
+  }
+
+  join: ga_events_full__hits__e_commerce_action {
+    view_label: "Events: E-commerce Action"
   }
 
 

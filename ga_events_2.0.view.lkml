@@ -589,22 +589,22 @@ view: ga_events_full__hits__e_commerce_action {
 
   dimension: action_type {
     type: string
-    sql: ${TABLE}.action_type ;;
+    sql: ${ga_events_full__hits.e_commerce_action}.action_type ;;
   }
 
   dimension: action_type_clean {
     type: string
     sql:
       CASE
-        WHEN ${TABLE}.action_type = '0'  THEN 'unknown'
-        WHEN ${TABLE}.action_type = '1' THEN 'product_list_click'
-        WHEN ${TABLE}.action_type = '2' THEN 'product_detail_view'
-        WHEN ${TABLE}.action_type = '3' THEN 'add_to_cart'
-        WHEN ${TABLE}.action_type = '4' THEN 'remove_from_cart'
-        WHEN ${TABLE}.action_type = '5' THEN 'product_checkout_view'
-        WHEN ${TABLE}.action_type = '6' THEN 'completed_purchase'
-        WHEN ${TABLE}.action_type = '7' THEN 'refund_purchase'
-        WHEN ${TABLE}.action_type = '8' THEN 'checkout_options'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '0'  THEN 'unknown'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '1' THEN 'product_list_click'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '2' THEN 'product_detail_view'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '3' THEN 'add_to_cart'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '4' THEN 'remove_from_cart'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '5' THEN 'product_checkout_view'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '6' THEN 'completed_purchase'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '7' THEN 'refund_purchase'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '8' THEN 'checkout_options'
         ELSE NULL
       END;;
   }
@@ -631,16 +631,6 @@ view: ga_events_full__hits__latency_tracking {
                 CAST(${ga_events_full.visit_id} AS STRING),
                 ${ga_events_full.full_visitor_id});;
   }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
 
 
   dimension: dom_content_loaded_time {
