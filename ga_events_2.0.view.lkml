@@ -26,13 +26,11 @@ view: ga_events_full {
   dimension: date {
     type: string
     sql: PARSE_DATE('%Y%m%d', ${TABLE}.date) ;;
-    #sql: {% condition ${TABLE}.date %} _TABLE_SUFFIX {% endcondition %} ;;
   }
 
   dimension_group: ga_date {
     type: time
     timeframes: [date, week, month]
-    #sql: {% condition ${TABLE}.date %} _TABLE_SUFFIX {% endcondition %} ;;
     sql: cast(${date} as TIMESTAMP) ;;
   }
 
@@ -196,11 +194,6 @@ view: ga_events_full__hits {
     sql: ${TABLE}.eventInfo;;
   }
 
-  dimension: experiment {
-    hidden: yes
-    sql: ${TABLE}.experiment ;;
-  }
-
   dimension: hit_number {
     type: number
     sql: ${TABLE}.hitNumber ;;
@@ -242,22 +235,6 @@ view: ga_events_full__hits {
     sql: ${TABLE}.minute ;;
   }
 
-
-#   dimension: product {
-#     hidden: yes
-#     sql: ${TABLE}.product ;;
-#   }
-#
-#   dimension: promotion {
-#     hidden: yes
-#     sql: ${TABLE}.promotion ;;
-#   }
-#
-#   dimension: promotion_action_info {
-#     hidden: yes
-#     sql: ${TABLE}.promotionActionInfo ;;
-#   }
-
   dimension: publisher {
     hidden: yes
     sql: ${TABLE}.publisher ;;
@@ -280,7 +257,7 @@ view: ga_events_full__hits {
   }
 }
 
-# DONE: Event Info dimensions
+# In QA: Event Info dimensions
 view: ga_events_full__hits__event_info {
 
 
@@ -351,7 +328,7 @@ view: ga_events_full__hits__event_info {
   ##### END OF BUSINESS LOGIC FOR EVENTS ################
 }
 
-# DONE: Content Group dimension
+# In QA: Content Group dimension
 view: ga_events_full__hits__content_group {
 
   # copy/build the parimary key
@@ -439,7 +416,7 @@ view: ga_events_full__hits__content_group {
 #   }
 }
 
-#
+# In QA: Hits CDs need modification
 view: ga_events_full__hits__custom_dimensions {
 
   # copy/build the parimary key
@@ -605,28 +582,6 @@ view: ga_events_full__hits__custom_dimensions {
   }
 }
 
-view: ga_events_full__hits__experiment {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-  dimension: experiment_id {
-    type: string
-    sql: ${TABLE}.experimentId ;;
-  }
-
-  dimension: experiment_variant {
-    type: string
-    sql: ${TABLE}.experimentVariant ;;
-  }
-}
-
 view: ga_events_full__hits__e_commerce_action {
 
   # copy/build the parimary key
@@ -640,93 +595,35 @@ view: ga_events_full__hits__e_commerce_action {
 
   dimension: action_type {
     type: string
-    sql: ${TABLE}.action_type ;;
+    sql: ${ga_events_full__hits.e_commerce_action}.action_type ;;
   }
 
-  dimension: option {
+  dimension: action_type_clean {
     type: string
-    sql: ${TABLE}.option ;;
+    sql:
+      CASE
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '0'  THEN 'unknown'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '1' THEN 'product_list_click'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '2' THEN 'product_detail_view'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '3' THEN 'add_to_cart'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '4' THEN 'remove_from_cart'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '5' THEN 'product_checkout_view'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '6' THEN 'completed_purchase'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '7' THEN 'refund_purchase'
+        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '8' THEN 'checkout_options'
+        ELSE NULL
+      END;;
   }
 
-  dimension: step {
-    type: number
-    sql: ${TABLE}.step ;;
-  }
-}
+  # dimension: option {
+  #   type: string
+  #   sql: ${TABLE}.option ;;
+  # }
 
-# view: ga_events_full__hits__product__custom_metrics {
-#   dimension: index {
-#     type: number
-#     sql: ${TABLE}.index ;;
-#   }
-
-#   dimension: value {
-#     type: number
-#     sql: ${TABLE}.value ;;
-#   }
-# }
-
-view: ga_events_full__hits__social {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-
-  dimension: has_social_source_referral {
-    type: string
-    sql: ${TABLE}.hasSocialSourceReferral ;;
-  }
-
-  dimension: social_interaction_action {
-    type: string
-    sql: ${TABLE}.socialInteractionAction ;;
-  }
-
-  dimension: social_interaction_network {
-    type: string
-    sql: ${TABLE}.socialInteractionNetwork ;;
-  }
-
-  dimension: social_interaction_network_action {
-    type: string
-    sql: ${TABLE}.socialInteractionNetworkAction ;;
-  }
-
-  dimension: social_interaction_target {
-    type: string
-    sql: ${TABLE}.socialInteractionTarget ;;
-  }
-
-  dimension: social_interactions {
-    type: number
-    sql: ${TABLE}.socialInteractions ;;
-  }
-
-  dimension: social_network {
-    type: string
-    sql: ${TABLE}.socialNetwork ;;
-  }
-
-  dimension: unique_social_interactions {
-    type: number
-    sql: ${TABLE}.uniqueSocialInteractions ;;
-  }
+  # dimension: step {
+  #   type: number
+  #   sql: ${TABLE}.step ;;
+  # }
 }
 
 
@@ -740,16 +637,6 @@ view: ga_events_full__hits__latency_tracking {
                 CAST(${ga_events_full.visit_id} AS STRING),
                 ${ga_events_full.full_visitor_id});;
   }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
 
 
   dimension: dom_content_loaded_time {
