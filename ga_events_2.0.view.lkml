@@ -20,13 +20,11 @@ view: ga_events_full {
   dimension: date {
     type: string
     sql: PARSE_DATE('%Y%m%d', ${TABLE}.date) ;;
-    #sql: {% condition ${TABLE}.date %} _TABLE_SUFFIX {% endcondition %} ;;
   }
 
   dimension_group: ga_date {
     type: time
     timeframes: [date, week, month]
-    #sql: {% condition ${TABLE}.date %} _TABLE_SUFFIX {% endcondition %} ;;
     sql: cast(${date} as TIMESTAMP) ;;
   }
 
@@ -188,11 +186,6 @@ view: ga_events_full__hits {
   dimension: event_info {
     hidden: yes
     sql: ${TABLE}.eventInfo;;
-  }
-
-  dimension: experiment {
-    hidden: yes
-    sql: ${TABLE}.experiment ;;
   }
 
   dimension: hit_number {
@@ -433,7 +426,6 @@ view: ga_events_full__hits__content_group {
 #   }
 }
 
-#
 view: ga_events_full__hits__custom_dimensions {
 
   # copy/build the parimary key
@@ -596,28 +588,6 @@ view: ga_events_full__hits__custom_dimensions {
     sql:
       (SELECT MAX(IF(fps.index = 75, fps.value, NULL))
       FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS fps);;
-  }
-}
-
-view: ga_events_full__hits__experiment {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-  dimension: experiment_id {
-    type: string
-    sql: ${TABLE}.experimentId ;;
-  }
-
-  dimension: experiment_variant {
-    type: string
-    sql: ${TABLE}.experimentVariant ;;
   }
 }
 
