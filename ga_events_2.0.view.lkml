@@ -1,12 +1,12 @@
 view: ga_events_full {
   sql_table_name: `api-project-1065928543184.96922533.ga_sessions_*`;;
-  #sql: {% condition date_filter %} _TABLE_SUFFIX {% endcondition %} ;;
 
   # added time partitioned filter
   filter: ga_session_date {
     type: string
     sql: {% condition %} _TABLE_SUFFIX {% endcondition %} ;;
   }
+
 
   # Create a primary key
   dimension: primary {
@@ -216,12 +216,6 @@ view: ga_events_full__hits {
   dimension: is_secure {
     type: yesno
     sql: ${TABLE}.isSecure ;;
-  }
-
-
-  dimension: latency_tracking {
-    hidden: yes
-    sql: ${TABLE}.latencyTracking ;;
   }
 
   dimension: minute {
@@ -576,6 +570,7 @@ view: ga_events_full__hits__custom_dimensions {
   }
 }
 
+# In QA: Hit E-commerce Action type
 view: ga_events_full__hits__e_commerce_action {
 
   # copy/build the parimary key
@@ -587,10 +582,10 @@ view: ga_events_full__hits__e_commerce_action {
                 ${ga_events_full.full_visitor_id});;
   }
 
-  dimension: action_type {
-    type: string
-    sql: ${ga_events_full__hits.e_commerce_action}.action_type ;;
-  }
+  # dimension: action_type {
+  #   type: string
+  #   sql: ${ga_events_full__hits.e_commerce_action}.action_type ;;
+  # }
 
   dimension: action_type_clean {
     type: string
@@ -608,110 +603,6 @@ view: ga_events_full__hits__e_commerce_action {
         ELSE NULL
       END;;
   }
-
-  # dimension: option {
-  #   type: string
-  #   sql: ${TABLE}.option ;;
-  # }
-
-  # dimension: step {
-  #   type: number
-  #   sql: ${TABLE}.step ;;
-  # }
-}
-
-
-view: ga_events_full__hits__latency_tracking {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-
-  dimension: dom_content_loaded_time {
-    type: number
-    sql: ${TABLE}.domContentLoadedTime ;;
-  }
-
-  dimension: dom_interactive_time {
-    type: number
-    sql: ${TABLE}.domInteractiveTime ;;
-  }
-
-  dimension: dom_latency_metrics_sample {
-    type: number
-    sql: ${TABLE}.domLatencyMetricsSample ;;
-  }
-
-  dimension: domain_lookup_time {
-    type: number
-    sql: ${TABLE}.domainLookupTime ;;
-  }
-
-  dimension: page_download_time {
-    type: number
-    sql: ${TABLE}.pageDownloadTime ;;
-  }
-
-  dimension: page_load_sample {
-    type: number
-    sql: ${TABLE}.pageLoadSample ;;
-  }
-
-  dimension: page_load_time {
-    type: number
-    sql: ${TABLE}.pageLoadTime ;;
-  }
-
-  dimension: redirection_time {
-    type: number
-    sql: ${TABLE}.redirectionTime ;;
-  }
-
-  dimension: server_connection_time {
-    type: number
-    sql: ${TABLE}.serverConnectionTime ;;
-  }
-
-  dimension: server_response_time {
-    type: number
-    sql: ${TABLE}.serverResponseTime ;;
-  }
-
-  dimension: speed_metrics_sample {
-    type: number
-    sql: ${TABLE}.speedMetricsSample ;;
-  }
-
-  dimension: user_timing_category {
-    type: string
-    sql: ${TABLE}.userTimingCategory ;;
-  }
-
-  dimension: user_timing_label {
-    type: string
-    sql: ${TABLE}.userTimingLabel ;;
-  }
-
-  dimension: user_timing_sample {
-    type: number
-    sql: ${TABLE}.userTimingSample ;;
-  }
-
-  dimension: user_timing_value {
-    type: number
-    sql: ${TABLE}.userTimingValue ;;
-  }
-
-  dimension: user_timing_variable {
-    type: string
-    sql: ${TABLE}.userTimingVariable ;;
-  }
 }
 
 view: ga_events_full__hits__publisher {
@@ -724,17 +615,6 @@ view: ga_events_full__hits__publisher {
                 CAST(${ga_events_full.visit_id} AS STRING),
                 ${ga_events_full.full_visitor_id});;
   }
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
 
   dimension: ads_clicked {
     type: number
@@ -966,82 +846,6 @@ view: ga_events_full__hits__publisher {
     sql: ${TABLE}.viewableAdsViewed ;;
   }
 }
-
-# view: ga_events_full__hits__promotion {
-#
-#   # copy/build the parimary key
-#   dimension: primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id});;
-#   }
-#
-# #   # build/copy a hits level primary
-# #   dimension: hits_primary {
-# #     primary_key: yes
-# #     type: string
-# #     sql: CONCAT(${ga_events_full.date},
-# #                 CAST(${ga_events_full.visit_id} AS STRING),
-# #                 ${ga_events_full.full_visitor_id},
-# #                 ${ga_events_full__hits.hit_number}) ;;
-# #   }
-#
-#
-#   dimension: promo_creative {
-#     type: string
-#     sql: ${TABLE}.promoCreative ;;
-#   }
-#
-#   dimension: promo_id {
-#     type: string
-#     sql: ${TABLE}.promoId ;;
-#   }
-#
-#   dimension: promo_name {
-#     type: string
-#     sql: ${TABLE}.promoName ;;
-#   }
-#
-#   dimension: promo_position {
-#     type: string
-#     sql: ${TABLE}.promoPosition ;;
-#   }
-# }
-
-# view: ga_events_full__hits__refund {
-#
-#   # copy/build the parimary key
-#   dimension: primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id});;
-#   }
-#
-# #   # build/copy a hits level primary
-# #   dimension: hits_primary {
-# #     primary_key: yes
-# #     type: string
-# #     sql: CONCAT(${ga_events_full.date},
-# #                 CAST(${ga_events_full.visit_id} AS STRING),
-# #                 ${ga_events_full.full_visitor_id},
-# #                 ${ga_events_full__hits.hit_number}) ;;
-# #   }
-#
-#
-#   dimension: local_refund_amount {
-#     type: number
-#     sql: ${TABLE}.localRefundAmount ;;
-#   }
-#
-#   dimension: refund_amount {
-#     type: number
-#     sql: ${TABLE}.refundAmount ;;
-#   }
-# }
 
 view: ga_events_full__geo_network {
 

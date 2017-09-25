@@ -203,7 +203,7 @@ explore: order_attribution_base {
 explore: ga_events_version_2 {
   # define the
   view_name: ga_events_full
-  view_label: "Google Analytics Events"
+  view_label: "Events per session"
   always_filter: {
     filters: {
       field: ga_events_full__hits.type
@@ -213,7 +213,7 @@ explore: ga_events_version_2 {
 
   # join with the __custom_dimensions STRUC
   join: ga_events_full__custom_dimensions {
-    view_label: "Custom Dimensions"
+    view_label: "Events: User"
   }
 
   # join with the __custom_dimensions STRUC
@@ -239,5 +239,11 @@ explore: ga_events_version_2 {
     view_label: "Events: E-commerce Action"
   }
 
+}
 
+
+explore: ga_dates_list {
+  # define the
+  view_name: ga_dates_list
+  view_label: "GA dates list"
 }
