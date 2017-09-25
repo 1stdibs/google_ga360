@@ -2,8 +2,6 @@ view: ga_sessions_full {
   sql_table_name: `api-project-1065928543184.96922533.ga_sessions*`
     ;;
 
-  # ADDED FIELD: a primary key ########
-  # Author: YJ
   dimension: primary {
     primary_key: yes
     type: string
@@ -20,6 +18,11 @@ view: ga_sessions_full {
     type: time
     timeframes: [date, week, month]
     sql: cast(PARSE_DATE('%Y%m%d', ${date}) as TIMESTAMP) ;;
+  }
+
+  dimension: visit_start_time {
+    type: number
+    sql: ${TABLE}.visitStartTime ;;
   }
 
   dimension: full_visitor_id {
@@ -42,9 +45,6 @@ view: ga_sessions_full {
     sql: ${TABLE}.visitNumber ;;
   }
 
-  # FORMATED FIELD: interprets number of seconds since 1970-01-01 00:00:00 UTC
-  # Author: YJ
-  # Status: needs QA
   dimension: session_start_time {
     type: date_time
     sql: TIMESTAMP_SECONDS(${TABLE}.visitStartTime) ;;

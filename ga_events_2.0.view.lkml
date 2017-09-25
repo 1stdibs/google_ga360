@@ -9,7 +9,7 @@ view: ga_events_full {
 
   dimension: current_year {
     type: string
-    sql: IF(month(current_date()) < 3, '2016,2017', '2016,2017') ;;
+    sql: IF(MONTH(CURRENT_DATE()) < 3, '2016,2017', '2016,2017') ;;
   }
 
   # Create a primary key
@@ -21,6 +21,7 @@ view: ga_events_full {
                 ${full_visitor_id}) ;;
   }
 
+  # Hide date field in front-end UI
   dimension: date {
     hidden: yes
     type: string
@@ -31,7 +32,7 @@ view: ga_events_full {
   dimension_group: sessions {
     type: time
     timeframes: [date, week, month]
-    sql: cast(PARSE_DATE('%Y%m%d', ${date}) as TIMESTAMP) ;;
+    sql: CAST(PARSE_DATE('%Y%m%d', ${date}) AS TIMESTAMP) ;;
   }
 
   dimension: full_visitor_id {
@@ -44,19 +45,27 @@ view: ga_events_full {
     sql: ${TABLE}.visitId ;;
   }
 
-  # RECORD/STRUCT: custom_dimension
+  # Hide visit_start_time field in front-end UI
+  dimension: visit_start_time {
+    # This is in the UTC timezone
+    hidden: yes
+    type: number
+    sql: ${TABLE}.visitStartTime ;;
+  }
+
+  # STRUCT RECORD
   dimension: custom_dimensions {
     hidden: yes
     sql: ${TABLE}.customDimensions ;;
   }
 
-  # RECORD/STRUCT hits
+  # STRUCT RECORD
   dimension: hits {
     hidden: yes
     sql: ${TABLE}.hits ;;
   }
 
-  # OPTIONAL
+  # ARRAY RECORD
   dimension: geo_network {
     hidden: yes
     sql: ${TABLE}.geoNetwork ;;
@@ -65,20 +74,21 @@ view: ga_events_full {
 
 view: ga_events_full__custom_dimensions {
 
-  # hide this variable in the explore
+  # Hide index field in front-end UI
   dimension: index {
     hidden: yes
     type: number
     sql: ${TABLE}.index ;;
   }
 
-  # hide this variable in the explore
+  # Hide value field in front-end UI
   dimension: value {
     hidden: yes
     type: string
     sql: ${TABLE}.value ;;
   }
 
+  # Re-create a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes
@@ -110,7 +120,7 @@ view: ga_events_full__custom_dimensions {
 # In QA event_info, content_group, custom_dimensions, e_commerce_action
 view: ga_events_full__hits {
 
-  # copy/build the parimary key
+  # Re-create a primary key
   dimension: primary {
     primary_key: yes
     type: string
@@ -119,40 +129,31 @@ view: ga_events_full__hits {
                 ${ga_events_full.full_visitor_id});;
   }
 
-  dimension: content_group {
-    hidden: yes
-    sql: ${TABLE}.contentGroup ;;
+  dimension: number {
+    type: number
+    sql: ${TABLE}.hitNumber ;;
   }
 
-  dimension: custom_dimensions {
-    hidden: yes
-    sql: ${TABLE}.customDimensions ;;
+  dimension: type {
+    type: string
+    sql: ${TABLE}.type ;;
+  }
+
+  dimension: time {
+    type: date_time
+    # transform the million second hit time to timestamp
+    sql: TIMESTAMP_SECONDS(${ga_events_full.visit_start_time} +
+                           CAST(${TABLE}.time/1000 AS INT64));;
+  }
+
+  dimension: referer {
+    type: string
+    sql: ${TABLE}.referer ;;
   }
 
   dimension: platform{
     type: string
     sql: ${TABLE}.dataSource ;;
-  }
-
-  dimension: e_commerce_action {
-    hidden: yes
-    sql: ${TABLE}.eCommerceAction ;;
-  }
-
-  # when hitType == "EVENT"
-  dimension: event_info {
-    hidden: yes
-    sql: ${TABLE}.eventInfo;;
-  }
-
-  dimension: hit_number {
-    type: number
-    sql: ${TABLE}.hitNumber ;;
-  }
-
-  dimension: hour {
-    type: number
-    sql: ${TABLE}.hour ;;
   }
 
   dimension: is_entrance {
@@ -170,38 +171,36 @@ view: ga_events_full__hits {
     sql: ${TABLE}.isInteraction ;;
   }
 
-  dimension: is_secure {
-    type: yesno
-    sql: ${TABLE}.isSecure ;;
+  # ARRAY RECORD
+  dimension: content_group {
+    hidden: yes
+    sql: ${TABLE}.contentGroup ;;
   }
 
-  dimension: minute {
-    type: number
-    sql: ${TABLE}.minute ;;
+  # STRUCT RECORD
+  dimension: custom_dimensions {
+    hidden: yes
+    sql: ${TABLE}.customDimensions ;;
   }
 
-  dimension: referer {
-    type: string
-    sql: ${TABLE}.referer ;;
+  # ARRAY RECORD
+  dimension: e_commerce_action {
+    hidden: yes
+    sql: ${TABLE}.eCommerceAction ;;
   }
 
-  dimension: time {
-    type: number
-    sql: ${TABLE}.time ;;
+  # STRUCT RECORD: when type = 'EVENT'
+  dimension: event_info {
+    hidden: yes
+    sql: ${TABLE}.eventInfo;;
   }
 
-
-  dimension: type {
-    type: string
-    sql: ${TABLE}.type ;;
-  }
 }
 
 # In QA: Event Info dimensions
 view: ga_events_full__hits__event_info {
 
-
-  # copy/build the parimary key
+  # Re-create a primary key
   dimension: primary {
     primary_key: yes
     type: string
@@ -271,7 +270,7 @@ view: ga_events_full__hits__event_info {
 # In QA: Content Group dimension
 view: ga_events_full__hits__content_group {
 
-  # copy/build the parimary key
+  # Re-create a primary key
   dimension: primary {
     primary_key: yes
     type: string
@@ -304,62 +303,12 @@ view: ga_events_full__hits__content_group {
     type: string
     sql: ${ga_events_full__hits.content_group}.contentGroup5 ;;
   }
-#
-#   dimension: content_group_unique_views1 {
-#     type: number
-#     sql: ${TABLE}.contentGroupUniqueViews1 ;;
-#   }
-#
-#   dimension: content_group_unique_views2 {
-#     type: number
-#     sql: ${TABLE}.contentGroupUniqueViews2 ;;
-#   }
-#
-#   dimension: content_group_unique_views3 {
-#     type: number
-#     sql: ${TABLE}.contentGroupUniqueViews3 ;;
-#   }
-#
-#   dimension: content_group_unique_views4 {
-#     type: number
-#     sql: ${TABLE}.contentGroupUniqueViews4 ;;
-#   }
-#
-#   dimension: content_group_unique_views5 {
-#     type: number
-#     sql: ${TABLE}.contentGroupUniqueViews5 ;;
-#   }
-#
-#   dimension: previous_content_group1 {
-#     type: string
-#     sql: ${TABLE}.previousContentGroup1 ;;
-#   }
-#
-#   dimension: previous_content_group2 {
-#     type: string
-#     sql: ${TABLE}.previousContentGroup2 ;;
-#   }
-#
-#   dimension: previous_content_group3 {
-#     type: string
-#     sql: ${TABLE}.previousContentGroup3 ;;
-#   }
-#
-#   dimension: previous_content_group4 {
-#     type: string
-#     sql: ${TABLE}.previousContentGroup4 ;;
-#   }
-#
-#   dimension: previous_content_group5 {
-#     type: string
-#     sql: ${TABLE}.previousContentGroup5 ;;
-#   }
 }
 
 # In QA: Hits CDs need modification
 view: ga_events_full__hits__custom_dimensions {
 
-  # copy/build the parimary key
+  # Re-create a primary key
   dimension: primary {
     primary_key: yes
     type: string
@@ -525,7 +474,7 @@ view: ga_events_full__hits__custom_dimensions {
 # In QA: Hit E-commerce Action type
 view: ga_events_full__hits__e_commerce_action {
 
-  # copy/build the parimary key
+  # Re-create a primary key
   dimension: primary {
     primary_key: yes
     type: string
@@ -555,9 +504,7 @@ view: ga_events_full__hits__e_commerce_action {
 # In QA: IP addression info
 view: ga_events_full__geo_network {
 
-  # Field Definition: This section contains information about the geography of the user.
-
-  # copy/build the parimary key
+  # Re-create a primary key
   dimension: primary {
     primary_key: yes
     type: string
@@ -577,7 +524,6 @@ view: ga_events_full__geo_network {
   }
 
   dimension: continent {
-    # Def: The continent from which sessions originated, based on IP address.
     type: string
     sql: ${TABLE}.continent ;;
   }
@@ -608,7 +554,8 @@ view: ga_events_full__geo_network {
     sql: ${TABLE}.networkDomain ;;
   }
 
-  dimension: network_location {
+  dimension: network_service_provider {
+    # The names of the service providers used to reach the property.
     type: string
     sql: ${TABLE}.networkLocation ;;
   }
