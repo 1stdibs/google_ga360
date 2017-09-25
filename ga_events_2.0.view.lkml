@@ -1,12 +1,18 @@
 view: ga_events_full {
   sql_table_name: `api-project-1065928543184.96922533.ga_sessions_*`;;
 
+
   # added time partitioned filter
   filter: ga_session_date {
     type: string
     sql: {% condition %} _TABLE_SUFFIX {% endcondition %} ;;
   }
 
+
+  dimension: current_year {
+    type: string
+    sql: IF(month(current_date()) < 3, '2016,2017', '2016,2017') ;;
+  }
 
   # Create a primary key
   dimension: primary {
