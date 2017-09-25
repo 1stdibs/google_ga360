@@ -156,16 +156,6 @@ view: ga_events_full__hits {
     sql: ${TABLE}.dataSource ;;
   }
 
-  dimension: is_entrance {
-    type: yesno
-    sql: ${TABLE}.isEntrance ;;
-  }
-
-  dimension: is_exit {
-    type: yesno
-    sql: ${TABLE}.isExit ;;
-  }
-
   dimension: is_interaction {
     type: yesno
     sql: ${TABLE}.isInteraction ;;
