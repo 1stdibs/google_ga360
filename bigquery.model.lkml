@@ -203,7 +203,7 @@ explore: order_attribution_base {
 explore: ga_events_version_2 {
   # define the
   view_name: ga_events_full
-  view_label: "Events per session"
+  view_label: "Events"
   always_filter: {
     filters: {
       field: ga_events_full__hits.type
@@ -237,6 +237,14 @@ explore: ga_events_version_2 {
 
   join: ga_events_full__hits__e_commerce_action {
     view_label: "Events: E-commerce Action"
+  }
+
+  # @YJ: Optional filed
+  join: ga_events_full__geo_network {
+    view_label: "Events: IP Address Info"
+    # * Added [] to repeat STRUCT field
+    sql: LEFT JOIN UNNEST([${ga_events_full.geo_network}]) AS ga_events_full__geo_network ;;
+    relationship: one_to_many
   }
 
 }

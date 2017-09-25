@@ -16,7 +16,6 @@ view: ga_sessions_full {
   }
 
   # ADDED FIELD: the Timeframes dimension group ########
-  # Author: YJ
   dimension_group: sessions_date {
     type: time
     timeframes: [date, week, month]

@@ -1,13 +1,11 @@
 view: ga_events_full {
   sql_table_name: `api-project-1065928543184.96922533.ga_sessions_*`;;
 
-
   # added time partitioned filter
   filter: ga_session_date {
     type: string
     sql: {% condition %} _TABLE_SUFFIX {% endcondition %} ;;
   }
-
 
   dimension: current_year {
     type: string
@@ -24,14 +22,16 @@ view: ga_events_full {
   }
 
   dimension: date {
+    hidden: yes
     type: string
-    sql: PARSE_DATE('%Y%m%d', ${TABLE}.date) ;;
+    sql: ${TABLE}.date ;;
   }
 
-  dimension_group: ga_date {
+  # Create a session date dimension/filter group
+  dimension_group: sessions {
     type: time
     timeframes: [date, week, month]
-    sql: cast(${date} as TIMESTAMP) ;;
+    sql: cast(PARSE_DATE('%Y%m%d', ${date}) as TIMESTAMP) ;;
   }
 
   dimension: full_visitor_id {
@@ -50,67 +50,17 @@ view: ga_events_full {
     sql: ${TABLE}.customDimensions ;;
   }
 
-  # RECORD hits
+  # RECORD/STRUCT hits
   dimension: hits {
     hidden: yes
     sql: ${TABLE}.hits ;;
   }
 
-
-#   dimension: user_id {
-#     type: string
-#     sql: ${TABLE}.userId ;;
-#   }
-
-#   dimension: channel_grouping {
-#     type: string
-#     sql: ${TABLE}.channelGrouping ;;
-#   }
-#
-
-#   dimension: device {
-#     hidden: yes
-#     sql: ${TABLE}.device ;;
-#   }
-
-#   dimension: geo_network {
-#     hidden: yes
-#     sql: ${TABLE}.geoNetwork ;;
-#   }
-
-#   dimension: social_engagement_type {
-#     type: string
-#     sql: ${TABLE}.socialEngagementType ;;
-#   }
-#
-#   dimension: totals {
-#     hidden: yes
-#     sql: ${TABLE}.totals ;;
-#   }
-#
-#   dimension: traffic_source {
-#     hidden: yes
-#     sql: ${TABLE}.trafficSource ;;
-#   }
-
-#   dimension: visit_number {
-#     type: number
-#     sql: ${TABLE}.visitNumber ;;
-#   }
-#
-#   dimension: visit_start_time {
-#     type: number
-#     sql: ${TABLE}.visitStartTime ;;
-#   }
-#
-#   dimension: visitor_id {
-#     type: number
-#     sql: ${TABLE}.visitorId ;;
-#   }
-#
-#   measure: session_count {
-#     type: count
-#   }
+  # OPTIONAL
+  dimension: geo_network {
+    hidden: yes
+    sql: ${TABLE}.geoNetwork ;;
+  }
 }
 
 view: ga_events_full__custom_dimensions {
@@ -157,6 +107,7 @@ view: ga_events_full__custom_dimensions {
   }
 }
 
+# In QA event_info, content_group, custom_dimensions, e_commerce_action
 view: ga_events_full__hits {
 
   # copy/build the parimary key
@@ -227,11 +178,6 @@ view: ga_events_full__hits {
   dimension: minute {
     type: number
     sql: ${TABLE}.minute ;;
-  }
-
-  dimension: publisher {
-    hidden: yes
-    sql: ${TABLE}.publisher ;;
   }
 
   dimension: referer {
@@ -588,11 +534,6 @@ view: ga_events_full__hits__e_commerce_action {
                 ${ga_events_full.full_visitor_id});;
   }
 
-  # dimension: action_type {
-  #   type: string
-  #   sql: ${ga_events_full__hits.e_commerce_action}.action_type ;;
-  # }
-
   dimension: action_type_clean {
     type: string
     sql:
@@ -611,250 +552,11 @@ view: ga_events_full__hits__e_commerce_action {
   }
 }
 
-view: ga_events_full__hits__publisher {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-  dimension: ads_clicked {
-    type: number
-    sql: ${TABLE}.adsClicked ;;
-  }
-
-  dimension: ads_pages_viewed {
-    type: number
-    sql: ${TABLE}.adsPagesViewed ;;
-  }
-
-  dimension: ads_revenue {
-    type: number
-    sql: ${TABLE}.adsRevenue ;;
-  }
-
-  dimension: ads_units_matched {
-    type: number
-    sql: ${TABLE}.adsUnitsMatched ;;
-  }
-
-  dimension: ads_units_viewed {
-    type: number
-    sql: ${TABLE}.adsUnitsViewed ;;
-  }
-
-  dimension: ads_viewed {
-    type: number
-    sql: ${TABLE}.adsViewed ;;
-  }
-
-  dimension: adsense_backfill_dfp_clicks {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpClicks ;;
-  }
-
-  dimension: adsense_backfill_dfp_impressions {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpImpressions ;;
-  }
-
-  dimension: adsense_backfill_dfp_matched_queries {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpMatchedQueries ;;
-  }
-
-  dimension: adsense_backfill_dfp_measurable_impressions {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpMeasurableImpressions ;;
-  }
-
-  dimension: adsense_backfill_dfp_pages_viewed {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpPagesViewed ;;
-  }
-
-  dimension: adsense_backfill_dfp_queries {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpQueries ;;
-  }
-
-  dimension: adsense_backfill_dfp_revenue_cpc {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpRevenueCpc ;;
-  }
-
-  dimension: adsense_backfill_dfp_revenue_cpm {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpRevenueCpm ;;
-  }
-
-  dimension: adsense_backfill_dfp_viewable_impressions {
-    type: number
-    sql: ${TABLE}.adsenseBackfillDfpViewableImpressions ;;
-  }
-
-  dimension: adx_backfill_dfp_clicks {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpClicks ;;
-  }
-
-  dimension: adx_backfill_dfp_impressions {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpImpressions ;;
-  }
-
-  dimension: adx_backfill_dfp_matched_queries {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpMatchedQueries ;;
-  }
-
-  dimension: adx_backfill_dfp_measurable_impressions {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpMeasurableImpressions ;;
-  }
-
-  dimension: adx_backfill_dfp_pages_viewed {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpPagesViewed ;;
-  }
-
-  dimension: adx_backfill_dfp_queries {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpQueries ;;
-  }
-
-  dimension: adx_backfill_dfp_revenue_cpc {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpRevenueCpc ;;
-  }
-
-  dimension: adx_backfill_dfp_revenue_cpm {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpRevenueCpm ;;
-  }
-
-  dimension: adx_backfill_dfp_viewable_impressions {
-    type: number
-    sql: ${TABLE}.adxBackfillDfpViewableImpressions ;;
-  }
-
-  dimension: adx_clicks {
-    type: number
-    sql: ${TABLE}.adxClicks ;;
-  }
-
-  dimension: adx_impressions {
-    type: number
-    sql: ${TABLE}.adxImpressions ;;
-  }
-
-  dimension: adx_matched_queries {
-    type: number
-    sql: ${TABLE}.adxMatchedQueries ;;
-  }
-
-  dimension: adx_measurable_impressions {
-    type: number
-    sql: ${TABLE}.adxMeasurableImpressions ;;
-  }
-
-  dimension: adx_pages_viewed {
-    type: number
-    sql: ${TABLE}.adxPagesViewed ;;
-  }
-
-  dimension: adx_queries {
-    type: number
-    sql: ${TABLE}.adxQueries ;;
-  }
-
-  dimension: adx_revenue {
-    type: number
-    sql: ${TABLE}.adxRevenue ;;
-  }
-
-  dimension: adx_viewable_impressions {
-    type: number
-    sql: ${TABLE}.adxViewableImpressions ;;
-  }
-
-  dimension: dfp_ad_group {
-    type: string
-    sql: ${TABLE}.dfpAdGroup ;;
-  }
-
-  dimension: dfp_ad_units {
-    type: string
-    sql: ${TABLE}.dfpAdUnits ;;
-  }
-
-  dimension: dfp_clicks {
-    type: number
-    sql: ${TABLE}.dfpClicks ;;
-  }
-
-  dimension: dfp_impressions {
-    type: number
-    sql: ${TABLE}.dfpImpressions ;;
-  }
-
-  dimension: dfp_matched_queries {
-    type: number
-    sql: ${TABLE}.dfpMatchedQueries ;;
-  }
-
-  dimension: dfp_measurable_impressions {
-    type: number
-    sql: ${TABLE}.dfpMeasurableImpressions ;;
-  }
-
-  dimension: dfp_network_id {
-    type: string
-    sql: ${TABLE}.dfpNetworkId ;;
-  }
-
-  dimension: dfp_pages_viewed {
-    type: number
-    sql: ${TABLE}.dfpPagesViewed ;;
-  }
-
-  dimension: dfp_queries {
-    type: number
-    sql: ${TABLE}.dfpQueries ;;
-  }
-
-  dimension: dfp_revenue_cpc {
-    type: number
-    sql: ${TABLE}.dfpRevenueCpc ;;
-  }
-
-  dimension: dfp_revenue_cpm {
-    type: number
-    sql: ${TABLE}.dfpRevenueCpm ;;
-  }
-
-  dimension: dfp_viewable_impressions {
-    type: number
-    sql: ${TABLE}.dfpViewableImpressions ;;
-  }
-
-  dimension: measurable_ads_viewed {
-    type: number
-    sql: ${TABLE}.measurableAdsViewed ;;
-  }
-
-  dimension: viewable_ads_viewed {
-    type: number
-    sql: ${TABLE}.viewableAdsViewed ;;
-  }
-}
-
+# In QA: IP addression info
 view: ga_events_full__geo_network {
 
+  # Field Definition: This section contains information about the geography of the user.
+
   # copy/build the parimary key
   dimension: primary {
     primary_key: yes
@@ -863,7 +565,6 @@ view: ga_events_full__geo_network {
                 CAST(${ga_events_full.visit_id} AS STRING),
                 ${ga_events_full.full_visitor_id});;
   }
-
 
   dimension: city {
     type: string
@@ -876,6 +577,7 @@ view: ga_events_full__geo_network {
   }
 
   dimension: continent {
+    # Def: The continent from which sessions originated, based on IP address.
     type: string
     sql: ${TABLE}.continent ;;
   }
@@ -919,231 +621,5 @@ view: ga_events_full__geo_network {
   dimension: sub_continent {
     type: string
     sql: ${TABLE}.subContinent ;;
-  }
-}
-
-# view: ga_events_full__traffic_source {
-
-#   # build/copy a hits level primary
-#   dimension: hits_primary {
-#     primary_key: yes
-#     type: string
-#     sql: CONCAT(${ga_events_full.date},
-#                 CAST(${ga_events_full.visit_id} AS STRING),
-#                 ${ga_events_full.full_visitor_id},
-#                 ${ga_events_full__hits.hit_number}) ;;
-#   }
-
-
-#   dimension: ad_content {
-#     type: string
-#     sql: ${TABLE}.adContent ;;
-#   }
-
-#   dimension: adwords_click_info {
-#     hidden: yes
-#     sql: ${TABLE}.adwordsClickInfo ;;
-#   }
-
-#   dimension: campaign {
-#     type: string
-#     sql: ${TABLE}.campaign ;;
-#   }
-
-#   dimension: campaign_code {
-#     type: string
-#     sql: ${TABLE}.campaignCode ;;
-#   }
-
-#   dimension: is_true_direct {
-#     type: yesno
-#     sql: ${TABLE}.isTrueDirect ;;
-#   }
-
-#   dimension: keyword {
-#     type: string
-#     sql: ${TABLE}.keyword ;;
-#   }
-
-#   dimension: medium {
-#     type: string
-#     sql: ${TABLE}.medium ;;
-#   }
-
-#   dimension: referral_path {
-#     type: string
-#     sql: ${TABLE}.referralPath ;;
-#   }
-
-#   dimension: source {
-#     type: string
-#     sql: ${TABLE}.source ;;
-#   }
-# }
-
-# view: ga_events_full__traffic_source__adwords_click_info {
-#   dimension: ad_group_id {
-#     type: number
-#     sql: ${TABLE}.adGroupId ;;
-#   }
-
-#   dimension: ad_network_type {
-#     type: string
-#     sql: ${TABLE}.adNetworkType ;;
-#   }
-
-#   dimension: campaign_id {
-#     type: number
-#     sql: ${TABLE}.campaignId ;;
-#   }
-
-#   dimension: creative_id {
-#     type: number
-#     sql: ${TABLE}.creativeId ;;
-#   }
-
-#   dimension: criteria_id {
-#     type: number
-#     sql: ${TABLE}.criteriaId ;;
-#   }
-
-#   dimension: criteria_parameters {
-#     type: string
-#     sql: ${TABLE}.criteriaParameters ;;
-#   }
-
-#   dimension: customer_id {
-#     type: number
-#     sql: ${TABLE}.customerId ;;
-#   }
-
-#   dimension: gcl_id {
-#     type: string
-#     sql: ${TABLE}.gclId ;;
-#   }
-
-#   dimension: is_video_ad {
-#     type: yesno
-#     sql: ${TABLE}.isVideoAd ;;
-#   }
-
-#   dimension: page {
-#     type: number
-#     sql: ${TABLE}.page ;;
-#   }
-
-#   dimension: slot {
-#     type: string
-#     sql: ${TABLE}.slot ;;
-#   }
-
-#   dimension: targeting_criteria {
-#     hidden: yes
-#     sql: ${TABLE}.targetingCriteria ;;
-#   }
-# }
-
-# view: ga_events_full__traffic_source__adwords_click_info__targeting_criteria {
-#   dimension: boom_userlist_id {
-#     type: number
-#     sql: ${TABLE}.boomUserlistId ;;
-#   }
-# }
-
-view: ga_events_full__device {
-
-  # copy/build the parimary key
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
-  }
-
-
-  dimension: browser {
-    type: string
-    sql: ${TABLE}.browser ;;
-  }
-
-  dimension: browser_size {
-    type: string
-    sql: ${TABLE}.browserSize ;;
-  }
-
-  dimension: browser_version {
-    type: string
-    sql: ${TABLE}.browserVersion ;;
-  }
-
-  dimension: device_category {
-    type: string
-    sql: ${TABLE}.deviceCategory ;;
-  }
-
-  dimension: flash_version {
-    type: string
-    sql: ${TABLE}.flashVersion ;;
-  }
-
-  dimension: is_mobile {
-    type: yesno
-    sql: ${TABLE}.isMobile ;;
-  }
-
-  dimension: java_enabled {
-    type: yesno
-    sql: ${TABLE}.javaEnabled ;;
-  }
-
-  dimension: language {
-    type: string
-    sql: ${TABLE}.language ;;
-  }
-
-  dimension: mobile_device_branding {
-    type: string
-    sql: ${TABLE}.mobileDeviceBranding ;;
-  }
-
-  dimension: mobile_device_info {
-    type: string
-    sql: ${TABLE}.mobileDeviceInfo ;;
-  }
-
-  dimension: mobile_device_marketing_name {
-    type: string
-    sql: ${TABLE}.mobileDeviceMarketingName ;;
-  }
-
-  dimension: mobile_device_model {
-    type: string
-    sql: ${TABLE}.mobileDeviceModel ;;
-  }
-
-  dimension: mobile_input_selector {
-    type: string
-    sql: ${TABLE}.mobileInputSelector ;;
-  }
-
-  dimension: operating_system {
-    type: string
-    sql: ${TABLE}.operatingSystem ;;
-  }
-
-  dimension: operating_system_version {
-    type: string
-    sql: ${TABLE}.operatingSystemVersion ;;
-  }
-
-  dimension: screen_colors {
-    type: string
-    sql: ${TABLE}.screenColors ;;
-  }
-
-  dimension: screen_resolution {
-    type: string
-    sql: ${TABLE}.screenResolution ;;
   }
 }
