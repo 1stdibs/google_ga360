@@ -483,7 +483,7 @@ view: ga_events_full__hits__e_commerce_action {
                 ${ga_events_full.full_visitor_id});;
   }
 
-  dimension: action_type_clean {
+  dimension: action_type {
     type: string
     sql:
       CASE
