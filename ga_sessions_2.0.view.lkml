@@ -545,11 +545,6 @@ view: ga_sessions_full__device {
     sql: ${TABLE}.flashVersion ;;
   }
 
-  dimension: is_mobile {
-    type: yesno
-    sql: ${TABLE}.isMobile ;;
-  }
-
   dimension: java_enabled {
     type: yesno
     sql: ${TABLE}.javaEnabled ;;

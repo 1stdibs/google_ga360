@@ -1,4 +1,4 @@
-view: ga_events_full {
+view: ga_hits_full {
   sql_table_name: `api-project-1065928543184.96922533.ga_sessions_*`;;
 
   # added time partitioned filter
@@ -72,16 +72,16 @@ view: ga_events_full {
   }
 }
 
-view: ga_events_full__custom_dimensions {
+view: ga_hits_full__custom_dimensions {
 
   # Re-create a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes
     type: string
-    sql: CONCAT(${ga_events_full.date},
-        CAST(${ga_events_full.visit_id} AS string),
-        ${ga_events_full.full_visitor_id}) ;;
+    sql: CONCAT(${ga_hits_full.date},
+        CAST(${ga_hits_full.visit_id} AS string),
+        ${ga_hits_full.full_visitor_id}) ;;
   }
 
   # Hide index field in front-end UI
@@ -104,7 +104,7 @@ view: ga_events_full__custom_dimensions {
       (SELECT
         MAX(IF(temp.index = 33, temp.value, NULL))
       FROM
-        UNNEST(${ga_events_full.custom_dimensions}) AS temp);;
+        UNNEST(${ga_hits_full.custom_dimensions}) AS temp);;
   }
 
   dimension: guest_id {
@@ -113,21 +113,21 @@ view: ga_events_full__custom_dimensions {
       (SELECT
         MAX(IF(temp.index = 32, temp.value, NULL))
       FROM
-        UNNEST(${ga_events_full.custom_dimensions}) AS temp);;
+        UNNEST(${ga_hits_full.custom_dimensions}) AS temp);;
   }
 }
 
 # In QA event_info, content_group, custom_dimensions, e_commerce_action
-view: ga_events_full__hits {
+view: ga_hits_full__hits {
 
   # Re-create a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes
     type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
   }
 
   dimension: number {
@@ -143,7 +143,7 @@ view: ga_events_full__hits {
   dimension: time {
     type: date_time
     # transform the million second hit time to timestamp
-    sql: TIMESTAMP_SECONDS(${ga_events_full.visit_start_time} +
+    sql: TIMESTAMP_SECONDS(${ga_hits_full.visit_start_time} +
                            CAST(${TABLE}.time/1000 AS INT64));;
   }
 
@@ -189,36 +189,36 @@ view: ga_events_full__hits {
 }
 
 # In QA: Event Info dimensions
-view: ga_events_full__hits__event_info {
+view: ga_hits_full__hits__event_info {
 
   # Re-create a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes
     type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
   }
 
   dimension: event_action {
     type: string
-    sql: ${ga_events_full__hits.event_info}.eventAction;;
+    sql: ${ga_hits_full__hits.event_info}.eventAction;;
   }
 
   dimension: event_category {
     type: string
-    sql: ${ga_events_full__hits.event_info}.eventCategory;;
+    sql: ${ga_hits_full__hits.event_info}.eventCategory;;
   }
 
   dimension: event_label {
     type: string
-    sql: ${ga_events_full__hits.event_info}.eventLabel;;
+    sql: ${ga_hits_full__hits.event_info}.eventLabel;;
   }
 
   dimension: event_value {
     type: number
-    sql: ${ga_events_full__hits.event_info}.eventValue;;
+    sql: ${ga_hits_full__hits.event_info}.eventValue;;
   }
 
 
@@ -260,55 +260,55 @@ view: ga_events_full__hits__event_info {
 }
 
 # In QA: Content Group dimension
-view: ga_events_full__hits__content_group {
+view: ga_hits_full__hits__content_group {
 
   # Re-create a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes
     type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
   }
 
   dimension: content_group1 {
     type: string
-    sql: ${ga_events_full__hits.content_group}.contentGroup1 ;;
+    sql: ${ga_hits_full__hits.content_group}.contentGroup1 ;;
   }
 
   dimension: content_group2 {
     type: string
-    sql: ${ga_events_full__hits.content_group}.contentGroup2 ;;
+    sql: ${ga_hits_full__hits.content_group}.contentGroup2 ;;
   }
 
   dimension: content_group3 {
     type: string
-    sql: ${ga_events_full__hits.content_group}.contentGroup3 ;;
+    sql: ${ga_hits_full__hits.content_group}.contentGroup3 ;;
   }
 
   dimension: content_group4 {
     type: string
-    sql: ${ga_events_full__hits.content_group}.contentGroup4 ;;
+    sql: ${ga_hits_full__hits.content_group}.contentGroup4 ;;
   }
 
   dimension: content_group5 {
     type: string
-    sql: ${ga_events_full__hits.content_group}.contentGroup5 ;;
+    sql: ${ga_hits_full__hits.content_group}.contentGroup5 ;;
   }
 }
 
 # In QA: Hits CDs need modification
-view: ga_events_full__hits__custom_dimensions {
+view: ga_hits_full__hits__custom_dimensions {
 
   # Re-create a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes
     type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
   }
 
   dimension: index {
@@ -328,14 +328,14 @@ view: ga_events_full__hits__custom_dimensions {
     type: string
     sql:
       (SELECT MAX(IF(ic.index = 4, ic.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ic);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS ic);;
   }
 
   dimension: page_sort {
     type: string
     sql:
       (SELECT MAX(IF(ps.index = 5, ps.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ps);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS ps);;
   }
 
   # ?@YJ: should we keep this in ITEM level?
@@ -343,14 +343,14 @@ view: ga_events_full__hits__custom_dimensions {
     type: string
     sql:
       (SELECT MAX(IF(pst.index = 7, pst.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS pst);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS pst);;
   }
 
   dimension: view_mode {
     type: string
     sql:
       (SELECT MAX(IF(vm.index = 8, vm.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS vm);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS vm);;
   }
 
   # ?@YJ: should we keep this in ITEM level?
@@ -358,14 +358,14 @@ view: ga_events_full__hits__custom_dimensions {
     type: string
     sql:
       (SELECT MAX(IF(id.index = 10, id.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS id);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS id);;
   }
 
   dimension: number_of_images {
     type: string
     sql:
       (SELECT MAX(IF(noi.index = 14, noi.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS noi);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS noi);;
   }
 
   # ?@YJ: should we keep this in ITEM level?
@@ -373,35 +373,35 @@ view: ga_events_full__hits__custom_dimensions {
     type: string
     sql:
       (SELECT MAX(IF(ii.index = 15, ii.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions})  AS ii) ;;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions})  AS ii) ;;
   }
 
   dimension: page_number_viewed {
     type: string
     sql:
       (SELECT MAX(IF(pnv.index = 16, pnv.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS pnv) ;;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS pnv) ;;
   }
 
   dimension: item_count {
     type: number
     sql:
       (SELECT MAX(IF(ic.index = 17, ic.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ic) ;;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS ic) ;;
   }
 
   dimension: content_module {
     type: string
     sql:
       (SELECT MAX(IF(cm.index = 18, cm.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS cm) ;;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS cm) ;;
   }
 
   dimension: asking_price {
     type: string
     sql:
       (SELECT MAX(IF(ap.index = 21, ap.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ap) ;;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS ap) ;;
   }
 
   # ?@YJ: should we keep this in ITEM level?
@@ -409,7 +409,7 @@ view: ga_events_full__hits__custom_dimensions {
     type: string
     sql:
       (SELECT MAX(IF(dn.index = 22, dn.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS dn) ;;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS dn) ;;
   }
 
   # ?@YJ: should we keep this in ITEM level?
@@ -417,14 +417,14 @@ view: ga_events_full__hits__custom_dimensions {
     type: string
     sql:
       (SELECT MAX(IF(c.index = 43, c.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS c);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS c);;
   }
 
   dimension: dealer_id {
     type: string
     sql:
       (SELECT MAX(IF(di.index = 44, di.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS di);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS di);;
   }
 
   # ?@YJ: should we keep this in ITEM level?
@@ -432,28 +432,28 @@ view: ga_events_full__hits__custom_dimensions {
     type: string
     sql:
       (SELECT MAX(IF(ipl.index = 45, ipl.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ipl);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS ipl);;
   }
 
   dimension: price_type {
     type: string
     sql:
       (SELECT MAX(IF(pt.index = 67, pt.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS pt);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS pt);;
   }
 
   dimension: order_type {
     type: string
     sql:
       (SELECT MAX(IF(ot.index = 68, ot.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ot);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS ot);;
   }
 
   dimension: shipping_status {
     type: string
     sql:
       (SELECT MAX(IF(ss.index = 61, ss.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS ss);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS ss);;
   }
 
   # ?@YJ: can we replace this by landWebPagePath
@@ -461,52 +461,52 @@ view: ga_events_full__hits__custom_dimensions {
     type: string
     sql:
       (SELECT MAX(IF(fps.index = 75, fps.value, NULL))
-      FROM UNNEST(${ga_events_full__hits.custom_dimensions}) AS fps);;
+      FROM UNNEST(${ga_hits_full__hits.custom_dimensions}) AS fps);;
   }
 }
 
 # In QA: Hit E-commerce Action type
-view: ga_events_full__hits__e_commerce_action {
+view: ga_hits_full__hits__e_commerce_action {
 
   # Re-create a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes
     type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
   }
 
   dimension: action_type {
     type: string
     sql:
       CASE
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '0'  THEN 'unknown'
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '1' THEN 'product_list_click'
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '2' THEN 'product_detail_view'
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '3' THEN 'add_to_cart'
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '4' THEN 'remove_from_cart'
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '5' THEN 'product_checkout_view'
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '6' THEN 'completed_purchase'
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '7' THEN 'refund_purchase'
-        WHEN ${ga_events_full__hits.e_commerce_action}.action_type = '8' THEN 'checkout_options'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '0'  THEN 'unknown'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '1' THEN 'product_list_click'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '2' THEN 'product_detail_view'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '3' THEN 'add_to_cart'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '4' THEN 'remove_from_cart'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '5' THEN 'product_checkout_view'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '6' THEN 'completed_purchase'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '7' THEN 'refund_purchase'
+        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '8' THEN 'checkout_options'
         ELSE NULL
       END;;
   }
 }
 
 # In QA: IP addression info
-view: ga_events_full__geo_network {
+view: ga_hits_full__geo_network {
 
   # Re-create a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes
     type: string
-    sql: CONCAT(${ga_events_full.date},
-                CAST(${ga_events_full.visit_id} AS STRING),
-                ${ga_events_full.full_visitor_id});;
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
   }
 
   dimension: city {

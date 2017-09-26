@@ -126,57 +126,47 @@ explore: gmv_revenue_budget {
 
 
 
-################## @YJ test table structure ##################
 
-### Table Name: Google Analytics Sessions Full
-### Explanation: this table has all columns in ga_sessions
-### Author: @YJ
-### Create Date: 2017-08-29
 
 explore: ga_sessions_version_2{
   # define the
   view_name: ga_sessions_full
-  view_label: "Google Analytics Sessions"
+  view_label: "Sessions"
 
   # join with the __custom_dimensions STRUC
   join: ga_sessions_full__custom_dimensions {
-    view_label: "Google Analytics Sessions: Custom Dimensions"
+    view_label: "Sessions: Custom Dimensions"
   }
 
   # join with the __hits STRUC
   join: ga_sessions_full__hits {
-    view_label: "Google Analytics Sessions: Hits"
+    view_label: "Sessions: Hits"
   }
-
-  # join: ga_sessions_full__hits {
-  #   view_label: "Google Analytics Sessions: Hits"
-  #   sql: CROSS JOIN UNNEST(${ga_sessions_full.hits}) AS ga_sessions_full__hits ;;
-  # }
 
   # join with the __totals RECORD
   join: ga_sessions_full__totals {
-    view_label: "Google Analytics Sessions: Totals"
+    view_label: "Sessions: Totals"
     sql: LEFT JOIN UNNEST([${ga_sessions_full.totals}]) AS ga_sessions_full__totals ;;
     relationship: one_to_many
   }
 
   # join with the __traffic_source RECORD
   join: ga_sessions_full__traffic_source {
-    view_label: "Google Analytics Sessions: Traffic Source"
+    view_label: "Sessions: Traffic Source"
     sql: LEFT JOIN UNNEST([${ga_sessions_full.traffic_source}]) AS ga_sessions_full__traffic_source;;
     relationship: one_to_many
   }
 
   # join with the __device RECORD
   join: ga_sessions_full__device {
-    view_label: "Google Analytics Sessions: Device"
+    view_label: "Sessions: Device"
     sql: LEFT JOIN UNNEST([${ga_sessions_full.device}]) AS ga_sessions_full__device;;
     relationship: one_to_many
   }
 
   # join with the __geo_network RECORD
   join: ga_sessions_full__geo_network{
-    view_label: "Google Analytics Sessions: Geo-network"
+    view_label: "Sessions: IP Address Info"
     sql:  LEFT JOIN UNNEST([${ga_sessions_full.geo_network}]) AS ga_sessions_full__geo_network ;;
     relationship:  one_to_many
   }
@@ -202,50 +192,52 @@ explore: order_attribution_base {
 
 explore: ga_events_version_2 {
   # define the
-  view_name: ga_events_full
-  view_label: "Events"
-  always_filter: {
-    filters: {
-      field: ga_events_full__hits.type
-      value: "EVENT"
-    }
+  view_name: ga_hits_full
+  view_label: "Basic Info"
+  # always_filter: {
+  #   filters: {
+  #     field: ga_events_full__hits.type
+  #     value: "EVENT"
+  #   }
+  # }
+
+  # join with the __custom_dimensions STRUC
+  join: ga_hits_full__custom_dimensions {
+    view_label: "User Info"
   }
 
   # join with the __custom_dimensions STRUC
-  join: ga_events_full__custom_dimensions {
-    view_label: "Events: User"
-  }
-
-  # join with the __custom_dimensions STRUC
-  join: ga_events_full__hits {
-    view_label: "Events: Hits"
-    sql: CROSS JOIN UNNEST(${ga_events_full.hits}) AS ga_events_full__hits;;
+  join: ga_hits_full__hits {
+    view_label: "Hits Summary"
+    sql: CROSS JOIN UNNEST(${ga_hits_full.hits}) AS ga_hits_full__hits;;
     relationship: one_to_many
   }
 
-  join: ga_events_full__hits__event_info {
-    view_label: "Events: Event Info"
+  join: ga_hits_full__hits__content_group {
+    view_label: "Content Group"
   }
 
-  join: ga_events_full__hits__content_group {
-    view_label: "Events: Content Group"
+  join: ga_hits_full__hits__custom_dimensions {
+    view_label: "Custom Dimensions"
   }
 
-  join: ga_events_full__hits__custom_dimensions {
-    view_label: "Events: Custom Dimensions"
-  }
-
-  join: ga_events_full__hits__e_commerce_action {
-    view_label: "Events: E-commerce Action"
+  join: ga_hits_full__hits__e_commerce_action {
+    view_label: "E-commerce Action"
   }
 
   # @YJ: Optional filed
-  join: ga_events_full__geo_network {
-    view_label: "Events: IP Address Info"
+  join: ga_hits_full__geo_network {
+    view_label: "IP Address Info"
     # * Added [] to repeat STRUCT field
-    sql: LEFT JOIN UNNEST([${ga_events_full.geo_network}]) AS ga_events_full__geo_network ;;
+    sql: LEFT JOIN UNNEST([${ga_hits_full.geo_network}]) AS ga_hits_full__geo_network ;;
     relationship: one_to_many
   }
+
+  join: ga_hits_full__hits__event_info {
+    view_label: "'EVENT' Type Only Info"
+
+  }
+
 
 }
 
