@@ -282,6 +282,7 @@ view: ga_sessions_full__hits {
 view: ga_sessions_full__totals {
 
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: concat(${ga_sessions_full.date},
@@ -386,6 +387,7 @@ view: ga_sessions_full__totals {
 view: ga_sessions_full__geo_network {
 
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: concat(${ga_sessions_full.date},
@@ -455,6 +457,7 @@ view: ga_sessions_full__geo_network {
 view: ga_sessions_full__traffic_source {
 
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: concat(${ga_sessions_full.date},
@@ -513,6 +516,7 @@ view: ga_sessions_full__traffic_source {
 view: ga_sessions_full__device {
 
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: concat(${ga_sessions_full.date},
