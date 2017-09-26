@@ -19,10 +19,6 @@ view: ga_sessions_full {
     sql: cast(PARSE_DATE('%Y%m%d', ${date}) as TIMESTAMP) ;;
   }
 
-  dimension: visit_start_time {
-    type: number
-    sql: ${TABLE}.visitStartTime ;;
-  }
 
   dimension: full_visitor_id {
     type: string
@@ -46,7 +42,7 @@ view: ga_sessions_full {
 
   dimension: session_start_time {
     type: date_time
-    sql: TIMESTAMP_MILLIS(${TABLE}.visitStartTime) ;;
+    sql: TIMESTAMP_SECONDS(${TABLE}.visitStartTime) ;;
   }
 
   dimension: channel_grouping {
