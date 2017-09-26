@@ -13,7 +13,6 @@ view: ga_sessions_full {
     sql: ${TABLE}.date ;;
   }
 
-  # ADDED FIELD: the Timeframes dimension group ########
   dimension_group: sessions_date {
     type: time
     timeframes: [date, week, month]
@@ -47,7 +46,7 @@ view: ga_sessions_full {
 
   dimension: session_start_time {
     type: date_time
-    sql: TIMESTAMP_SECONDS(${TABLE}.visitStartTime) ;;
+    sql: TIMESTAMP_MILLIS(${TABLE}.visitStartTime) ;;
   }
 
   dimension: channel_grouping {
@@ -606,51 +605,3 @@ view: ga_sessions_full__device {
     sql: ${TABLE}.screenResolution ;;
   }
 }
-
-
-
-
-
-# view: custom_dimensions {
-  # derived_table: {
-  #   sql:
-  #   SELECT
-  #     concat(date, cast(visitId AS string), fullVisitorId) AS primary_key,
-  #     (SELECT
-  #       MAX(IF(index = 33, value, NULL)) AS cd_user_id
-  #     FROM
-  #       UNNEST(customDimensions)) AS cd_user_id,
-  #     (SELECT
-  #       MAX(IF(index = 32, value, NULL)) AS cd_guest_id
-  #     FROM
-  #       UNNEST(customDimensions)) AS cd_guest_id,
-  #     (SELECT
-  #       MAX(IF(index = 29, value, NULL)) AS cd_login_status
-  #     FROM
-  #       UNNEST(customDimensions)) AS cd_login_status
-  #     FROM
-  #       `api-project-1065928543184.96922533.ga_sessions_*`
-#     ;;
-#   }
-
-#   dimension: primary {
-#     primary_key: yes
-#     type: string
-#     sql: ${TABLE}.primary_key ;;
-#   }
-
-#   dimension: cd_user_id {
-#     type: string
-#     sql: ${TABLE}.cd_user_id ;;
-#   }
-
-#   dimension: cd_guest_id {
-#     type: string
-#     sql: ${TABLE}.cd_guest_id ;;
-#   }
-
-#   dimension: cd_login_status {
-#     type: string
-#     sql: ${TABLE}.cd_login_status ;;
-#   }
-# }
