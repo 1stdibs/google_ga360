@@ -74,6 +74,16 @@ view: ga_events_full {
 
 view: ga_events_full__custom_dimensions {
 
+  # Re-create a primary key
+  dimension: primary {
+    hidden: yes
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_events_full.date},
+        CAST(${ga_events_full.visit_id} AS string),
+        ${ga_events_full.full_visitor_id}) ;;
+  }
+
   # Hide index field in front-end UI
   dimension: index {
     hidden: yes
@@ -86,16 +96,6 @@ view: ga_events_full__custom_dimensions {
     hidden: yes
     type: string
     sql: ${TABLE}.value ;;
-  }
-
-  # Re-create a primary key
-  dimension: primary {
-    hidden: yes
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_events_full.date},
-        CAST(${ga_events_full.visit_id} AS string),
-        ${ga_events_full.full_visitor_id}) ;;
   }
 
   dimension: user_id {
@@ -122,6 +122,7 @@ view: ga_events_full__hits {
 
   # Re-create a primary key
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: CONCAT(${ga_events_full.date},
@@ -192,6 +193,7 @@ view: ga_events_full__hits__event_info {
 
   # Re-create a primary key
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: CONCAT(${ga_events_full.date},
@@ -262,6 +264,7 @@ view: ga_events_full__hits__content_group {
 
   # Re-create a primary key
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: CONCAT(${ga_events_full.date},
@@ -300,6 +303,7 @@ view: ga_events_full__hits__custom_dimensions {
 
   # Re-create a primary key
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: CONCAT(${ga_events_full.date},
@@ -466,6 +470,7 @@ view: ga_events_full__hits__e_commerce_action {
 
   # Re-create a primary key
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: CONCAT(${ga_events_full.date},
@@ -496,6 +501,7 @@ view: ga_events_full__geo_network {
 
   # Re-create a primary key
   dimension: primary {
+    hidden: yes
     primary_key: yes
     type: string
     sql: CONCAT(${ga_events_full.date},
