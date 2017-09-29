@@ -219,6 +219,7 @@ explore: ga_events_version_2 {
   join: ga_hits_full__hits__e_commerce_action {
     view_label: "E-commerce Action"
     sql: LEFT JOIN UNNEST([${ga_hits_full__hits.e_commerce_action}]) AS ga_hits_full__hits__e_commerce_action ;;
+    sql_where: ${ga_hits_full__hits.e_commerce_action} IS NOT NULL;;
     relationship: one_to_many
   }
 
