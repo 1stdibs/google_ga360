@@ -85,41 +85,6 @@ view: ga_sessions_full {
 #    sql: ${TABLE}.socialEngagementType ;;
 #  }
 
-#  dimension: user_id {
-#    type: string
-#    sql: ${TABLE}.userId ;;
-#  }
-
-
-#   dimension: user_id {
-#     type: string
-#     sql:
-#       (SELECT
-#         MAX(IF(${ga_sessions_full.custom_dimensions}.index = 33,
-#               ${ga_sessions_full.custom_dimensions}.value,
-#               NULL)) AS user_id_temp
-#       FROM
-#         UNNEST(${TABLE}.customDimensions));;
-#   }
-#
-# #  dimension: guest_id {
-# #    type: string
-# #    sql:
-# #      (SELECT
-# #        MAX(IF(${TABLE}.index = 32, ${TABLE}.value, NULL)) AS guest_id_temp
-# #      FROM
-# #        UNNEST(${ga_sessions_full.custom_dimensions})) ;;
-# #  }
-#
-# #  dimension: login_status {
-# #    type: string
-# #    sql:
-# #      (SELECT
-# #        MAX(IF(${TABLE}.index = 29, ${TABLE}.value, NULL)) AS login_status_temp
-# #      FROM
-# #        UNNEST(${ga_sessions_full.custom_dimensions}));;
-# #  }
-
 }
 
 # SUB-VIEW: CUSTOM DIMENSIONS ########
@@ -258,8 +223,8 @@ view: ga_sessions_full__hits {
 
   # ADDED MESAURE: count total number of transactions ########
   measure: total_events_count {
-    type: sum
-    sql: ${events} ;;
+    type: number
+    sql: SUM(${events}) ;;
   }
 
   # dimension: is_exit {

@@ -189,17 +189,10 @@ explore: order_attribution_base {
 }
 
 
-
 explore: ga_events_version_2 {
   # define the
   view_name: ga_hits_full
   view_label: "Basic Info"
-  # always_filter: {
-  #   filters: {
-  #     field: ga_events_full__hits.type
-  #     value: "EVENT"
-  #   }
-  # }
 
   # join with the __custom_dimensions STRUC
   join: ga_hits_full__custom_dimensions {
@@ -215,6 +208,8 @@ explore: ga_events_version_2 {
 
   join: ga_hits_full__hits__content_group {
     view_label: "Content Group"
+    sql: LEFT JOIN UNNEST([${ga_hits_full__hits.content_group}]) AS ga_hits_full__hits__content_group ;;
+    relationship: one_to_many
   }
 
   join: ga_hits_full__hits__custom_dimensions {
@@ -223,9 +218,11 @@ explore: ga_events_version_2 {
 
   join: ga_hits_full__hits__e_commerce_action {
     view_label: "E-commerce Action"
+    sql: LEFT JOIN UNNEST([${ga_hits_full__hits.e_commerce_action}]) AS ga_hits_full__hits__e_commerce_action ;;
+    sql_where: ${ga_hits_full__hits.e_commerce_action} IS NOT NULL;;
+    relationship: one_to_many
   }
 
-  # @YJ: Optional filed
   join: ga_hits_full__geo_network {
     view_label: "IP Address Info"
     # * Added [] to repeat STRUCT field
@@ -233,10 +230,40 @@ explore: ga_events_version_2 {
     relationship: one_to_many
   }
 
+  # When hitType == 'EVENT' then populating
   join: ga_hits_full__hits__event_info {
-    view_label: "'EVENT' Type Only Info"
-
+    view_label: "Hit Type: Event Info"
+    sql: LEFT JOIN UNNEST([${ga_hits_full__hits.event_info}]) AS ga_hits_full__hits__event_info;;
+    sql_where: ${ga_hits_full__hits.hit_type} = 'EVENT' ;;
+    relationship: one_to_many
   }
+
+  join: ga_hits_full__hits__page {
+    view_label: "Hit Type: Pageview Info"
+    sql: LEFT JOIN UNNEST([${ga_hits_full__hits.page}]) AS ga_hits_full__hits__page;;
+    sql_where: ${ga_hits_full__hits.hit_type} = 'PAGE';;
+    relationship: one_to_many
+  }
+
+  join: ga_hits_full__hits__app_info {
+    view_label: "Hit Type: Appview Info"
+    sql: LEFT JOIN UNNEST([${ga_hits_full__hits.app_info}]) AS ga_hits_full__hits__app_info;;
+    sql_where: ${ga_hits_full__hits.hit_type} = 'APPVIEW' ;;
+    relationship: one_to_many
+  }
+
+  # When hitType == 'PAGE' then populatin
+  join: ga_hits_full__hits__pageview_and_appview {
+    view_label: "Hit Type: Pageview and Appview Info"
+  }
+
+  join: ga_hits_full__hits__social {
+    view_label: "Hit Type: Social Info"
+    sql: LEFT JOIN UNNEST([${ga_hits_full__hits.social}]) AS ga_hits_full__hits__social;;
+    sql_where: ${ga_hits_full__hits.hit_type} = 'SOCIAL' ;;
+    relationship: one_to_many
+  }
+
 
 
 }

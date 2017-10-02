@@ -70,6 +70,7 @@ view: ga_hits_full {
     hidden: yes
     sql: ${TABLE}.geoNetwork ;;
   }
+
 }
 
 view: ga_hits_full__custom_dimensions {
@@ -130,17 +131,17 @@ view: ga_hits_full__hits {
                 ${ga_hits_full.full_visitor_id});;
   }
 
-  dimension: number {
+  dimension: hit_number {
     type: number
     sql: ${TABLE}.hitNumber ;;
   }
 
-  dimension: type {
+  dimension: hit_type {
     type: string
     sql: ${TABLE}.type ;;
   }
 
-  dimension: time {
+  dimension: hit_time {
     type: date_time
     # transform the million second hit time to timestamp
     sql: TIMESTAMP_SECONDS(${ga_hits_full.visit_start_time} +
@@ -160,6 +161,18 @@ view: ga_hits_full__hits {
   dimension: is_interaction {
     type: yesno
     sql: ${TABLE}.isInteraction ;;
+  }
+
+  dimension: is_entrance {
+    type: yesno
+    hidden: yes
+    sql: ${TABLE}.isEntrance ;;
+  }
+
+  dimension: is_exit {
+    type: yesno
+    hidden: yes
+    sql: ${TABLE}.isExit ;;
   }
 
   # ARRAY RECORD
@@ -186,77 +199,35 @@ view: ga_hits_full__hits {
     sql: ${TABLE}.eventInfo;;
   }
 
-}
-
-# In QA: Event Info dimensions
-view: ga_hits_full__hits__event_info {
-
-  # Re-create a primary key
-  dimension: primary {
+  # STRUCT RECORD: when type = 'PAGE'
+  dimension: page {
     hidden: yes
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_hits_full.date},
-                CAST(${ga_hits_full.visit_id} AS STRING),
-                ${ga_hits_full.full_visitor_id});;
+    sql: ${TABLE}.page ;;
   }
 
-  dimension: event_action {
-    type: string
-    sql: ${ga_hits_full__hits.event_info}.eventAction;;
+  # STRUCT RECORD: when type = 'APP'
+  dimension: app_info {
+    hidden: yes
+    sql: ${TABLE}.appInfo ;;
   }
 
-  dimension: event_category {
-    type: string
-    sql: ${ga_hits_full__hits.event_info}.eventCategory;;
+  dimension: social {
+    hidden: yes
+    sql: ${TABLE}.social ;;
   }
 
-  dimension: event_label {
-    type: string
-    sql: ${ga_hits_full__hits.event_info}.eventLabel;;
+  # TEST FIELD ######################################################
+  ###################################################################
+  ###################################################################
+  ###################################################################
+  dimension: product {
+    hidden: yes
+    sql: ${TABLE}.product ;;
   }
-
-  dimension: event_value {
-    type: number
-    sql: ${ga_hits_full__hits.event_info}.eventValue;;
-  }
-
-
-  ##### BEGINNING OF EVENT BUSINESS LOGIC ############
-
-  measure: contact_dealer_clicked {
-    type: number
-    sql: SUM(IF(${event_action} IN  ('contact dealer clicked', 'call dealer clicked','call dealer initiated', 'request shipping quote clicked','request hold clicked', 'request net price clicked' ), 1, 0)) ;;
-  }
-
-  measure: contact_dealer_submitted {
-    type: number
-    sql:SUM(IF(${event_action} IN  ('contact dealer submitted','request shipping quote submitted', 'request hold submitted', 'request net price submitted', 'offer inquiry submitted' ), 1, 0))  ;;
-  }
-
-  measure: registration_entries {
-    type: number
-    sql: SUM(IF(${event_action} = 'registration entry', 1, 0)) ;;
-  }
-
-  measure: registration_completes {
-    type: number
-    sql: SUM(IF(${event_action} =  'registration complete', 1, 0)) ;;
-  }
-
-  measure: purchase_clicks {
-    type: number
-    sql: SUM(IF(${event_category} = 'purchase click', 1, 0)) ;;
-    drill_fields: [event_action]
-  }
-
-  measure: make_offer_clicks {
-    type: number
-    sql: SUM(IF(${event_category} = 'make offer click', 1, 0)) ;;
-    drill_fields: [event_action]
-  }
-
-  ##### END OF BUSINESS LOGIC FOR EVENTS ################
+  ###################################################################
+  ###################################################################
+  ###################################################################
+  ###################################################### TEST FIELD #
 }
 
 # In QA: Content Group dimension
@@ -274,27 +245,27 @@ view: ga_hits_full__hits__content_group {
 
   dimension: content_group1 {
     type: string
-    sql: ${ga_hits_full__hits.content_group}.contentGroup1 ;;
+    sql: ${TABLE}.contentGroup1 ;;
   }
 
   dimension: content_group2 {
     type: string
-    sql: ${ga_hits_full__hits.content_group}.contentGroup2 ;;
+    sql: ${TABLE}.contentGroup2 ;;
   }
 
   dimension: content_group3 {
     type: string
-    sql: ${ga_hits_full__hits.content_group}.contentGroup3 ;;
+    sql: ${TABLE}.contentGroup3 ;;
   }
 
   dimension: content_group4 {
     type: string
-    sql: ${ga_hits_full__hits.content_group}.contentGroup4 ;;
+    sql: ${TABLE}.contentGroup4 ;;
   }
 
   dimension: content_group5 {
     type: string
-    sql: ${ga_hits_full__hits.content_group}.contentGroup5 ;;
+    sql: ${TABLE}.contentGroup5 ;;
   }
 }
 
@@ -482,19 +453,142 @@ view: ga_hits_full__hits__e_commerce_action {
     type: string
     sql:
       CASE
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '0'  THEN 'unknown'
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '1' THEN 'product_list_click'
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '2' THEN 'product_detail_view'
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '3' THEN 'add_to_cart'
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '4' THEN 'remove_from_cart'
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '5' THEN 'product_checkout_view'
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '6' THEN 'completed_purchase'
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '7' THEN 'refund_purchase'
-        WHEN ${ga_hits_full__hits.e_commerce_action}.action_type = '8' THEN 'checkout_options'
+        WHEN ${TABLE}.action_type = '0'  THEN 'unknown'
+        WHEN ${TABLE}.action_type = '1' THEN 'product_list_click'
+        WHEN ${TABLE}.action_type = '2' THEN 'product_detail_view'
+        WHEN ${TABLE}.action_type = '3' THEN 'add_to_cart'
+        WHEN ${TABLE}.action_type = '4' THEN 'remove_from_cart'
+        WHEN ${TABLE}.action_type = '5' THEN 'product_checkout_view'
+        WHEN ${TABLE}.action_type = '6' THEN 'completed_purchase'
+        WHEN ${TABLE}.action_type = '7' THEN 'refund_purchase'
+        WHEN ${TABLE}.action_type = '8' THEN 'checkout_options'
         ELSE NULL
       END;;
   }
+
+#   dimension: option {
+#     type: string
+#     sql: ${TABLE}.option ;;
+#   }
+#
+  dimension: checkout_step {
+    type: number
+    sql: ${TABLE}.step ;;
+  }
+
 }
+
+# TEST ADDED #######################################################
+####################################################################
+####################################################################
+####################################################################
+view: ga_hits_full__hits__product {
+  dimension: custom_dimensions {
+    hidden: yes
+    sql: ${TABLE}.customDimensions ;;
+  }
+
+  dimension: custom_metrics {
+    hidden: yes
+    sql: ${TABLE}.customMetrics ;;
+  }
+
+  dimension: is_click {
+    type: yesno
+    sql: ${TABLE}.isClick ;;
+  }
+
+  dimension: is_impression {
+    type: yesno
+    sql: ${TABLE}.isImpression ;;
+  }
+
+  dimension: local_product_price {
+    type: number
+    sql: ${TABLE}.localProductPrice ;;
+  }
+
+  dimension: local_product_refund_amount {
+    type: number
+    sql: ${TABLE}.localProductRefundAmount ;;
+  }
+
+  dimension: local_product_revenue {
+    type: number
+    sql: ${TABLE}.localProductRevenue ;;
+  }
+
+  dimension: product_brand {
+    type: string
+    sql: ${TABLE}.productBrand ;;
+  }
+
+  dimension: product_list_name {
+    type: string
+    sql: ${TABLE}.productListName ;;
+  }
+
+  dimension: product_list_position {
+    type: number
+    sql: ${TABLE}.productListPosition ;;
+  }
+
+  dimension: product_price {
+    type: number
+    sql: ${TABLE}.productPrice ;;
+  }
+
+  dimension: product_quantity {
+    type: number
+    sql: ${TABLE}.productQuantity ;;
+  }
+
+  dimension: product_refund_amount {
+    type: number
+    sql: ${TABLE}.productRefundAmount ;;
+  }
+
+  dimension: product_revenue {
+    type: number
+    sql: ${TABLE}.productRevenue ;;
+  }
+
+  dimension: product_sku {
+    type: string
+    sql: ${TABLE}.productSKU ;;
+  }
+
+  dimension: product_variant {
+    type: string
+    sql: ${TABLE}.productVariant ;;
+  }
+
+  dimension: v2_product_category {
+    type: string
+    sql: ${TABLE}.v2ProductCategory ;;
+  }
+
+  dimension: v2_product_name {
+    type: string
+    sql: ${TABLE}.v2ProductName ;;
+  }
+}
+
+view: ga_hits_full__hits__product__custom_metrics {
+  dimension: index {
+    type: number
+    sql: ${TABLE}.index ;;
+  }
+
+  dimension: value {
+    type: number
+    sql: ${TABLE}.value ;;
+  }
+}
+####################################################################
+####################################################################
+####################################################################
+####################################################### TEST ADDED #
 
 # In QA: IP addression info
 view: ga_hits_full__geo_network {
@@ -564,5 +658,330 @@ view: ga_hits_full__geo_network {
   dimension: sub_continent {
     type: string
     sql: ${TABLE}.subContinent ;;
+  }
+}
+
+# In QA: Event Info dimensions
+########### Conditional Filter: hitType == "EVENT" ############
+view: ga_hits_full__hits__event_info {
+  # derived_table: {
+  #   sql:
+  #     SELECT
+  #       *
+  #     FROM
+  #       ${ga_hits_full}
+  #     WHERE ${ga_hits_full__hits.hit_type} = 'EVENT' ;;
+  # }
+
+  # Re-create a primary key
+  dimension: primary {
+    hidden: yes
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
+  }
+
+  # filter: event_test {
+  #   sql: ${ga_hits_full__hits.hit_type} = 'EVENT' ;;
+  # }
+
+  dimension: event_action {
+    type: string
+    sql: ${TABLE}.eventAction;;
+  }
+
+  dimension: event_category {
+    type: string
+    sql: ${TABLE}.eventCategory;;
+  }
+
+  dimension: event_label {
+    type: string
+    sql: ${TABLE}.eventLabel;;
+  }
+
+  dimension: event_value {
+    type: number
+    sql: ${TABLE}.eventValue;;
+  }
+
+
+  ##### BEGINNING OF EVENT BUSINESS LOGIC ############
+
+  measure: contact_dealer_clicked {
+    type: number
+    sql: SUM(IF(${event_action} IN  ('contact dealer clicked', 'call dealer clicked','call dealer initiated', 'request shipping quote clicked','request hold clicked', 'request net price clicked' ), 1, 0)) ;;
+  }
+
+  measure: contact_dealer_submitted {
+    type: number
+    sql:SUM(IF(${event_action} IN  ('contact dealer submitted','request shipping quote submitted', 'request hold submitted', 'request net price submitted', 'offer inquiry submitted' ), 1, 0))  ;;
+  }
+
+  measure: registration_entries {
+    type: number
+    sql: SUM(IF(${event_action} = 'registration entry', 1, 0)) ;;
+  }
+
+  measure: registration_completes {
+    type: number
+    sql: SUM(IF(${event_action} =  'registration complete', 1, 0)) ;;
+  }
+
+  measure: purchase_clicks {
+    type: number
+    sql: SUM(IF(${event_category} = 'purchase click', 1, 0)) ;;
+    drill_fields: [event_action]
+  }
+
+  measure: make_offer_clicks {
+    type: number
+    sql: SUM(IF(${event_category} = 'make offer click', 1, 0)) ;;
+    drill_fields: [event_action]
+  }
+
+  ##### END OF BUSINESS LOGIC FOR EVENTS ################
+}
+
+########## Conditional Filter: hitType == "APPVIEW" ##########
+view: ga_hits_full__hits__app_info {
+
+  # Re-create a primary key
+  dimension: primary {
+    hidden: yes
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
+  }
+
+#   dimension: id {
+#     type: string
+#     sql: ${TABLE}.id ;;
+#   }
+
+  dimension: app_id {
+    type: string
+    sql: ${TABLE}.appId ;;
+  }
+
+  dimension: app_installer_id {
+    type: string
+    sql: ${TABLE}.appInstallerId ;;
+  }
+
+  dimension: app_name {
+    type: string
+    sql: ${TABLE}.appName ;;
+  }
+
+  dimension: app_version {
+    type: string
+    sql: ${TABLE}.appVersion ;;
+  }
+
+  dimension: exit_screen_name {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.exitScreenName ;;
+  }
+
+  dimension: installer_id {
+    type: string
+    sql: ${TABLE}.installerId ;;
+  }
+
+  dimension: landing_screen_name {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.landingScreenName ;;
+  }
+
+  dimension: name {
+    type: string
+    sql: ${TABLE}.name ;;
+  }
+
+  dimension: screen_depth {
+    type: string
+    sql: ${TABLE}.screenDepth ;;
+  }
+
+  dimension: screen_name {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.screenName ;;
+  }
+
+  dimension: version {
+    type: string
+    sql: ${TABLE}.version ;;
+  }
+}
+
+########## Conditional Filter: hitType == "PAGE" ##########
+view: ga_hits_full__hits__page{
+
+  # Re-create a primary key
+  dimension: primary {
+    hidden: yes
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
+  }
+
+#   dimension: hostname {
+#     type: string
+#     sql: ${TABLE}.hostname ;;
+#   }
+
+  dimension: page_path {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.pagePath ;;
+  }
+
+#   dimension: page_path_level1 {
+#     type: string
+#     sql: ${TABLE}.pagePathLevel1 ;;
+#   }
+
+  dimension: page_path_level2 {
+    type: string
+    sql: ${ga_hits_full__hits.page}.pagePathLevel2 ;;
+  }
+
+  dimension: page_path_level3 {
+    type: string
+    sql: ${ga_hits_full__hits.page}.pagePathLevel3 ;;
+  }
+
+  dimension: page_path_level4 {
+    type: string
+    sql: ${ga_hits_full__hits.page}.pagePathLevel4 ;;
+  }
+
+  dimension: page_title {
+    type: string
+    sql: ${ga_hits_full__hits.page}.pageTitle ;;
+  }
+
+#   dimension: search_category {
+#     type: string
+#     sql: ${TABLE}.searchCategory ;;
+#   }
+#
+  dimension: search_keyword {
+    type: string
+    sql: ${ga_hits_full__hits.page}.searchKeyword ;;
+  }
+
+#   dimension: search_keyword_binary {
+#     hidden: yes
+#     type: number
+#     sql: IF(${search_keyword} IS NOT NULL, 1, 0) ;;
+#   }
+
+  # count the number of sessions' unique search
+  measure: total_searches_count {
+    type: number
+    sql: COUNT(${search_keyword});;
+  }
+
+
+}
+
+########## Conditional Filter: hitType == "PAGE|APPVIEW" ##########
+view: ga_hits_full__hits__pageview_and_appview{
+
+  # Re-create a primary key
+  dimension: primary {
+    hidden: yes
+    primary_key: yes
+    type: string
+    sql: CONCAT(${ga_hits_full.date},
+                CAST(${ga_hits_full.visit_id} AS STRING),
+                ${ga_hits_full.full_visitor_id});;
+  }
+
+  dimension: page_screen_path {
+    type: string
+    sql:
+      CASE
+        WHEN ${ga_hits_full__hits.hit_type} = 'PAGE' THEN ${ga_hits_full__hits__page.page_path}
+        WHEN ${ga_hits_full__hits.hit_type} = 'APPVIEW' THEN ${ga_hits_full__hits__app_info.screen_name}
+        ELSE NULL
+      END;;
+  }
+
+  dimension: page_screen_landing_page {
+    type: string
+    sql:
+      CASE
+        WHEN (${ga_hits_full__hits.hit_type} = 'PAGE'
+              AND ${ga_hits_full__hits.is_entrance} IS TRUE) THEN ${ga_hits_full__hits__page.page_path}
+        WHEN ${ga_hits_full__hits.hit_type} = 'APPVIEW' THEN ${ga_hits_full__hits__app_info.landing_screen_name}
+        ELSE NULL
+      END;;
+  }
+
+  dimension: page_screen_exit_page {
+    type: string
+    sql:
+      CASE
+        WHEN (${ga_hits_full__hits.hit_type} = 'PAGE'
+              AND ${ga_hits_full__hits.is_exit} IS TRUE) THEN ${ga_hits_full__hits__page.page_path}
+        WHEN ${ga_hits_full__hits.hit_type} = 'APPVIEW' THEN ${ga_hits_full__hits__app_info.exit_screen_name}
+        ELSE NULL
+      END;;
+  }
+
+}
+
+########## Conditional Filter: hitType == "SOCIAL" ##########
+view: ga_hits_full__hits__social {
+  dimension: has_social_source_referral {
+    type: string
+    sql: ${TABLE}.hasSocialSourceReferral ;;
+  }
+
+  dimension: social_interaction_action {
+    type: string
+    sql: ${TABLE}.socialInteractionAction ;;
+  }
+
+  dimension: social_interaction_network {
+    type: string
+    sql: ${TABLE}.socialInteractionNetwork ;;
+  }
+
+  dimension: social_interaction_network_action {
+    type: string
+    sql: ${TABLE}.socialInteractionNetworkAction ;;
+  }
+
+  dimension: social_interaction_target {
+    type: string
+    sql: ${TABLE}.socialInteractionTarget ;;
+  }
+
+  dimension: social_interactions {
+    type: number
+    sql: ${TABLE}.socialInteractions ;;
+  }
+
+  dimension: social_network {
+    type: string
+    sql: ${TABLE}.socialNetwork ;;
+  }
+
+  dimension: unique_social_interactions {
+    type: number
+    sql: ${TABLE}.uniqueSocialInteractions ;;
   }
 }
