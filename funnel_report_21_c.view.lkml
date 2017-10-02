@@ -43,8 +43,8 @@ view: funnel_report_21_c {
     type: sum
     sql: ${TABLE}.confirmed_GMV ;;
     group_label: "Order Fields"
-    value_format_name: decimal_1
-  }
+    value_format_name: usd_0
+    }
 
   measure: contact_dealer {
     type: sum
