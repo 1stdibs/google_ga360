@@ -1,6 +1,13 @@
 view: ga_sessions_full {
-  sql_table_name: `api-project-1065928543184.96922533.ga_sessions*`
+  sql_table_name: `api-project-1065928543184.96922533.ga_sessions_*`
     ;;
+
+  # added time partitioned filter
+  filter: ga_session_date {
+    type: string
+    sql: {% condition %} _TABLE_SUFFIX {% endcondition %} ;;
+  }
+
 
   dimension: primary {
     primary_key: yes
@@ -347,6 +354,7 @@ view: ga_sessions_full__totals {
 # TYPE: ARRAY
 view: ga_sessions_full__geo_network {
 
+  # recreate a primary key
   dimension: primary {
     hidden: yes
     primary_key: yes

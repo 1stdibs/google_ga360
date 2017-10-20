@@ -590,76 +590,76 @@ view: ga_hits_full__hits__product__custom_metrics {
 ####################################################################
 ####################################################### TEST ADDED #
 
-# In QA: IP addression info
-view: ga_hits_full__geo_network {
+# # In QA: IP addression info
+# view: ga_hits_full__geo_network {
 
-  # Re-create a primary key
-  dimension: primary {
-    hidden: yes
-    primary_key: yes
-    type: string
-    sql: CONCAT(${ga_hits_full.date},
-                CAST(${ga_hits_full.visit_id} AS STRING),
-                ${ga_hits_full.full_visitor_id});;
-  }
+#   # Re-create a primary key
+#   dimension: primary {
+#     hidden: yes
+#     primary_key: yes
+#     type: string
+#     sql: CONCAT(${ga_hits_full.date},
+#                 CAST(${ga_hits_full.visit_id} AS STRING),
+#                 ${ga_hits_full.full_visitor_id});;
+#   }
 
-  dimension: city {
-    type: string
-    sql: ${TABLE}.city ;;
-  }
+#   dimension: city {
+#     type: string
+#     sql: ${TABLE}.city ;;
+#   }
 
-  dimension: city_id {
-    type: string
-    sql: ${TABLE}.cityId ;;
-  }
+#   dimension: city_id {
+#     type: string
+#     sql: ${TABLE}.cityId ;;
+#   }
 
-  dimension: continent {
-    type: string
-    sql: ${TABLE}.continent ;;
-  }
+#   dimension: continent {
+#     type: string
+#     sql: ${TABLE}.continent ;;
+#   }
 
-  dimension: country {
-    type: string
-    map_layer_name: countries
-    sql: ${TABLE}.country ;;
-  }
+#   dimension: country {
+#     type: string
+#     map_layer_name: countries
+#     sql: ${TABLE}.country ;;
+#   }
 
-  dimension: latitude {
-    type: string
-    sql: ${TABLE}.latitude ;;
-  }
+#   dimension: latitude {
+#     type: string
+#     sql: ${TABLE}.latitude ;;
+#   }
 
-  dimension: longitude {
-    type: string
-    sql: ${TABLE}.longitude ;;
-  }
+#   dimension: longitude {
+#     type: string
+#     sql: ${TABLE}.longitude ;;
+#   }
 
-  dimension: metro {
-    type: string
-    sql: ${TABLE}.metro ;;
-  }
+#   dimension: metro {
+#     type: string
+#     sql: ${TABLE}.metro ;;
+#   }
 
-  dimension: network_domain {
-    type: string
-    sql: ${TABLE}.networkDomain ;;
-  }
+#   dimension: network_domain {
+#     type: string
+#     sql: ${TABLE}.networkDomain ;;
+#   }
 
-  dimension: network_service_provider {
-    # The names of the service providers used to reach the property.
-    type: string
-    sql: ${TABLE}.networkLocation ;;
-  }
+#   dimension: network_service_provider {
+#     # The names of the service providers used to reach the property.
+#     type: string
+#     sql: ${TABLE}.networkLocation ;;
+#   }
 
-  dimension: region {
-    type: string
-    sql: ${TABLE}.region ;;
-  }
+#   dimension: region {
+#     type: string
+#     sql: ${TABLE}.region ;;
+#   }
 
-  dimension: sub_continent {
-    type: string
-    sql: ${TABLE}.subContinent ;;
-  }
-}
+#   dimension: sub_continent {
+#     type: string
+#     sql: ${TABLE}.subContinent ;;
+#   }
+# }
 
 # In QA: Event Info dimensions
 ########### Conditional Filter: hitType == "EVENT" ############

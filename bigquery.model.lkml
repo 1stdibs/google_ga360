@@ -128,52 +128,50 @@ explore: gmv_revenue_budget {
 
 
 
-explore: ga_sessions_version_2{
+explore: google_analytics_sessions {
   # define the
   view_name: ga_sessions_full
-  view_label: "Sessions"
+  view_label: "Sessions Summary"
 
   # join with the __custom_dimensions STRUC
   join: ga_sessions_full__custom_dimensions {
-    view_label: "Sessions: Custom Dimensions"
+    view_label: "Custom Dimensions"
   }
 
   # join with the __hits STRUC
   join: ga_sessions_full__hits {
-    view_label: "Sessions: Hits"
+    view_label: "Hits Info"
   }
 
   # join with the __totals RECORD
   join: ga_sessions_full__totals {
-    view_label: "Sessions: Totals"
+    view_label: "Totals"
     sql: LEFT JOIN UNNEST([${ga_sessions_full.totals}]) AS ga_sessions_full__totals ;;
     relationship: one_to_many
   }
 
   # join with the __traffic_source RECORD
   join: ga_sessions_full__traffic_source {
-    view_label: "Sessions: Traffic Source"
+    view_label: "Traffic Source"
     sql: LEFT JOIN UNNEST([${ga_sessions_full.traffic_source}]) AS ga_sessions_full__traffic_source;;
     relationship: one_to_many
   }
 
   # join with the __device RECORD
   join: ga_sessions_full__device {
-    view_label: "Sessions: Device"
+    view_label: "Device"
     sql: LEFT JOIN UNNEST([${ga_sessions_full.device}]) AS ga_sessions_full__device;;
     relationship: one_to_many
   }
 
   # join with the __geo_network RECORD
   join: ga_sessions_full__geo_network{
-    view_label: "Sessions: IP Address Info"
+    view_label: "IP Address Info"
     sql:  LEFT JOIN UNNEST([${ga_sessions_full.geo_network}]) AS ga_sessions_full__geo_network ;;
     relationship:  one_to_many
   }
 }
 ##############################################################
-
-
 
 explore: funnel_report_21_c {
   # define the
@@ -188,8 +186,8 @@ explore: order_attribution_base {
   view_label: "Order Attribution Base"
 }
 
-
-explore: ga_events_version_2 {
+# In QA ##########
+explore: google_analytics_hits {
   # define the
   view_name: ga_hits_full
   view_label: "Basic Info"
@@ -220,13 +218,6 @@ explore: ga_events_version_2 {
     view_label: "E-commerce Action"
     sql: LEFT JOIN UNNEST([${ga_hits_full__hits.e_commerce_action}]) AS ga_hits_full__hits__e_commerce_action ;;
     sql_where: ${ga_hits_full__hits.e_commerce_action} IS NOT NULL;;
-    relationship: one_to_many
-  }
-
-  join: ga_hits_full__geo_network {
-    view_label: "IP Address Info"
-    # * Added [] to repeat STRUCT field
-    sql: LEFT JOIN UNNEST([${ga_hits_full.geo_network}]) AS ga_hits_full__geo_network ;;
     relationship: one_to_many
   }
 
@@ -263,8 +254,6 @@ explore: ga_events_version_2 {
     sql_where: ${ga_hits_full__hits.hit_type} = 'SOCIAL' ;;
     relationship: one_to_many
   }
-
-
 
 }
 
