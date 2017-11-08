@@ -256,7 +256,10 @@ explore: google_analytics_hits {
   }
 
 }
-
+explore: ga_status {
+  # define the
+  view_label: "GA Status"
+}
 
 explore: ga_dates_list {
   # define the
