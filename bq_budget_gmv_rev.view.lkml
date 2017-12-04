@@ -94,9 +94,113 @@ view: bq_budget_gmv_rev {
     sql: ${TABLE}.Reforecast_Off_Platform_Confirmed_GMV ;;
   }
 
+  measure: Budget_Total_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Budget_Total_Submitted_Orders ;;
+  }
+
+  measure: Budget_Furniture_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Budget_Furniture_Submitted_Orders ;;
+  }
+
+  measure: Budget_Jewelry_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Budget_Jewelry_Submitted_Orders ;;
+  }
+
+  measure: Budget_Fashion_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Budget_Fashion_Submitted_Orders ;;
+  }
+
+  measure: Budget_Art_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Budget_Art_Submitted_Orders ;;
+  }
+
+  measure: Budget_Total_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Budget_Total_Submitted_GMV ;;
+  }
+
+  measure: Budget_Furniture_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Budget_Furniture_Submitted_GMV ;;
+  }
+
+  measure: Budget_Jewelry_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Budget_Jewelry_Submitted_GMV ;;
+  }
+
+  measure: Budget_Fashion_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Budget_Fashion_Submitted_GMV ;;
+  }
+
+  measure: Budget_Art_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Budget_Art_Submitted_GMV ;;
+  }
+
+  measure: Reforecast_Total_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Total_Submitted_Orders ;;
+  }
+
+  measure: Reforecast_Furniture_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Furniture_Submitted_Orders ;;
+  }
+
+  measure: Reforecast_Jewelry_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Jewelry_Submitted_Orders ;;
+  }
+
+  measure: Reforecast_Fashion_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Fashion_Submitted_Orders ;;
+  }
+
+  measure: Reforecast_Art_Submitted_Orders {
+    type: sum
+    sql: ${TABLE}.Reforecast_Art_Submitted_Orders ;;
+  }
+
+  measure: Reforecast_Total_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Total_Submitted_GMV ;;
+  }
+
+  measure: Reforecast_Furniture_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Furniture_Submitted_GMV ;;
+  }
+
+  measure: Reforecast_Jewelry_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Jewelry_Submitted_GMV ;;
+  }
+
+  measure: Reforecast_Fashion_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Fashion_Submitted_GMV ;;
+  }
+
+  measure: Reforecast_Art_Submitted_GMV {
+    type: sum
+    sql: ${TABLE}.Reforecast_Art_Submitted_GMV ;;
+  }
+
+
+
+
   measure: count {
     type: count
     drill_fields: []
     hidden: yes
   }
+
 }
