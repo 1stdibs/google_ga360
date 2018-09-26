@@ -143,7 +143,8 @@ explore: gmv_revenue_budget {
 explore: google_analytics_sessions {
   # define the
   view_name: ga_sessions_full
-  view_label: "RAW - Sessions Summary"
+  view_label: "Sessions Summary"
+  label: "Raw - GA Transactions"
 
   # join with the __custom_dimensions STRUC
   join: ga_sessions_full__custom_dimensions {
