@@ -12,6 +12,8 @@ include: "*.dashboard"
 
 
 explore: ga_sessions {
+  label: "FLAT - GA Sessions"
+
   always_filter:  {
     filters: {
       field: partition_date
@@ -24,6 +26,8 @@ explore: ga_sessions {
 
 explore: ga_session_counts {
   view_name: ga_ecommerce
+  label: "FLAT - GA Ecommerce (?)"
+
   fields: [ga_pageviews.sessions_count, ga_ecommerce.partition_date,ga_pageviews.partition_date, ga_ecommerce.sessions_with_pdp_view,ga_ecommerce.sessions_with_transaction,ga_pageviews.searchbrowse_sessions,ga_ecommerce.hit_date, ga_ecommerce.ecom_action_type, ga_pageviews.is_searchbrowse,ga_pageviews.isPDP, ga_pageviews.web_page_path]
   join: ga_pageviews {
     type: inner
@@ -42,11 +46,14 @@ explore: ga_session_counts {
 
 explore: ga_pageviews {
   sql_always_where: ${ga_pageviews.partition_date}=${ga_pageviews.hit_date};;
+  label: "FLAT - GA Pageviews"
+
   always_filter:  {
     filters: {
       field: partition_date
       value: "last 30 days"
     }
+
   }
   # join: ga_sessions {
   #   relationship: many_to_one
@@ -68,6 +75,8 @@ explore: ga_events {
       value: "last 30 days"
     }
   }
+  label: "FLAT - GA Events"
+
   # join: ga_sessions {
   #   sql_on: ${ga_events.sessionid} = ${ga_sessions.sessionid};;
   # }
@@ -81,6 +90,7 @@ explore: ga_ecommerce {
       value: "last 30 days"
     }
   }
+  label: "FLAT - GA ecommerce"
   # join: ga_sessions {
   #   sql_on: ${ga_ecommerce.sessionid} = ${ga_sessions.sessionid};;
   # }
@@ -105,6 +115,8 @@ explore: ga_transactions {
       value: "last 30 days"
     }
   }
+  label: "FLAT - GA Transactions"
+
 }
 
 explore: traffic_budget {
