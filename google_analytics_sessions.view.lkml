@@ -9,6 +9,14 @@ view: ga_sessions_full {
   }
 
 
+  dimension_group: ga_date {
+    type: time
+    timeframes: [date,week,month,year]
+    sql: _PARTITIONTIME ;;
+    # NOTE: for manually partitioned files use code below
+    # sql: TIMESTAMP(PARSE_DATE('%Y%m%d', REGEXP_EXTRACT(_TABLE_SUFFIX,r'\d\d\d\d\d\d\d\d'))) ;;
+  }
+
   dimension: primary {
     primary_key: yes
     type: string

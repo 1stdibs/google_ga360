@@ -144,7 +144,14 @@ explore: google_analytics_sessions {
   # define the
   view_name: ga_sessions_full
   view_label: "Sessions Summary"
-  label: "Raw - GA Transactions"
+  label: "Raw - GA Sessions"
+
+  conditionally_filter: {
+    filters: {
+      field: ga_sessions_full.ga_date_date
+      value: "1 days ago for 1 day"
+    }
+  }
 
   # join with the __custom_dimensions STRUC
   join: ga_sessions_full__custom_dimensions {
