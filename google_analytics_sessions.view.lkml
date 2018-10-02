@@ -10,6 +10,12 @@ view: ga_sessions_full {
 
   }
 
+  filter: _table_suffix_date {
+    type: string
+#     sql: ${_table_suffix} ;;
+
+  }
+
   filter: date_range {
     type: string
   }

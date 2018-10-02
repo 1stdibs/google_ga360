@@ -153,7 +153,15 @@ explore: google_analytics_sessions {
         value: "2018"
       }
 
+    filters: {
+      field: ga_sessions_full._table_suffix
+      value: "10"
+    }
 
+    filters: {
+      field: ga_sessions_full.sessions_date_date
+      value: "7 days"
+    }
 
   }
 #
