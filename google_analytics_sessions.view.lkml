@@ -1,13 +1,78 @@
 view: ga_sessions_full {
-  sql_table_name: `api-project-1065928543184.96922533.ga_sessions_*`
-    ;;
+  sql_table_name:
+   `api-project-1065928543184.96922533.ga_sessions_{% parameter ga_year %}*`    ;;
 
-  # added time partitioned filter
-  filter: ga_session_date {
+
+#   # added time partitioned filter
+  dimension: _table_suffix {
     type: string
-    sql: {% condition %} _TABLE_SUFFIX {% endcondition %} ;;
+    sql: ${TABLE}._TABLE_SUFFIX ;;
+
   }
 
+  filter: _table_suffix_date {
+    type: string
+#     sql: ${_table_suffix} ;;
+
+  }
+
+  filter: date_range {
+    type: string
+  }
+
+#   dimension: start_date {
+#     type: string
+#     sql: {% date_start ${date_range} %};;
+#   }
+
+  parameter: ga_year {
+    type: unquoted
+    allowed_value: {
+      label: "2018"
+      value: "2018"
+    }
+    allowed_value: {
+      label: "2017"
+      value: "2017"
+      }
+    allowed_value: {
+      label: "2016"
+      value: "2016"
+
+      }
+    allowed_value: {
+      label: "2015"
+      value: "2015"
+      }
+    allowed_value: {
+      label: "2014"
+      value: "2014"
+    }
+
+    allowed_value: {
+      label: "2013"
+      value: "2013"
+    }
+    default_value: "2018"
+  }
+
+
+  dimension: kjlkj {
+    type: string
+    sql: '' ;;
+
+  }
+
+#
+#   dimension_group: ga_date {
+#     type: time
+#     timeframes: [date,week,month,year]
+# #     sql: _PARTITIONTIME ;;
+#     # NOTE: for manually partitioned files use code below
+#     sql:  {% time_dimension.date_granularity._parameter_value %}
+#  ;;
+#
+#   }
 
   dimension: primary {
     primary_key: yes

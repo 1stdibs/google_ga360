@@ -14,6 +14,15 @@ explore: daily_sessions {}
 
 
 
+#   always_filter:  {
+#     filters: {
+#       field: partition_date
+#       value: "last 30 days"
+#     }
+#   }
+#   sql_always_where: ${ga_sessions.partition_date}=${ga_sessions.session_start_date};;
+
+
 
 
 
@@ -174,12 +183,48 @@ explore: daily_sessions {}
 
 
 
-
 # explore: google_analytics_sessions {
 #   # define the
 #   view_name: ga_sessions_full
 #   view_label: "Sessions Summary"
-#   label: "Raw - GA Transactions"
+#   label: "Raw - GA Sessions"
+
+#   always_filter: {
+
+#       filters: {
+#         field: ga_sessions_full.ga_year
+#         value: "2018"
+#       }
+
+#     filters: {
+#       field: ga_sessions_full._table_suffix
+#       value: "10"
+#     }
+
+#     filters: {
+#       field: ga_sessions_full.sessions_date_date
+#       value: "7 days"
+#     }
+
+#   }
+#
+#   sql_always_where:
+#   {% if time_dimension.date_granularity._parameter_value == 'month' %}
+#   ${time_dimension.day}=1
+#   {% elsif time_dimension.date_granularity._parameter_value == 'quarter' %}
+#   ${time_dimension.day}=1 and ${time_dimension.month_number} in (1,4,7,10)
+#   {% else %}
+#   ${time_dimension.day}=1 and ${time_dimension.month_number} =1
+#   {% endif %}
+#
+#   ;;
+
+#   conditionally_filter: {
+#     filters: {
+#       field: ga_sessions_full.ga_date_date
+#       value: "1 days ago for 1 day"
+#     }
+#   }
 
 #   # join with the __custom_dimensions STRUC
 #   join: ga_sessions_full__custom_dimensions {
