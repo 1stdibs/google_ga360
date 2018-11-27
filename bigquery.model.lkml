@@ -12,6 +12,15 @@ include: "*.dashboard"
 
 explore: daily_sessions {}
 
+explore: ga_pageviews {
+  :conditionally_filter: {
+    filters: {
+      field: partition_time
+      value: "last 30 days"
+    }
+  }
+}
+
 
 
 #   always_filter:  {
