@@ -1,67 +1,294 @@
 view: ga_sessions_full {
   sql_table_name:
-   `api-project-1065928543184.96922533.ga_sessions_{% parameter ga_year %}*`    ;;
-
-
+   `api-project-1065928543184.96922533.ga_sessions_20*`    ;;
+## Add the 20 to avoid including intraday tables
+#{% parameter ga_year %}
 #   # added time partitioned filter
-  dimension: _table_suffix {
-    type: string
-    sql: ${TABLE}._TABLE_SUFFIX ;;
 
-  }
 
-  filter: _table_suffix_date {
-    type: string
-#     sql: ${_table_suffix} ;;
 
-  }
+#### Session Level Information
 
-  filter: date_range {
-    type: string
-  }
-
-#   dimension: start_date {
-#     type: string
-#     sql: {% date_start ${date_range} %};;
-#   }
-
-  parameter: ga_year {
-    type: unquoted
-    allowed_value: {
-      label: "2018"
-      value: "2018"
-    }
-    allowed_value: {
-      label: "2017"
-      value: "2017"
-      }
-    allowed_value: {
-      label: "2016"
-      value: "2016"
-
-      }
-    allowed_value: {
-      label: "2015"
-      value: "2015"
-      }
-    allowed_value: {
-      label: "2014"
-      value: "2014"
+    dimension: _table_suffix {
+      type: string
+      sql: ${TABLE}._TABLE_SUFFIX ;;
+      hidden: yes
+      # Useful for testing
     }
 
-    allowed_value: {
-      label: "2013"
-      value: "2013"
+
+    dimension: date_suffix {
+      type: date_time
+      sql:
+          TIMESTAMP(PARSE_DATE('%Y%m%d',CONCAT('20',${TABLE}._TABLE_SUFFIX))) ;;
+      label: "Day of Session"
+      description: "Date of the session - used to scan tables and return only specific partitioned tables"
+      view_label: "Session Details"
     }
-    default_value: "2018"
-  }
 
 
-  dimension: kjlkj {
+  dimension: sessionid {
+    primary_key: yes
     type: string
-    sql: '' ;;
-
+    sql:concat(${date}, cast(${visit_id} AS string), ${full_visitor_id}) ;;
+    description: "Specific identifier for session, unique per user/device."
+    group_label: "Session Identifiers"
+    view_label: "Session Details"
   }
+
+  dimension: date {
+    type: string
+    sql: ${TABLE}.date ;;
+    hidden: yes
+  }
+
+  dimension_group: time_of_session {
+    type: time
+    timeframes: [time, time_of_day]
+    sql: cast(PARSE_DATE('%Y%m%d', ${date}) as TIMESTAMP) ;;
+    view_label: "Session Details"
+  }
+
+
+  dimension: full_visitor_id {
+    type: string
+    sql: ${TABLE}.fullVisitorId ;;
+    group_label: "Session Identifiers"
+    view_label: "Session Details"
+  }
+
+  dimension: visit_id {
+    type: number
+    sql: ${TABLE}.visitId ;;
+    group_label: "Session Identifiers"
+    view_label: "Session Details"
+  }
+
+  dimension: visit_number {
+    type: number
+    sql: ${TABLE}.visitNumber ;;
+    group_label: "Session Identifiers"
+    view_label: "Session Details"
+  }
+
+  dimension: session_start_time {
+    type: date_time
+    sql: TIMESTAMP_SECONDS(${TABLE}.visitStartTime) ;;
+    view_label: "Session Details"
+  }
+
+  dimension: channel_grouping {
+    type: string
+    sql: ${TABLE}.channelGrouping ;;
+    view_label: "Session Details"
+    group_label: "Acquisition"
+  }
+
+
+
+    ####### Access Totals Record #################
+
+
+    dimension: session_quality {
+      type: number
+      sql: ${TABLE}.totals.sessionQualityDim ;;
+      view_label: "Session Details"
+      group_label: "Session Attributes"
+    }
+
+    dimension: time_on_site {
+      type: number
+      sql: ${TABLE}.totals.timeOnSite + ${TABLE}.totals.timeOnScreen ;;
+      view_label: "Session Details"
+      hidden: yes
+    }
+
+
+
+  ####### Access Traffic Source Record #################
+
+
+  dimension: session_source {
+    type: string
+    sql: ${TABLE}.trafficSource.source ;;
+    view_label: "Session Details"
+    group_label: "Acquisition"
+  }
+
+  dimension: session_medium {
+    type: string
+    sql: ${TABLE}.trafficSource.medium ;;
+    view_label: "Session Details"
+    group_label: "Acquisition"
+  }
+
+  dimension: session_campaign {
+    type: string
+    sql: ${TABLE}.trafficSource.campaign ;;
+    view_label: "Session Details"
+    group_label: "Acquisition"
+  }
+
+  dimension: session_keyword {
+    type: string
+    sql: ${TABLE}.trafficSource.keyword ;;
+    view_label: "Session Details"
+    group_label: "Acquisition"
+  }
+
+
+  ####### Access Device Record #################
+
+
+  dimension: device_browser {
+    type: string
+    sql: ${TABLE}.device.browser ;;
+    view_label: "Session Details"
+    group_label: "Device Details"
+  }
+
+  dimension: device_operating_system {
+    type: string
+    sql: ${TABLE}.device.operatingSystem ;;
+    view_label: "Session Details"
+    group_label: "Device Details"
+  }
+
+  dimension: device_is_mobile {
+    type: yesno
+    sql: ${TABLE}.device.isMobile ;;
+    view_label: "Session Details"
+    group_label: "Device Details"
+  }
+
+  dimension: device_category {
+    type: string
+    sql: ${TABLE}.device.deviceCategory ;;
+    view_label: "Session Details"
+    group_label: "Device Details"
+  }
+
+
+
+  ####### Access GeoNetwork Record #################
+
+
+  dimension: session_continent {
+    type: string
+    sql: ${TABLE}.geoNetwork.continent ;;
+    view_label: "Session Details"
+    group_label: "Geography Details"
+  }
+
+  dimension: session_country {
+    type: string
+    sql: ${TABLE}.geoNetwork.country ;;
+    view_label: "Session Details"
+    group_label: "Geography Details"
+  }
+
+
+  dimension: session_region {
+    type: string
+    sql: ${TABLE}.geoNetwork.region ;;
+    view_label: "Session Details"
+    group_label: "Geography Details"
+  }
+
+
+  dimension: session_city {
+    type: string
+    sql: ${TABLE}.geoNetwork.city ;;
+    view_label: "Session Details"
+    group_label: "Geography Details"
+  }
+
+
+  dimension: session_location {
+    type: location
+    sql_latitude: ${TABLE}.geoNetwork.latitude ;;
+    sql_longitude: ${TABLE}.geoNetwork.longitude ;;
+    view_label: "Session Details"
+    group_label: "Geography Details"
+  }
+
+
+  ######################## Other
+    parameter: ga_year {
+      type: unquoted
+      allowed_value: {
+        label: "2018"
+        value: "2018"
+      }
+      allowed_value: {
+        label: "2017"
+        value: "2017"
+      }
+      allowed_value: {
+        label: "2016"
+        value: "2016"
+
+      }
+      allowed_value: {
+        label: "2015"
+        value: "2015"
+      }
+      allowed_value: {
+        label: "2014"
+        value: "2014"
+      }
+
+      allowed_value: {
+        label: "2013"
+        value: "2013"
+      }
+      default_value: "2018"
+      hidden: yes
+    }
+
+
+
+
+
+### Nested Records ##########
+
+
+    dimension: hits {
+      sql: ${TABLE}.hits ;;
+      hidden: yes
+    }
+
+    dimension: totals {
+      sql: ${TABLE}.totals ;;
+      hidden: yes
+    }
+
+    dimension: customDimensions {
+      sql: ${TABLE}.customDimensions ;;
+      hidden: yes
+    }
+
+  dimension: device {
+    hidden: yes
+    sql: ${TABLE}.device ;;
+  }
+
+  dimension: geo_network {
+    hidden: yes
+    sql: ${TABLE}.geoNetwork ;;
+  }
+
+
+  dimension: traffic_source {
+    hidden: yes
+    sql: ${TABLE}.trafficSource ;;
+    view_label: "Acquisition details"
+    label: "Session Source"
+  }
+
+################
+
+
 
 #
 #   dimension_group: ga_date {
@@ -74,567 +301,241 @@ view: ga_sessions_full {
 #
 #   }
 
-  dimension: primary {
-    primary_key: yes
-    type: string
-    sql:concat(${date}, cast(${visit_id} AS string), ${full_visitor_id}) ;;
-  }
-
-  dimension: date {
-    type: string
-    sql: ${TABLE}.date ;;
-  }
-
-  dimension_group: sessions_date {
-    type: time
-    timeframes: [date, week, month]
-    sql: cast(PARSE_DATE('%Y%m%d', ${date}) as TIMESTAMP) ;;
-  }
-
-
-  dimension: full_visitor_id {
-    type: string
-    sql: ${TABLE}.fullVisitorId ;;
-  }
-
-  dimension: visit_id {
-    type: number
-    sql: ${TABLE}.visitId ;;
-  }
 
   measure: total_user_count {
     type: count_distinct
     sql: ${full_visitor_id}  ;;
+    view_label: "Session Details"
+    group_label: "Visitor Details"
+    label: "Total Distinct Visitors"
   }
 
-  dimension: visit_number {
-    type: number
-    sql: ${TABLE}.visitNumber ;;
-  }
 
-  dimension: session_start_time {
-    type: date_time
-    sql: TIMESTAMP_SECONDS(${TABLE}.visitStartTime) ;;
-  }
 
-  dimension: channel_grouping {
-    type: string
-    sql: ${TABLE}.channelGrouping ;;
-  }
-
-  dimension: totals {
-    hidden: yes
-    sql: ${TABLE}.totals ;;
-  }
-
-  dimension: custom_dimensions {
-    hidden: yes
-    sql: ${TABLE}.customDimensions ;;
-  }
-
-  dimension: device {
-    hidden: yes
-    sql: ${TABLE}.device ;;
-  }
-
-  dimension: geo_network {
-    hidden: yes
-    sql: ${TABLE}.geoNetwork ;;
-  }
-
-  dimension: hits {
-    hidden: yes
-    sql: ${TABLE}.hits ;;
-  }
-
-  dimension: traffic_source {
-    hidden: yes
-    sql: ${TABLE}.trafficSource ;;
-  }
-
-#  dimension: social_engagement_type {
-#    type: string
-#    sql: ${TABLE}.socialEngagementType ;;
-#  }
-
+    measure: sessions {
+      type: sum
+      sql: ${TABLE}.totals.visits ;;
+      sql_distinct_key: ${sessionid} ;;
+      view_label: "Session Details"
+      label: "Count of Sessions"
+    }
 }
 
-# SUB-VIEW: CUSTOM DIMENSIONS ########
-# TYPE: STRUC (2-level ARRAY)
-view: ga_sessions_full__custom_dimensions {
+######################## SUB-VIEW: USER/SESSION SCOPED CUSTOM DIMENSIONS ######################
 
-  # hide this variable in the explore
-  dimension: index {
-    hidden: yes
-    type: number
-    sql: ${TABLE}.index ;;
-  }
+# TYPE: STRUCT (2-level ARRAY)
+  view: customDimensions {
 
-  # hide this variable in the explore
-  dimension: value {
-    hidden: yes
-    type: string
-    sql: ${TABLE}.value ;;
-  }
 
-  dimension: primary {
-    hidden: yes
-    primary_key: yes
-    type: string
-    sql: concat(${ga_sessions_full.date},
+    dimension: index {
+      hidden: yes
+      type: number
+      sql: ${TABLE}.index ;;
+    }
+
+
+    dimension: value {
+      hidden: yes
+      type: string
+      sql: ${TABLE}.value ;;
+    }
+
+    dimension: primary {
+      hidden: yes
+      primary_key: yes
+      type: string
+      sql: concat(${ga_sessions_full.date},
         cast(${ga_sessions_full.visit_id} AS string),
         ${ga_sessions_full.full_visitor_id}) ;;
-  }
+    }
 
-  dimension: user_id {
-    type: string
-    sql:
-      (SELECT
-        MAX(IF(temp.index = 33, temp.value, NULL))
+    ## User Scoped Custom Dimensions ##
+
+    dimension: buyer_status {
+      type: string
+      view_label: "User Session details"
+      label: "Session Buyer Status"
+      sql:
+        (SELECT lower(value)
+        FROM
+          ${ga_sessions_full.customDimensions} AS temp
+        WHERE index = 24
+        )
+      ;;
+      }
+
+    dimension: customer_type {
+      type: string
+      view_label: "User Session details"
+      label: "Session Customer Type"
+      sql:
+        (SELECT lower(value)
+        FROM
+          ${ga_sessions_full.customDimensions} AS temp
+        WHERE index = 34
+        )
+      ;;
+    }
+
+    dimension: user_id {
+      type: string
+      sql:
+      (SELECT value
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
-  }
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 33
+      );;
+      view_label: "User Session details"
+      label: ".User ID"
+    }
 
-  dimension: guest_id {
-    type: string
-    sql:
-      (SELECT
-        MAX(IF(temp.index = 32, temp.value, NULL))
+    dimension: guest_id {
+      type: string
+      sql:
+      (SELECT value
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
-  }
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 32
+        );;
+      view_label: "User Session details"
+      label: ".Guest ID"
+    }
 
-  dimension: login_status {
-    type: string
-    sql:
-      (SELECT
-        MAX(IF(temp.index = 29, temp.value, NULL))
+    dimension: session_registration_status {
+      type: string
+      sql:
+      (SELECT lower(value)
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
-  }
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 30
+        );;
+      view_label: "User Session details"
+    }
 
-  dimension: registration_status {
-    type: string
-    sql:
-      (SELECT
-        MAX(IF(temp.index = 30, temp.value, NULL))
+    dimension: trade_firm_id {
+      type: string
+      sql:
+      (SELECT value
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
-  }
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 82
+        );;
+      view_label: "User Session details"
+      label: ".User Trade Firm ID"
+    }
 
-  dimension: customer_type {
-    type: string
-    sql:
-      (SELECT
-        MAX(IF(temp.index = 34, temp.value, NULL))
+
+    dimension: session_login_status {
+      type: string
+      sql:
+      (SELECT lower(value)
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
-  }
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 29
+        );;
+      view_label: "User Session details"
+    }
 
-  dimension: buyer_status {
-    type: string
-    sql:
-      (SELECT
-        MAX(IF(temp.index = 24, temp.value, NULL))
+
+
+    dimension: session_trade_status {
+      type: string
+      sql:
+      (SELECT lower(value)
       FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 6
+        );;
+      view_label: "User Session details"
+    }
+
   }
 
-  dimension: trade_status {
-    type: string
-    sql:
-      (SELECT
-        MAX(IF(temp.index = 6, temp.value, NULL))
-      FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
-  }
 
-  dimension: default_currency {
-    type: string
-    sql:
-      (SELECT
-        MAX(IF(temp.index = 23, temp.value, NULL))
-      FROM
-        UNNEST(${ga_sessions_full.custom_dimensions}) AS temp);;
-  }
 
-}
+
 
 # SUB-VIEW: HITS ########
 # TYPE: STRUC (2-level ARRAY)
-view: ga_sessions_full__hits {
-  dimension: primary {
-    hidden: yes
-    primary_key: yes
-    type: string
-    sql: concat(${ga_sessions_full.date},
+  view: hits {
+    dimension: primary {
+      hidden: yes
+      primary_key: yes
+      type: string
+      sql: concat(${ga_sessions_full.date},
         cast(${ga_sessions_full.visit_id} AS string),
         ${ga_sessions_full.full_visitor_id}) ;;
+    }
+
+
+
+    dimension: type {
+      type: string
+      sql: ${TABLE}.type ;;
+      hidden: yes
+    }
+
+    dimension: app_info {
+      hidden: yes
+      sql: ${TABLE}.appInfo ;;
+    }
+
+    measure: web_pageviews {
+      type: sum
+      sql:
+      if(page.pagePath != '', 1, 0);;
+      sql_distinct_key: ${primary} ;;
+      filters: {
+        field: type
+        value: "PAGE"
+      }
+    }
+
+    measure: web_pdp_pageviews {
+      type: sum
+      sql:
+      if(page.pagePath != '', 1, 0);;
+      sql_distinct_key: ${primary} ;;
+      filters: {
+        field: type
+        value: "PAGE"
+      }
+      filters: {
+        field: pageType
+        value: "Products"
+      }
+    }
+
+    measure: app_pageviews {
+      type: sum
+      sql:
+      if(appInfo.screenName != '', 1, 0);;
+      sql_distinct_key: ${primary} ;;
+      filters: {
+        field: type
+        value: "APP"
+      }
+    }
+
+
+    ########### Page Level Dimensions
+
+    dimension: pageType {
+      type: string
+      sql: contentGroup.contentGroup1 ;;
+      view_label: "Page Level Details"
+      description: "Content grouping of pages : (Products, Results, Home, Other)"
+    }
+
+    dimension: pageSubType {
+      type: string
+      sql: contentGroup.contentGroup2 ;;
+      view_label: "Page Level Details"
+      description: "Content sub-grouping of pages : (PDP-Available, Search, Browse, Checkout, etc.)"
+    }
+
+
+    ##########
+
+
   }
-
-  dimension: app_info {
-    hidden: yes
-    sql: ${TABLE}.appInfo ;;
-  }
-
-  # build measure to count how many Events
-  # @Vicky: what is the difference between Events and hits
-  dimension: events {
-    type: number
-    sql: (
-    SELECT SUM(IF(temp.type = "EVENT", 1, 0))
-    FROM
-        UNNEST(${ga_sessions_full.hits}) AS temp
-      ) ;;
-  }
-
-  # dimension: events {
-  #   type: number
-  #   sql: SUM(IF(${TABLE}.type = "EVENT", 1, 0)) ;;
-  # }
-
-  # ADDED MESAURE: count total number of transactions ########
-  measure: total_events_count {
-    type: number
-    sql: SUM(${events}) ;;
-  }
-
-  # dimension: is_exit {
-  #   type: yesno
-  #   sql: ${TABLE}.isExit ;;
-  # }
-
-  # dimension: is_entrance {
-  #   type: yesno
-  #   sql: ${TABLE}.isEntrance ;;
-  # }
-}
-
-# SUB-VIEW: TOTALS ########
-# TYPE: ARRAY
-view: ga_sessions_full__totals {
-
-  dimension: primary {
-    hidden: yes
-    primary_key: yes
-    type: string
-    sql: concat(${ga_sessions_full.date},
-        cast(${ga_sessions_full.visit_id} AS string),
-        ${ga_sessions_full.full_visitor_id}) ;;
-  }
-
-  dimension: bounces {
-    type: number
-    sql: ${TABLE}.bounces ;;
-  }
-
-  dimension: hits {
-    type: number
-    sql: ${TABLE}.hits ;;
-  }
-
-  dimension: new_visits {
-    type: number
-    sql: ${TABLE}.newVisits ;;
-  }
-
-  dimension: pageviews {
-    type: number
-    sql: ${TABLE}.pageviews ;;
-  }
-
-  dimension: screenviews {
-    type: number
-    sql: ${TABLE}.screenviews ;;
-  }
-
-  dimension: pageviews_and_screenviews {
-    type: number
-    sql: case when ${pageviews} is null then ${screenviews}
-          else ${pageviews} end;;
-  }
-
-  dimension: time_on_screen {
-    type: number
-    sql: ${TABLE}.timeOnScreen ;;
-  }
-
-  dimension: time_on_site {
-    type: number
-    sql: ${TABLE}.timeOnSite ;;
-  }
-
-  dimension: total_transaction_revenue {
-    type: number
-    sql: ROUND(${TABLE}.totalTransactionRevenue/1000000, 3) ;;
-  }
-
-  dimension: transactions {
-    type: number
-    sql: ${TABLE}.transactions ;;
-  }
-
-  dimension: unique_screenviews {
-    type: number
-    sql: ${TABLE}.uniqueScreenviews ;;
-  }
-
-  dimension: visits {
-    type: number
-    sql: ${TABLE}.visits ;;
-  }
-
-  # ADDED MEASURE: count total number of pageviews and screenviews ########
-  measure: total_pageviews_and_screenviews_count {
-    type: sum
-    sql:  ${pageviews_and_screenviews};;
-  }
-
-  # ADDED MESAURE: count total number of transactions ########
-  measure: total_transactions_count {
-    type: sum
-    sql: ${transactions} ;;
-  }
-
-  # ADDED MEASURE: count total number of bounced sessions ########
-  measure: total_bounced_sessions_count {
-    type: sum
-    sql: ${bounces} ;;
-  }
-
-  # ADDED MESAURE: count total number of (valid) sessions ########
-  measure: total_sessions_count {
-    type: sum
-    sql: ${visits} ;;
-  }
-
-  # ADDED MEASURE: the total value of transaction revenue  ########
-  measure: total_gmv {
-    type: sum
-    sql: ROUND(${total_transaction_revenue}, 3) ;;
-  }
-}
-
-# SUB-VIEW: GEO NETWORK ########
-# TYPE: ARRAY
-view: ga_sessions_full__geo_network {
-
-  # recreate a primary key
-  dimension: primary {
-    hidden: yes
-    primary_key: yes
-    type: string
-    sql: concat(${ga_sessions_full.date},
-        cast(${ga_sessions_full.visit_id} AS string),
-        ${ga_sessions_full.full_visitor_id}) ;;
-  }
-
-  dimension: city {
-    type: string
-    sql: ${TABLE}.city ;;
-  }
-
-  dimension: city_id {
-    type: string
-    sql: ${TABLE}.cityId ;;
-  }
-
-  dimension: continent {
-    type: string
-    sql: ${TABLE}.continent ;;
-  }
-
-  dimension: country {
-    type: string
-    map_layer_name: countries
-    sql: ${TABLE}.country ;;
-  }
-
-  dimension: latitude {
-    type: string
-    sql: ${TABLE}.latitude ;;
-  }
-
-  dimension: longitude {
-    type: string
-    sql: ${TABLE}.longitude ;;
-  }
-
-  dimension: metro {
-    type: string
-    sql: ${TABLE}.metro ;;
-  }
-
-  dimension: network_domain {
-    type: string
-    sql: ${TABLE}.networkDomain ;;
-  }
-
-  dimension: network_location {
-    type: string
-    sql: ${TABLE}.networkLocation ;;
-  }
-
-  dimension: region {
-    type: string
-    sql: ${TABLE}.region ;;
-  }
-
-  dimension: sub_continent {
-    type: string
-    sql: ${TABLE}.subContinent ;;
-  }
-}
-
-# SUB-VIEW: TRAFFIC SOURCE ########
-# TYPE: ARRAY
-view: ga_sessions_full__traffic_source {
-
-  dimension: primary {
-    hidden: yes
-    primary_key: yes
-    type: string
-    sql: concat(${ga_sessions_full.date},
-        cast(${ga_sessions_full.visit_id} AS string),
-        ${ga_sessions_full.full_visitor_id}) ;;
-  }
-
-  dimension: ad_content {
-    type: string
-    sql: ${TABLE}.adContent ;;
-  }
-
-  dimension: adwords_click_info {
-    hidden: yes
-    sql: ${TABLE}.adwordsClickInfo ;;
-  }
-
-  dimension: campaign {
-    type: string
-    sql: ${TABLE}.campaign ;;
-  }
-
-  dimension: campaign_code {
-    type: string
-    sql: ${TABLE}.campaignCode ;;
-  }
-
-  dimension: is_true_direct {
-    type: yesno
-    sql: ${TABLE}.isTrueDirect ;;
-  }
-
-  dimension: keyword {
-    type: string
-    sql: ${TABLE}.keyword ;;
-  }
-
-  dimension: medium {
-    type: string
-    sql: ${TABLE}.medium ;;
-  }
-
-  dimension: referral_path {
-    type: string
-    sql: ${TABLE}.referralPath ;;
-  }
-
-  dimension: source {
-    type: string
-    sql: ${TABLE}.source ;;
-  }
-}
-
-# SUB-VIEW: DEVICE ########
-# TYPE: ARRAY
-view: ga_sessions_full__device {
-
-  dimension: primary {
-    hidden: yes
-    primary_key: yes
-    type: string
-    sql: concat(${ga_sessions_full.date},
-        cast(${ga_sessions_full.visit_id} AS string),
-        ${ga_sessions_full.full_visitor_id}) ;;
-  }
-
-  dimension: browser {
-    type: string
-    sql: ${TABLE}.browser ;;
-  }
-
-  dimension: browser_size {
-    type: string
-    sql: ${TABLE}.browserSize ;;
-  }
-
-  dimension: browser_version {
-    type: string
-    sql: ${TABLE}.browserVersion ;;
-  }
-
-  dimension: device_category {
-    type: string
-    sql: ${TABLE}.deviceCategory ;;
-  }
-
-  dimension: flash_version {
-    type: string
-    sql: ${TABLE}.flashVersion ;;
-  }
-
-  dimension: java_enabled {
-    type: yesno
-    sql: ${TABLE}.javaEnabled ;;
-  }
-
-  dimension: language {
-    type: string
-    sql: ${TABLE}.language ;;
-  }
-
-  dimension: mobile_device_branding {
-    type: string
-    sql: ${TABLE}.mobileDeviceBranding ;;
-  }
-
-  dimension: mobile_device_info {
-    type: string
-    sql: ${TABLE}.mobileDeviceInfo ;;
-  }
-
-  dimension: mobile_device_marketing_name {
-    type: string
-    sql: ${TABLE}.mobileDeviceMarketingName ;;
-  }
-
-  dimension: mobile_device_model {
-    type: string
-    sql: ${TABLE}.mobileDeviceModel ;;
-  }
-
-  dimension: mobile_input_selector {
-    type: string
-    sql: ${TABLE}.mobileInputSelector ;;
-  }
-
-  dimension: operating_system {
-    type: string
-    sql: ${TABLE}.operatingSystem ;;
-  }
-
-  dimension: operating_system_version {
-    type: string
-    sql: ${TABLE}.operatingSystemVersion ;;
-  }
-
-  dimension: screen_colors {
-    type: string
-    sql: ${TABLE}.screenColors ;;
-  }
-
-  dimension: screen_resolution {
-    type: string
-    sql: ${TABLE}.screenResolution ;;
-  }
-}

@@ -364,8 +364,7 @@ view: ga_sessions {
   }
 
   dimension_group: partition {
-    hidden: yes
-    label: "Session"
+    label: "Partition Time"
     type: time
     timeframes: [
       raw,

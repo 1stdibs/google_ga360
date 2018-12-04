@@ -12,8 +12,51 @@ include: "*.dashboard"
 
 explore: daily_sessions {}
 
+
+explore: ga_sessions {
+  join: ga_pageviews {
+    type: left_outer
+    relationship: one_to_many
+    sql_on: ${ga_sessions.sessionid} = ${ga_pageviews.sessionid}
+    AND ${ga_sessions.partition_date} = ${ga_pageviews.partition_date};;
+  }
+  join: ga_events {
+
+  }
+  conditionally_filter: {
+    filters: {
+      field: partition_time
+      value: "last 30 days"
+      }
+    }
+}
+
+explore: ga_sessions_full {
+
+    join: customDimensions {
+      sql: , UNNEST(customDimensions) as customDimensions ;;
+      relationship: one_to_many
+    }
+
+    join: hits {
+      sql: , UNNEST(hits) as hits  ;;
+      relationship: one_to_many
+    }
+
+  conditionally_filter: {
+    filters: {
+      field: date_suffix
+      value: "last 7 days"
+    }
+  }
+#     join: totals {
+#       sql: UNNEST(totals) ;;
+#     }
+
+}
+
 explore: ga_pageviews {
-  :conditionally_filter: {
+  conditionally_filter: {
     filters: {
       field: partition_time
       value: "last 30 days"

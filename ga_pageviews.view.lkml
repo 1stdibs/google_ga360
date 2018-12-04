@@ -60,6 +60,11 @@ view: ga_pageviews {
     hidden: yes
   }
 
+  measure: count_full_visitor {
+    type: count_distinct
+    sql: ${full_visitor_id} ;;
+  }
+
   dimension: ga_date {
     type: string
     sql: ${TABLE}.gaDate ;;
@@ -84,6 +89,7 @@ view: ga_pageviews {
     convert_tz: yes
     sql: ${TABLE}.hitTime ;;
     view_label: "Pageview details"
+    hidden: yes
   }
 
   dimension: hit_type {
@@ -116,12 +122,14 @@ view: ga_pageviews {
     type: yesno
     sql: ${TABLE}.isEntrance ;;
     view_label: "Pageview details"
+    group_label: "Entrance details"
   }
 
   dimension: is_exit {
     type: yesno
     sql: ${TABLE}.isExit ;;
     view_label: "Pageview details"
+    group_label: "Exit details"
   }
 
   dimension: is_interaction {
@@ -279,7 +287,7 @@ view: ga_pageviews {
     type: yesno
     sql:  ${pageType} = 'Products' or REGEXP_CONTAINS(${web_page_path}, '/vpv/pdp');;
     view_label: "Pageview details"
-    group_label: "PDP"
+    group_label: "Content Grouping"
   }
 
   dimension: is_searchbrowse{
@@ -287,7 +295,7 @@ view: ga_pageviews {
     description: "Looker is reporting lower numbers than GA - needs further review"
     sql:${pageSubType} IN ("Search", "Browse") or  REGEXP_CONTAINS(${web_page_path}, '/(search|furniture|art|fashion|jewelry|creators|dealers|collections|locations|sale|contemporary|associations|recognized|shopping-with|buy|(vpv/designers/.+/collections))') AND not REGEXP_CONTAINS(${web_page_path}, '/vpv/pdp');;
     view_label: "Pageview details"
-    group_label: "Search/Browse"
+    group_label: "Content Grouping"
   }
 
   dimension: pageType {
@@ -315,16 +323,16 @@ view: ga_pageviews {
 
 
   measure: pdp_pageviews {
-    type: number
-    sql: SUM(IF(${isPDP}, 1, 0)) ;;
+    type: sum
+    sql: IF(${isPDP}, 1, 0) ;;
     view_label: "Pageview details"
     group_label: "Pageview metrics"
     label: "Total PDP Pageviews"
   }
 
   measure: search_browse_pageviews {
-    type: number
-    sql: SUM(IF(${is_searchbrowse}, 1, 0)) ;;
+    type: sum
+    sql: IF(${is_searchbrowse}, 1, 0) ;;
     view_label: "Pageview details"
     group_label: "Pageview metrics"
     label: "Total S/B Pageviews"
@@ -345,6 +353,65 @@ view: ga_pageviews {
     }
   }
 
+
+
+
+###### App-Only
+
+  measure: app_total_pageviews {
+    type: count_distinct
+    sql: ${pageview_id} ;;
+    view_label: "App details"
+    group_label: "Pageview metrics"
+    filters: {
+      field: platform
+      value: "app"
+    }
+  }
+
+
+  measure: app_pdp_pageviews {
+    type: sum
+    sql: IF(${isPDP}, 1, 0) ;;
+    view_label: "App details"
+    group_label: "Pageview metrics"
+    label: "Total PDP Pageviews"
+    filters: {
+      field: platform
+      value: "app"
+    }
+  }
+
+  measure: app_search_browse_pageviews {
+    type: sum
+    sql: IF(${is_searchbrowse}, 1, 0) ;;
+    view_label: "App details"
+    group_label: "Pageview metrics"
+    label: "Total S/B Pageviews"
+    filters: {
+      field: platform
+      value: "app"
+    }
+  }
+
+  measure: app_searchbrowse_sessions{
+    type: count_distinct
+    sql: ${sessionid} ;;
+    view_label: "App details"
+    group_label: "Pageview metrics"
+    filters: {
+      field: is_searchbrowse
+      value: "Yes"
+    }
+    filters: {
+      field: isPDP
+      value: "No"
+    }
+    filters: {
+      field: platform
+      value: "app"
+    }
+  }
 
 
 
