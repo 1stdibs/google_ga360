@@ -86,6 +86,7 @@ view: ga_sessions_full {
 
 
 
+
     ####### Access Totals Record #################
 
 
@@ -302,12 +303,12 @@ view: ga_sessions_full {
 #   }
 
 
-  measure: total_user_count {
+  measure: unique_visitors {
     type: count_distinct
     sql: ${full_visitor_id}  ;;
     view_label: "Session Details"
     group_label: "Visitor Details"
-    label: "Total Distinct Visitors"
+    label: "Total Unique Visitors"
   }
 
 
@@ -318,6 +319,17 @@ view: ga_sessions_full {
       sql_distinct_key: ${sessionid} ;;
       view_label: "Session Details"
       label: "Count of Sessions"
+      group_label: "Session Totals"
+    }
+
+
+    measure: average_sessions_ver_visitor {
+      type: number
+      sql: 1.0 * (${sessions}/NULLIF(${unique_visitors},0))  ;;
+      value_format_name: decimal_2
+      drill_fields: [full_visitor_id, visit_number, sessions]
+      view_label: "Session Details"
+      group_label: "Session Totals"
     }
 }
 
