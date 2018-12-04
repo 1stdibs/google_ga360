@@ -525,6 +525,7 @@ view: ga_sessions_full {
       sql: contentGroup.contentGroup1 ;;
       view_label: "Page Level Details"
       description: "Content grouping of pages : (Products, Results, Home, Other)"
+      label: "Page Type"
     }
 
     dimension: pageSubType {
@@ -532,6 +533,14 @@ view: ga_sessions_full {
       sql: contentGroup.contentGroup2 ;;
       view_label: "Page Level Details"
       description: "Content sub-grouping of pages : (PDP-Available, Search, Browse, Checkout, etc.)"
+      label: "Page Sub Type"
+    }
+
+    dimension: pageSection {
+      type: string
+      sql: contentGroup.contentGroup3 ;;
+      view_label: "Page Level Details"
+      label: "Page Section"
     }
 
 
