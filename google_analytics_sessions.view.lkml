@@ -104,6 +104,14 @@ view: ga_sessions_full {
       hidden: yes
     }
 
+    dimension: visitnumber {
+      type: number
+      sql: ${TABLE}.visitNumber ;;
+      view_label: "Session Details"
+      group_label: "Visitor Details"
+      label: "Session Number"
+    }
+
 
 
   ####### Access Traffic Source Record #################
@@ -323,13 +331,50 @@ view: ga_sessions_full {
     }
 
 
-    measure: average_sessions_ver_visitor {
+    measure: average_sessions_per_visitor {
       type: number
       sql: 1.0 * (${sessions}/NULLIF(${unique_visitors},0))  ;;
       value_format_name: decimal_2
       drill_fields: [full_visitor_id, visit_number, sessions]
       view_label: "Session Details"
       group_label: "Session Totals"
+    }
+
+    measure: first_time_visitors {
+      label: "First Time Visitors"
+      view_label: "Session Details"
+      group_label: "Visitor Details"
+      type: count_distinct
+      sql: ${sessionid} ;;
+      filters: {
+        field: visitnumber
+        value: "1"
+      }
+    }
+
+    measure: second_time_visitors {
+      label: "Second Time Visitors"
+      type: count_distinct
+      view_label: "Session Details"
+      group_label: "Visitor Details"
+      sql: ${sessionid} ;;
+      filters: {
+        field: visitnumber
+        value: "2"
+      }
+    }
+
+
+    measure: returning_visitors {
+      label: "Returning Visitors"
+      type: count_distinct
+      sql: ${sessionid} ;;
+      view_label: "Session Details"
+      group_label: "Visitor Details"
+      filters: {
+        field: visitnumber
+        value: "<> 1"
+      }
     }
 }
 
