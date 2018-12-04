@@ -69,6 +69,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.visitNumber ;;
     group_label: "Session Identifiers"
     view_label: "Session Details"
+
   }
 
   dimension: session_start_time {
@@ -341,7 +342,7 @@ view: ga_sessions_full {
     }
 
     measure: first_time_visitors {
-      label: "First Time Visitors"
+      label: "Session Count by First Time Visitors"
       view_label: "Session Details"
       group_label: "Visitor Details"
       type: count_distinct
@@ -353,7 +354,7 @@ view: ga_sessions_full {
     }
 
     measure: second_time_visitors {
-      label: "Second Time Visitors"
+      label: "Session Count by Second Time Visitors"
       type: count_distinct
       view_label: "Session Details"
       group_label: "Visitor Details"
@@ -366,7 +367,7 @@ view: ga_sessions_full {
 
 
     measure: returning_visitors {
-      label: "Returning Visitors"
+      label: "Session Count by Returning Visitors"
       type: count_distinct
       sql: ${sessionid} ;;
       view_label: "Session Details"
