@@ -438,6 +438,15 @@ view: ga_sessions_full {
       ;;
     }
 
+    dimension: customer_type_trade_vs_other {
+      type: string
+      view_label: "User Session details"
+      label: "Session Customer Type (Trade vs. Consumer)"
+      sql: case when ${customer_type} in ('trade', 'trade and vip') then 'Trade'
+            else 'Consumer'
+            end;;
+    }
+
     dimension: user_id {
       type: number
       sql:
