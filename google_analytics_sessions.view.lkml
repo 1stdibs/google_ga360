@@ -17,11 +17,12 @@ view: ga_sessions_full {
     }
 
 
-    dimension: date_suffix {
-      type: date_time
+    dimension_group: date_suffix {
+      type: time
       sql:
           TIMESTAMP(PARSE_DATE('%Y%m%d',CONCAT('20',${TABLE}._TABLE_SUFFIX))) ;;
-      label: ".Day of Session"
+      label: ".Session"
+      timeframes: [date, week, quarter, month]
       description: "Date of the session - used to scan tables and return only specific partitioned tables"
       view_label: "Session Details"
     }

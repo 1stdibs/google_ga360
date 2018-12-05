@@ -46,7 +46,7 @@ explore: ga_sessions_full {
 
   conditionally_filter: {
     filters: {
-      field: date_suffix
+      field: date_suffix_date
       value: "last 7 days"
     }
   }
