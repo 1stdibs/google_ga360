@@ -21,7 +21,7 @@ view: ga_sessions_full {
       type: date_time
       sql:
           TIMESTAMP(PARSE_DATE('%Y%m%d',CONCAT('20',${TABLE}._TABLE_SUFFIX))) ;;
-      label: "Day of Session"
+      label: ".Day of Session"
       description: "Date of the session - used to scan tables and return only specific partitioned tables"
       view_label: "Session Details"
     }
@@ -64,13 +64,6 @@ view: ga_sessions_full {
     view_label: "Session Details"
   }
 
-  dimension: visit_number {
-    type: number
-    sql: ${TABLE}.visitNumber ;;
-    group_label: "Session Identifiers"
-    view_label: "Session Details"
-
-  }
 
   dimension: session_start_time {
     type: date_time
@@ -110,7 +103,7 @@ view: ga_sessions_full {
       sql: ${TABLE}.visitNumber ;;
       view_label: "Session Details"
       group_label: "Visitor Details"
-      label: "Session Number"
+      label: "Session Identifiers"
     }
 
 
@@ -336,7 +329,7 @@ view: ga_sessions_full {
       type: number
       sql: 1.0 * (${sessions}/NULLIF(${unique_visitors},0))  ;;
       value_format_name: decimal_2
-      drill_fields: [full_visitor_id, visit_number, sessions]
+      drill_fields: [full_visitor_id, visitnumber, sessions]
       view_label: "Session Details"
       group_label: "Session Totals"
     }
@@ -543,6 +536,8 @@ view: ga_sessions_full {
       sql:
       if(page.pagePath != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
+      view_label: "Page Level Details"
+      group_label: "Web Metrics"
       filters: {
         field: type
         value: "PAGE"
@@ -554,6 +549,8 @@ view: ga_sessions_full {
       sql:
       if(page.pagePath != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
+      view_label: "Page Level Details"
+      group_label: "Web Metrics"
       filters: {
         field: type
         value: "PAGE"
@@ -564,14 +561,67 @@ view: ga_sessions_full {
       }
     }
 
+    measure: web_results_pageviews {
+      type: sum
+      sql:
+      if(page.pagePath != '', 1, 0);;
+      sql_distinct_key: ${primary} ;;
+      view_label: "Page Level Details"
+      group_label: "Web Metrics"
+      filters: {
+        field: type
+        value: "PAGE"
+      }
+      filters: {
+        field: pageType
+        value: "Results"
+      }
+    }
+
     measure: app_pageviews {
       type: sum
       sql:
       if(appInfo.screenName != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
+      view_label: "Page Level Details"
+      group_label: "App Metrics"
       filters: {
         field: type
         value: "APP"
+      }
+    }
+
+    measure: app_results_pageviews {
+      type: sum
+      sql:
+      if(appInfo.screenName != '', 1, 0);;
+      sql_distinct_key: ${primary} ;;
+      view_label: "Page Level Details"
+      group_label: "App Metrics"
+      filters: {
+        field: type
+        value: "APP"
+      }
+      filters: {
+        field: pageType
+        value: "Results"
+      }
+    }
+
+    measure: app_pdp_pageviews {
+      type: sum
+      sql:
+      if(appInfo.screenName != '', 1, 0);;
+      sql_distinct_key: ${primary} ;;
+      view_label: "Page Level Details"
+      group_label: "App Metrics"
+      filters: {
+        field: type
+        value: "APP"
+      }
+      filters: {
+        field: pageType
+        value: "Products"
       }
     }
 
@@ -582,6 +632,7 @@ view: ga_sessions_full {
       type: string
       sql: contentGroup.contentGroup1 ;;
       view_label: "Page Level Details"
+      group_label: "Content Grouping"
       description: "Content grouping of pages : (Products, Results, Home, Other)"
       label: "Page Type"
     }
@@ -590,6 +641,7 @@ view: ga_sessions_full {
       type: string
       sql: contentGroup.contentGroup2 ;;
       view_label: "Page Level Details"
+      group_label: "Content Grouping"
       description: "Content sub-grouping of pages : (PDP-Available, Search, Browse, Checkout, etc.)"
       label: "Page Sub Type"
     }
@@ -598,6 +650,7 @@ view: ga_sessions_full {
       type: string
       sql: contentGroup.contentGroup3 ;;
       view_label: "Page Level Details"
+      group_label: "Content Grouping"
       label: "Page Section"
     }
 
