@@ -27,6 +27,14 @@ view: ga_sessions_full {
     }
 
 
+  dimension: visitStartSeconds {
+    label: "Visit Start Seconds"
+    type: number
+    sql: ${TABLE}.visitStarttime ;;
+    hidden: yes
+  }
+
+
   dimension: sessionid {
     primary_key: yes
     type: string
@@ -520,6 +528,14 @@ view: ga_sessions_full {
         ${ga_sessions_full.full_visitor_id}) ;;
     }
 
+    dimension_group: hit {
+      timeframes: [time, date,day_of_week,fiscal_quarter,week,month,year,month_name,month_num,week_of_year]
+      type: time
+      sql: TIMESTAMP_MILLIS(${ga_sessions_full.visitStartSeconds}*1000 + ${TABLE}.time) ;;
+      hidden: yes
+    }
+
+
 
 
     dimension: type {
@@ -766,6 +782,35 @@ view: ga_sessions_full {
         value: "contact dealer submitted"
       }
     }
+
+
+
+#### Ecommerce
+
+dimension: ecom_action_type {
+  type: string
+  sql: case cast(eCommerceAction.action_type as string)
+        when '1' then 'Product List Click'
+        when '2' then 'Product Detail View'
+        when '3' then 'Add to Cart'
+        when '4' then 'Remove from Cart'
+        when '5' then 'Checkout'
+        when '6' then 'Order Submitted'
+        when '7' then 'Refund'
+        else 'Unknown'
+        end ;;
+  view_label: "Ecommerce Details"
+
+
+}
+
+
+dimension: found_on_search_page {
+  type: yesno
+  sql: ${ecom_action_type} = 'Product List Click'
+      and ${pageType} = 'Results';;
+    hidden: yes
+}
 
 
   }
