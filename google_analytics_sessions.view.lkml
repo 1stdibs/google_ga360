@@ -559,6 +559,13 @@ view: ga_sessions_full {
       sql: ${TABLE}.appInfo ;;
     }
 
+    dimension: host {
+      type: string
+      sql: page.hostname ;;
+      view_label: "Page Level Details"
+      ## Needs further evaluation - how does this work with events? how does it work with sessions?
+    }
+
     measure: web_pageviews {
       type: sum
       sql:
