@@ -431,7 +431,7 @@ view: ga_sessions_full {
     }
 
     dimension: user_id {
-      type: string
+      type: number
       sql:
       (SELECT value
       FROM
@@ -466,7 +466,7 @@ view: ga_sessions_full {
     }
 
     dimension: trade_firm_id {
-      type: string
+      type: number
       sql:
       (SELECT value
       FROM
