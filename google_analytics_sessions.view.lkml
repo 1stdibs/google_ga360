@@ -209,8 +209,8 @@ view: ga_sessions_full {
 
   dimension: session_location {
     type: location
-    sql_latitude: ${TABLE}.geoNetwork.latitude ;;
-    sql_longitude: ${TABLE}.geoNetwork.longitude ;;
+    sql_latitude: cast(${TABLE}.geoNetwork.latitude as float64) ;;
+    sql_longitude: cast(${TABLE}.geoNetwork.longitude as float64) ;;
     view_label: "Session Details"
     group_label: "Geography Details"
   }
@@ -655,7 +655,59 @@ view: ga_sessions_full {
     }
 
 
-    ##########
+    ########### Custom Event Level Dimensions
+
+    dimension: eventCategory {
+      type: string
+      sql: eventInfo.eventCategory ;;
+      view_label: "Custom Event Level Details"
+      group_label: "Event Details"
+      label: "Event Category"
+    }
+
+    dimension: eventAction {
+      type: string
+      sql: eventInfo.eventAction ;;
+      view_label: "Custom Event Level Details"
+      group_label: "Event Details"
+      label: "Event Action"
+    }
+
+    dimension: eventLabel {
+      type: string
+      sql: eventInfo.eventLabel ;;
+      view_label: "Custom Event Level Details"
+      group_label: "Event Details"
+      label: "Event Label"
+    }
+
+    measure: count_of_events {
+      type: sum
+      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      view_label: "Custom Event Level Details"
+      group_label: "Event Metrics"
+      filters: {
+        field: type
+        value: "EVENT"
+      }
+
+    }
+
+    measure: count_of_purchase_clicks{
+      type: sum
+      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      view_label: "Custom Event Level Details"
+      group_label: "Event Metrics"
+      filters: {
+        field: type
+        value: "EVENT"
+      }
+      filters: {
+        field: eventCategory
+        value: "purchase click"
+      }
+
+    }
 
 
   }
