@@ -69,6 +69,7 @@ view: ga_sessions_full {
     type: date_time
     sql: TIMESTAMP_SECONDS(${TABLE}.visitStartTime) ;;
     view_label: "Session Details"
+    hidden: yes
   }
 
   dimension: channel_grouping {
@@ -102,8 +103,9 @@ view: ga_sessions_full {
       type: number
       sql: ${TABLE}.visitNumber ;;
       view_label: "Session Details"
-      group_label: "Visitor Details"
-      label: "Session Identifiers"
+      group_label: "Session Attributes"
+      label: "User Session Number"
+      description: "Rank of sessions by visitor"
     }
 
 
@@ -551,6 +553,7 @@ view: ga_sessions_full {
       sql_distinct_key: ${primary} ;;
       view_label: "Page Level Details"
       group_label: "Web Metrics"
+      label: "Web PDP Pageviews"
       filters: {
         field: type
         value: "PAGE"
@@ -615,6 +618,7 @@ view: ga_sessions_full {
       sql_distinct_key: ${primary} ;;
       view_label: "Page Level Details"
       group_label: "App Metrics"
+      label: "App PDP Pageviews"
       filters: {
         field: type
         value: "APP"
@@ -707,6 +711,60 @@ view: ga_sessions_full {
         value: "purchase click"
       }
 
+    }
+
+    measure: count_of_make_offer_clicks{
+      type: sum
+      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      view_label: "Custom Event Level Details"
+      group_label: "Event Metrics"
+      filters: {
+        field: type
+        value: "EVENT"
+      }
+      filters: {
+        field: eventCategory
+        value: "make offer click"
+      }
+
+    }
+
+    measure: count_of_contact_dealer_clicks{
+      type: sum
+      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      view_label: "Custom Event Level Details"
+      group_label: "Event Metrics"
+      filters: {
+        field: type
+        value: "EVENT"
+      }
+      filters: {
+        field: eventCategory
+        value: "contact dealer"
+      }
+      filters: {
+        field: eventCategory
+        value: "contact dealer clicked"
+      }
+    }
+
+    measure: count_of_contact_dealer_submits {
+      type: sum
+      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      view_label: "Custom Event Level Details"
+      group_label: "Event Metrics"
+      filters: {
+        field: type
+        value: "EVENT"
+      }
+      filters: {
+        field: eventCategory
+        value: "contact dealer"
+      }
+      filters: {
+        field: eventCategory
+        value: "contact dealer submitted"
+      }
     }
 
 
