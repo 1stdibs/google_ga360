@@ -14,15 +14,16 @@ explore: daily_sessions {}
 
 
 explore: ga_sessions {
+  hidden: yes
   join: ga_pageviews {
     type: left_outer
     relationship: one_to_many
     sql_on: ${ga_sessions.sessionid} = ${ga_pageviews.sessionid}
     AND ${ga_sessions.partition_date} = ${ga_pageviews.partition_date};;
   }
-  join: ga_events {
-
-  }
+#   join: ga_events {
+#
+#   }
   conditionally_filter: {
     filters: {
       field: partition_time
@@ -56,6 +57,7 @@ explore: ga_sessions_full {
 }
 
 explore: ga_pageviews {
+  hidden: yes
   conditionally_filter: {
     filters: {
       field: partition_time
