@@ -1,11 +1,3 @@
-### What does this Block do for me?
-
-* Accelerated Time to Value
-* Accessibility
-* Best Practice Design Patterns
-* Leveraging Most of BQ Investment
-
-
 ### Google Analytics Premium Data Structure
 
 * Google Analytics Premium (GA360) data is exported (in this case, through [Transfer Services](https://cloud.google.com/bigquery/transfer/)) in the format of a single flat table with a new entry for each session. Rather than creating new tables for each entity attribute, Google places aggregate or attribute information in nested fields in the single tabel. For more information on Nested Fields, and why Google chooses to use them, please refer to this overview on [Why Nesting is so Cool](https://discourse.looker.com/t/why-nesting-is-so-cool/4182).
@@ -15,19 +7,9 @@
 * Google's documentation on the data included in the export can be [found here](https://support.google.com/analytics/answer/3437719?hl=en).
 
 
-### Block Structure
+### Datasets Structure
 
-* ``ga_block`` contains all join logic and all individual view files, dimensions, and measures. You'll notice each view file has an ``extension: required`` parameter, which is also why each table has a ``_base`` suffix. This means each file must be appended to another table to show up on the Explore page. These other tables are located in the ``ga_customize`` view. Documentation on extends can be [found here](https://looker.com/docs/data-modeling/learning-lookml/extends?version=4.10&lookml=new).
-
-* ``ga_customze``: contains all the extended view files. If your organization uses any custom fields with Google Analytics, this is where you can insert those fields. In-line directions are provided in the code. *_It's important to note that, if you want to Explore a table, there must be an extends parameter under the correspdoning table in this view file_*. For example, if I wanted to explore ``trafficsource``, I would add an ``extends: [trafficsource_base]`` parameter under ``view: trafficsource``.
-
-### Necessary Customizations
-
-* **View**:``ga_customize`` line 19 parameter for ``sql_table_name`` must be customized to the users ``data_set.ga_session_*``.
-
-* **Dashboards**: Replace ``model: ga_connectors360`` with your chosen name.
-
-* **Available Explores**: Recall from above, that each ``extends`` field but must declared to allow users to Explore on a view.
+* ``google_analytics_sessions`` contains all join logic and all individual view files, dimensions, and measures. Multiple views are contained within, to more easily handle nested and unnested records
 
 
 ### Connecting to Other Data Sources

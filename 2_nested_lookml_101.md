@@ -62,21 +62,12 @@ dimension_group: modified {
   }
   ```
 
-8. Spread out the custom dimensions by including ones we will use
+8. Custom Dimensions
 
 
-
-
-
-
-    * What is one-to-one and what is one-to-many
-    * How to build date-partition tables
-    * how to get the custom dimension in Looker
-    * How to QA the custom dimension in Looker
-    * Document which CDs are stored in Looker
-    * Which variables are hidden
-    * Cast data into correct format: DATE/STRING/NUMBER, etc.
-
-Put your documentation here! Your text is rendered with [GitHub Flavored Markdown](https://help.github.com/articles/github-flavored-markdown).
-
-Click the "Edit Source" button above to make changes.
+  | KPI      | Category          |Action       |Label       |
+  |:------------------:|---------------------|---------------------|---------------------|
+  |*Purchase Clicks*        |purchase click| | |
+  |*Make Offer Clicks*       |make offer click | | |
+  |*Contact Dealer Clicks*       |contact dealer|contact dealer clicked | |
+  |*Contact Dealer Submits*      |contact dealer|contact dealer submitted | |
