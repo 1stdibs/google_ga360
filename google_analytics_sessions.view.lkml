@@ -22,7 +22,7 @@ view: ga_sessions_full {
       sql:
           TIMESTAMP(PARSE_DATE('%Y%m%d',CONCAT('20',${TABLE}._TABLE_SUFFIX))) ;;
       label: ".Session"
-      timeframes: [date, week, quarter, month]
+      timeframes: [time, date, week, quarter, month]
       description: "Date of the session - used to scan tables and return only specific partitioned tables"
       view_label: "Session Details"
     }
@@ -103,7 +103,7 @@ view: ga_sessions_full {
 
     dimension: time_on_site {
       type: number
-      sql: ${TABLE}.totals.timeOnSite + ${TABLE}.totals.timeOnScreen ;;
+      sql: ${TABLE}.totals.timeOnSite ;;
       view_label: "Session Details"
       hidden: yes
     }
@@ -116,6 +116,48 @@ view: ga_sessions_full {
       label: "User Session Number"
       description: "Rank of sessions by visitor"
     }
+
+    dimension: timeonsite_tier {
+      label: "Time On Site Tier"
+      type: tier
+      sql: ${TABLE}.totals.timeonsite ;;
+      tiers: [0,15,30,60,120,180,240,300,600]
+      style: integer
+      view_label: "Session Details"
+      group_label: "Session Attributes"
+    }
+
+    measure: total_hits {
+      type: sum
+      sql: ${TABLE}.totals.hits ;;
+      view_label: "Session Details"
+      hidden: yes
+    }
+
+
+    measure: timeonsite_average_per_session {
+      type: average
+      sql: 1.0 * ${time_on_site} ;;
+      view_label: "Session Details"
+      hidden: yes
+    }
+
+
+      measure: bounces_total {
+        type: sum
+        sql: ${TABLE}.totals.bounces ;;
+        view_label: "Session Details"
+        group_label: "Session Totals"
+      }
+
+      measure: bounce_rate {
+        type:  number
+        sql: 1.0 * ${bounces_total} / NULLIF(${sessions},0) ;;
+        value_format_name: percent_2
+        view_label: "Session Details"
+        group_label: "Session Totals"
+
+      }
 
 
 
@@ -566,6 +608,12 @@ view: ga_sessions_full {
       ## Needs further evaluation - how does this work with events? how does it work with sessions?
     }
 
+    dimension: page_path {
+      type: string
+      hidden: yes
+      sql: if(page.pagePath is not null, page.pagePath, appInfo.screenName) ;;
+    }
+
     measure: web_pageviews {
       type: sum
       sql:
@@ -800,6 +848,15 @@ view: ga_sessions_full {
       }
     }
 
+
+### Social Network
+
+dimension: social_network {
+  type: string
+  sql: social.socialNetwork ;;
+  group_label: "Social Attributes"
+  view_label: "Session Details"
+}
 
 
 #### Ecommerce
