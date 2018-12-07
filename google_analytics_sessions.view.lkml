@@ -74,6 +74,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.fullVisitorId ;;
     group_label: "Session Identifiers"
     view_label: "Session Details"
+    description: "The unique visitor ID (also known as client ID)"
   }
 
   dimension: visit_id {
@@ -152,6 +153,7 @@ view: ga_sessions_full {
       sql: ${TABLE}.totals.sessionQualityDim ;;
       view_label: "Session Details"
       group_label: "Session Attributes"
+      description: "An estimate of how close a particular session was to transacting, ranging from 1 to 100, calculated for each session. A value closer to 1 indicates a low session quality, or far from transacting, while a value closer to 100 indicates a high session quality, or very close to transacting. A value of 0 indicates that Session Quality is not calculated for the selected time range"
     }
 
     dimension: time_on_site {
@@ -159,6 +161,7 @@ view: ga_sessions_full {
       sql: ${TABLE}.totals.timeOnSite ;;
       view_label: "Session Details"
       hidden: yes
+      description: "Total time of the session expressed in seconds"
     }
 
 
@@ -195,6 +198,7 @@ view: ga_sessions_full {
       sql_distinct_key: ${sessionid} ;;
       view_label: "Session Details"
       group_label: "Session Totals"
+      description: "Total number of pageviews within the session"
     }
 
     measure: page_views_per_session {
@@ -211,6 +215,7 @@ view: ga_sessions_full {
       sql: ${TABLE}.totals.transactions ;;
       view_label: "Session Details"
       group_label: "Session Totals"
+      description: "Total number of ecommerce transactions within the session"
     }
 
     measure: screenViews_total {
@@ -219,6 +224,7 @@ view: ga_sessions_full {
       sql: ${TABLE}.totals.screenViews ;;
       view_label: "Session Details"
       group_label: "App Session Totals"
+      description: "Total number of screenviews within the session"
     }
 
     measure: timeOnScreen_total{
@@ -235,6 +241,7 @@ view: ga_sessions_full {
       sql: ${TABLE}.totals.bounces ;;
       view_label: "Session Details"
       group_label: "Session Totals"
+      description: "Total times visitors navigate away from the site after viewing only one page"
     }
 
     measure: bounce_rate {
@@ -243,6 +250,7 @@ view: ga_sessions_full {
       value_format_name: percent_2
       view_label: "Session Details"
       group_label: "Session Totals"
+      description: "the percentage of visitors to a particular website who navigate away from the site after viewing only one page"
 
     }
 
@@ -256,6 +264,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.trafficSource.source ;;
     view_label: "Session Details"
     group_label: "Acquisition"
+    description: "The source of the traffic source. Could be the name of the search engine, the referring hostname, or a value of the utm_source URL parameter"
   }
 
   dimension: session_medium {
@@ -263,6 +272,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.trafficSource.medium ;;
     view_label: "Session Details"
     group_label: "Acquisition"
+    description: "The medium of the traffic source. Could be 'organic', 'cpc', 'referral', or the value of the utm_medium URL parameter"
   }
 
   dimension: session_campaign {
@@ -270,6 +280,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.trafficSource.campaign ;;
     view_label: "Session Details"
     group_label: "Acquisition"
+    description: "The campaign value. Usually set by the utm_campaign URL parameter"
   }
 
   dimension: session_keyword {
@@ -277,6 +288,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.trafficSource.keyword ;;
     view_label: "Session Details"
     group_label: "Acquisition"
+    description: "The keyword of the traffic source, usually set when the trafficSource.medium is 'organic' or 'cpc'. Can be set by the utm_term URL parameter"
   }
 
 
@@ -288,6 +300,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.device.browser ;;
     view_label: "Session Details"
     group_label: "Device Details"
+    description: "The browser used (e.g., 'Chrome' or 'Firefox')"
   }
 
   dimension: device_operating_system {
@@ -295,6 +308,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.device.operatingSystem ;;
     view_label: "Session Details"
     group_label: "Device Details"
+    description: "The operating system of the device (e.g., 'Macintosh' or 'Windows')"
   }
 
   dimension: device_is_mobile {
@@ -302,6 +316,23 @@ view: ga_sessions_full {
     sql: ${TABLE}.device.isMobile ;;
     view_label: "Session Details"
     group_label: "Device Details"
+    description: "If the user is on a mobile device, this value is true, otherwise false"
+  }
+
+  dimension: device_name {
+    type: string
+    sql: ${TABLE}.device.mobileDeviceInfo ;;
+    view_label: "Session Details"
+    group_label: "Device Details"
+    description: "The language the device is set to use. Expressed as the IETF language code"
+  }
+
+  dimension: device_language {
+    type: string
+    sql: ${TABLE}.device.language ;;
+    view_label: "Session Details"
+    group_label: "Device Details"
+    description: "The marketing name used for the mobile device"
   }
 
   dimension: device_category {
@@ -309,6 +340,7 @@ view: ga_sessions_full {
     sql: ${TABLE}.device.deviceCategory ;;
     view_label: "Session Details"
     group_label: "Device Details"
+    description: "The type of device (Mobile, Tablet, Desktop)"
   }
 
 
