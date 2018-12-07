@@ -51,8 +51,6 @@ explore: ga_sessions_full {
 
 
 
-
-
 # explore: ga_sessions {
 #   label: "FLAT - GA Sessions"
 

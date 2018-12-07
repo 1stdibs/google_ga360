@@ -16,6 +16,16 @@ view: ga_sessions_full {
       # Useful for testing
     }
 
+    dimension_group: partition_date {
+      type: time
+      sql: TIMESTAMP(PARSE_DATE('%Y%m%d', REGEXP_EXTRACT(_TABLE_SUFFIX,r'\d\d\d\d\d\d\d\d')))  ;;
+      timeframes: [time, date, week, month]
+      view_label: "Session Details"
+      hidden: yes
+      ## Note: This is less performant than concat alternative (scanning less tables to begin with"
+      ## Note 2: This method can be used, after the year 2100, but by then...... ^_^"
+    }
+
 
     dimension_group: date_suffix {
       type: time
@@ -39,7 +49,7 @@ view: ga_sessions_full {
   dimension: sessionid {
     primary_key: yes
     type: string
-    sql:concat(${date}, cast(${visit_id} AS string), ${full_visitor_id}) ;;
+    sql:concat(${date}, "|", cast(${visit_id} AS string),"|", ${full_visitor_id}) ;;
     description: "Specific identifier for session, unique per user/device."
     group_label: "Session Identifiers"
     view_label: "Session Details"
@@ -71,6 +81,37 @@ view: ga_sessions_full {
     sql: ${TABLE}.visitId ;;
     group_label: "Session Identifiers"
     view_label: "Session Details"
+  }
+
+  dimension: visitnumber {
+    type: number
+    sql: ${TABLE}.visitNumber ;;
+    view_label: "Session Details"
+    group_label: "Session Attributes"
+    label: "User Session Number"
+    description: "The session number for this user. If this is the first session, then this is set to 1."
+  }
+
+  dimension:  first_time_visitor {
+    type: yesno
+    sql: ${visitnumber} = 1 ;;
+    view_label: "Session Details"
+    group_label: "Visitor Attributes"
+    description: "Is this the first session of the visitor?"
+  }
+
+  dimension: repeat_visitor {
+    type: yesno
+    sql: ${visitnumber} > 1 ;;
+    view_label: "Session Details"
+    group_label: "Visitor Attributes"
+  }
+
+  dimension: visitor_status_new_vs_repeat {
+    type: string
+    sql: if(${first_time_visitor}, "New", "Repeat") ;;
+    view_label: "Session Details"
+    group_label: "Visitor Attributes"
   }
 
 
@@ -108,14 +149,6 @@ view: ga_sessions_full {
       hidden: yes
     }
 
-    dimension: visitnumber {
-      type: number
-      sql: ${TABLE}.visitNumber ;;
-      view_label: "Session Details"
-      group_label: "Session Attributes"
-      label: "User Session Number"
-      description: "Rank of sessions by visitor"
-    }
 
     dimension: timeonsite_tier {
       label: "Time On Site Tier"
@@ -748,6 +781,7 @@ view: ga_sessions_full {
       view_label: "Custom Event Level Details"
       group_label: "Event Details"
       label: "Event Category"
+      hidden: yes
     }
 
     dimension: eventAction {
@@ -756,6 +790,7 @@ view: ga_sessions_full {
       view_label: "Custom Event Level Details"
       group_label: "Event Details"
       label: "Event Action"
+      hidden: yes
     }
 
     dimension: eventLabel {
@@ -764,6 +799,7 @@ view: ga_sessions_full {
       view_label: "Custom Event Level Details"
       group_label: "Event Details"
       label: "Event Label"
+      hidden: yes
     }
 
     measure: count_of_events {
