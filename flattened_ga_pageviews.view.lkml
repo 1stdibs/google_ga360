@@ -1,4 +1,4 @@
-view: ga_pageviews {
+view: flattened_ga_pageviews {
   sql_table_name: google_analytics.pageviews ;;
 
   dimension: app_screen_name {

@@ -1,4 +1,4 @@
-view: ga_sessions {
+view: flattened_ga_sessions {
   sql_table_name: google_analytics.sessions ;;
 
   dimension: ab_test_cdn_slot53 {

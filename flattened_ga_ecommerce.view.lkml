@@ -1,4 +1,4 @@
-view: ga_ecommerce {
+view: flattened_ga_ecommerce {
   sql_table_name: google_analytics.ecommerce ;;
 
   dimension: app_screen_name {

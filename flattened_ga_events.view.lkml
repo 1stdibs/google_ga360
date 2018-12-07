@@ -1,4 +1,4 @@
-view: ga_events {
+view: flattened_ga_events {
   sql_table_name: google_analytics.events ;;
 
   dimension: app_screen_name {

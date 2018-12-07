@@ -6,29 +6,6 @@ include: "*.view"
 # include all the dashboards
 include: "*.dashboard"
 
-# explore: ga_sessions {
-#   extends: [ga_sessions_block]
-# }
-
-
-explore: ga_sessions {
-  hidden: yes
-  join: ga_pageviews {
-    type: left_outer
-    relationship: one_to_many
-    sql_on: ${ga_sessions.sessionid} = ${ga_pageviews.sessionid}
-    AND ${ga_sessions.partition_date} = ${ga_pageviews.partition_date};;
-  }
-#   join: ga_events {
-#
-#   }
-  conditionally_filter: {
-    filters: {
-      field: partition_time
-      value: "last 30 days"
-      }
-    }
-}
 
 explore: ga_sessions_full {
 
@@ -53,37 +30,6 @@ explore: ga_sessions_full {
 #     }
 
 }
-
-explore: ga_pageviews {
-  hidden: yes
-  conditionally_filter: {
-    filters: {
-      field: partition_time
-      value: "last 30 days"
-    }
-  }
-}
-
-
-
-#   always_filter:  {
-#     filters: {
-#       field: partition_date
-#       value: "last 30 days"
-#     }
-#   }
-#   sql_always_where: ${ga_sessions.partition_date}=${ga_sessions.session_start_date};;
-
-
-
-
-
-
-
-
-
-
-
 
 
 
