@@ -206,6 +206,29 @@ view: ga_sessions_full {
       group_label: "Session Totals"
     }
 
+    measure: transactions_count {
+      type: sum
+      sql: ${TABLE}.totals.transactions ;;
+      view_label: "Session Details"
+      group_label: "Session Totals"
+    }
+
+    measure: screenViews_total {
+      label: "Screen Views Total"
+      type: sum
+      sql: ${TABLE}.totals.screenViews ;;
+      view_label: "Session Details"
+      group_label: "App Session Totals"
+    }
+
+    measure: timeOnScreen_total{
+      label: "Time On Screen Total"
+      type: sum
+      sql: ${TABLE}.totals.timeOnScreen ;;
+      view_label: "Session Details"
+      group_label: "App Session Totals"
+    }
+
 
     measure: bounces_total {
       type: sum
@@ -702,9 +725,15 @@ view: ga_sessions_full {
       sql: ${TABLE}.appInfo ;;
     }
 
+    dimension: hit_number {
+      type: number
+      sql: ${TABLE}.hitNumber ;;
+      hidden: yes
+    }
+
     dimension: host {
       type: string
-      sql: page.hostname ;;
+      sql: ${TABLE}.page.hostname ;;
       view_label: "Page Level Details"
       ## Needs further evaluation - how does this work with events? how does it work with sessions?
     }
@@ -712,13 +741,13 @@ view: ga_sessions_full {
     dimension: page_path {
       type: string
       hidden: yes
-      sql: if(page.pagePath is not null, page.pagePath, appInfo.screenName) ;;
+      sql: if(${TABLE}.page.pagePath is not null, ${TABLE}.page.pagePath, ${TABLE}.appInfo.screenName) ;;
     }
 
     measure: web_pageviews {
       type: sum
       sql:
-      if(page.pagePath != '', 1, 0);;
+      if(${TABLE}.page.pagePath != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
       view_label: "Page Level Details"
       group_label: "Web Metrics"
@@ -731,7 +760,7 @@ view: ga_sessions_full {
     measure: web_pdp_pageviews {
       type: sum
       sql:
-      if(page.pagePath != '', 1, 0);;
+      if(${TABLE}.page.pagePath != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
       view_label: "Page Level Details"
       group_label: "Web Metrics"
@@ -749,7 +778,7 @@ view: ga_sessions_full {
     measure: web_results_pageviews {
       type: sum
       sql:
-      if(page.pagePath != '', 1, 0);;
+      if(${TABLE}.page.pagePath != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
       view_label: "Page Level Details"
       group_label: "Web Metrics"
@@ -766,7 +795,7 @@ view: ga_sessions_full {
     measure: app_pageviews {
       type: sum
       sql:
-      if(appInfo.screenName != '', 1, 0);;
+      if(${TABLE}.appInfo.screenName != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
       view_label: "Page Level Details"
       group_label: "App Metrics"
@@ -779,7 +808,7 @@ view: ga_sessions_full {
     measure: app_results_pageviews {
       type: sum
       sql:
-      if(appInfo.screenName != '', 1, 0);;
+      if(${TABLE}.appInfo.screenName != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
       view_label: "Page Level Details"
       group_label: "App Metrics"
@@ -796,7 +825,7 @@ view: ga_sessions_full {
     measure: app_pdp_pageviews {
       type: sum
       sql:
-      if(appInfo.screenName != '', 1, 0);;
+      if(${TABLE}.appInfo.screenName != '', 1, 0);;
       sql_distinct_key: ${primary} ;;
       view_label: "Page Level Details"
       group_label: "App Metrics"
@@ -816,7 +845,7 @@ view: ga_sessions_full {
 
     dimension: pageType {
       type: string
-      sql: contentGroup.contentGroup1 ;;
+      sql: ${TABLE}.contentGroup.contentGroup1 ;;
       view_label: "Page Level Details"
       group_label: "Content Grouping"
       description: "Content grouping of pages : (Products, Results, Home, Other)"
@@ -825,7 +854,7 @@ view: ga_sessions_full {
 
     dimension: pageSubType {
       type: string
-      sql: contentGroup.contentGroup2 ;;
+      sql: ${TABLE}.contentGroup.contentGroup2 ;;
       view_label: "Page Level Details"
       group_label: "Content Grouping"
       description: "Content sub-grouping of pages : (PDP-Available, Search, Browse, Checkout, etc.)"
@@ -834,7 +863,7 @@ view: ga_sessions_full {
 
     dimension: pageSection {
       type: string
-      sql: contentGroup.contentGroup3 ;;
+      sql: ${TABLE}.contentGroup.contentGroup3 ;;
       view_label: "Page Level Details"
       group_label: "Content Grouping"
       label: "Page Section"
@@ -845,7 +874,7 @@ view: ga_sessions_full {
 
     dimension: eventCategory {
       type: string
-      sql: eventInfo.eventCategory ;;
+      sql: ${TABLE}.eventInfo.eventCategory ;;
       view_label: "Custom Event Level Details"
       group_label: "Event Details"
       label: "Event Category"
@@ -854,7 +883,7 @@ view: ga_sessions_full {
 
     dimension: eventAction {
       type: string
-      sql: eventInfo.eventAction ;;
+      sql: ${TABLE}.eventInfo.eventAction ;;
       view_label: "Custom Event Level Details"
       group_label: "Event Details"
       label: "Event Action"
@@ -863,7 +892,7 @@ view: ga_sessions_full {
 
     dimension: eventLabel {
       type: string
-      sql: eventInfo.eventLabel ;;
+      sql: ${TABLE}.eventInfo.eventLabel ;;
       view_label: "Custom Event Level Details"
       group_label: "Event Details"
       label: "Event Label"
@@ -872,7 +901,7 @@ view: ga_sessions_full {
 
     measure: count_of_events {
       type: sum
-      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      sql: if(${TABLE}.eventInfo.eventCategory != '', 1, 0) ;;
       view_label: "Custom Event Level Details"
       group_label: "Event Metrics"
       filters: {
@@ -884,7 +913,7 @@ view: ga_sessions_full {
 
     measure: count_of_purchase_clicks{
       type: sum
-      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      sql: if(${TABLE}.eventInfo.eventCategory != '', 1, 0) ;;
       view_label: "Custom Event Level Details"
       group_label: "Event Metrics"
       filters: {
@@ -900,7 +929,7 @@ view: ga_sessions_full {
 
     measure: count_of_make_offer_clicks{
       type: sum
-      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      sql: if(${TABLE}.eventInfo.eventCategory != '', 1, 0) ;;
       view_label: "Custom Event Level Details"
       group_label: "Event Metrics"
       filters: {
@@ -916,7 +945,7 @@ view: ga_sessions_full {
 
     measure: count_of_contact_dealer_clicks{
       type: sum
-      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      sql: if(${TABLE}.eventInfo.eventCategory != '', 1, 0) ;;
       view_label: "Custom Event Level Details"
       group_label: "Event Metrics"
       filters: {
@@ -935,7 +964,7 @@ view: ga_sessions_full {
 
     measure: count_of_contact_dealer_submits {
       type: sum
-      sql: if(eventInfo.eventCategory != '', 1, 0) ;;
+      sql: if(${TABLE}.eventInfo.eventCategory != '', 1, 0) ;;
       view_label: "Custom Event Level Details"
       group_label: "Event Metrics"
       filters: {
@@ -957,7 +986,7 @@ view: ga_sessions_full {
 
 dimension: social_network {
   type: string
-  sql: social.socialNetwork ;;
+  sql: ${TABLE}.social.socialNetwork ;;
   group_label: "Social Attributes"
   view_label: "Session Details"
 }
@@ -967,7 +996,7 @@ dimension: social_network {
 
 dimension: ecom_action_type {
   type: string
-  sql: case cast(eCommerceAction.action_type as string)
+  sql: case cast(${TABLE}.eCommerceAction.action_type as string)
         when '1' then 'Product List Click'
         when '2' then 'Product Detail View'
         when '3' then 'Add to Cart'
