@@ -107,11 +107,23 @@ view: ga_sessions_full {
     group_label: "Visitor Attributes"
   }
 
-  dimension: visitor_status_new_vs_repeat {
+  dimension: visitor_type_new_vs_repeat {
     type: string
     sql: if(${first_time_visitor}, "New", "Repeat") ;;
     view_label: "Session Details"
     group_label: "Visitor Attributes"
+    label: "Session Visitor Type (New/Repeat)"
+  }
+
+  dimension: visitnumbertier {
+    type: tier
+    sql: ${visitnumber} ;;
+    tiers: [1,2,5,10,15,20,50,100]
+    style: integer
+    view_label: "Session Details"
+    group_label: "Visitor Attributes"
+    label: "Visit Number Tier"
+    description: "User visit number tiered as follows : (1, 2, 3-4, 5-9, 10-14, 15-19, 20-49, 50-99, 100+"
   }
 
 
@@ -150,6 +162,7 @@ view: ga_sessions_full {
     }
 
 
+
     dimension: timeonsite_tier {
       label: "Time On Site Tier"
       type: tier
@@ -175,22 +188,40 @@ view: ga_sessions_full {
       hidden: yes
     }
 
+    measure: pageviews_total {
+      label: "Total Page Views in Session"
+      type: sum
+      sql: ${TABLE}.totals.pageviews ;;
+      sql_distinct_key: ${sessionid} ;;
+      view_label: "Session Details"
+      group_label: "Session Totals"
+    }
 
-      measure: bounces_total {
-        type: sum
-        sql: ${TABLE}.totals.bounces ;;
-        view_label: "Session Details"
-        group_label: "Session Totals"
-      }
+    measure: page_views_per_session {
+      label: "PageViews Per Session"
+      type: number
+      sql: 1.0 * ${pageviews_total} / NULLIF(${sessions},0) ;;
+      value_format_name: decimal_2
+      view_label: "Session Details"
+      group_label: "Session Totals"
+    }
 
-      measure: bounce_rate {
-        type:  number
-        sql: 1.0 * ${bounces_total} / NULLIF(${sessions},0) ;;
-        value_format_name: percent_2
-        view_label: "Session Details"
-        group_label: "Session Totals"
 
-      }
+    measure: bounces_total {
+      type: sum
+      sql: ${TABLE}.totals.bounces ;;
+      view_label: "Session Details"
+      group_label: "Session Totals"
+    }
+
+    measure: bounce_rate {
+      type:  number
+      sql: 1.0 * ${bounces_total} / NULLIF(${sessions},0) ;;
+      value_format_name: percent_2
+      view_label: "Session Details"
+      group_label: "Session Totals"
+
+    }
 
 
 
@@ -379,18 +410,6 @@ view: ga_sessions_full {
 
 
 
-#
-#   dimension_group: ga_date {
-#     type: time
-#     timeframes: [date,week,month,year]
-# #     sql: _PARTITIONTIME ;;
-#     # NOTE: for manually partitioned files use code below
-#     sql:  {% time_dimension.date_granularity._parameter_value %}
-#  ;;
-#
-#   }
-
-
   measure: unique_visitors {
     type: count_distinct
     sql: ${full_visitor_id}  ;;
@@ -401,14 +420,26 @@ view: ga_sessions_full {
 
 
 
-    measure: sessions {
-      type: sum
-      sql: ${TABLE}.totals.visits ;;
-      sql_distinct_key: ${sessionid} ;;
-      view_label: "Session Details"
-      label: "Count of Sessions"
-      group_label: "Session Totals"
-    }
+  measure: sessions {
+    type: sum
+    sql: ${TABLE}.totals.visits ;;
+    sql_distinct_key: ${sessionid} ;;
+    view_label: "Session Details"
+    label: "Count of Interaction Sessions"
+    description: "A session with an interaction event, as seen on the ga platform"
+    group_label: "Session Totals"
+  }
+
+
+  measure: total_sessions_incl_non_interaction {
+    type: count_distinct
+    sql: ${sessionid};;
+    sql_distinct_key: ${sessionid} ;;
+    view_label: "Session Details"
+    label: "Count of Total Sessions"
+    description: "A count of sessions with or without an interaction event"
+    group_label: "Session Totals"
+  }
 
 
     measure: average_sessions_per_visitor {
@@ -421,7 +452,7 @@ view: ga_sessions_full {
     }
 
     measure: first_time_visitors {
-      label: "Session Count by First Time Visitors"
+      label: "Count of First Time Visitors with a Session"
       view_label: "Session Details"
       group_label: "Visitor Details"
       type: count_distinct
@@ -433,7 +464,7 @@ view: ga_sessions_full {
     }
 
     measure: second_time_visitors {
-      label: "Session Count by Second Time Visitors"
+      label: "Count of Visitors with their Second Session"
       type: count_distinct
       view_label: "Session Details"
       group_label: "Visitor Details"
