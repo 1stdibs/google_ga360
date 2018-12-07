@@ -626,6 +626,43 @@ view: ga_sessions_full {
       view_label: "User Session details"
     }
 
+
+    dimension: cdn_slot_1 {
+      type: string
+      sql:
+      (SELECT lower(value)
+      FROM
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 62
+        );;
+      view_label: "User Session details"
+      group_label: "CDN Slots"
+    }
+
+    dimension: cdn_slot_2 {
+      type: string
+      sql:
+      (SELECT lower(value)
+      FROM
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 63
+        );;
+      view_label: "User Session details"
+      group_label: "CDN Slots"
+    }
+
+    dimension: cdn_slot_3 {
+      type: string
+      sql:
+      (SELECT lower(value)
+      FROM
+        ${ga_sessions_full.customDimensions} AS temp
+      WHERE index = 53
+        );;
+      view_label: "User Session details"
+      group_label: "CDN Slots"
+    }
+
   }
 
 
