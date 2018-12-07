@@ -10,8 +10,6 @@ include: "*.dashboard"
 #   extends: [ga_sessions_block]
 # }
 
-explore: daily_sessions { hidden:yes }
-
 
 explore: ga_sessions {
   hidden: yes
