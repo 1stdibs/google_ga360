@@ -1,38 +1,38 @@
 connection: "bigquery"
 
-# include all the views
-include: "*.view"
-
-# include all the dashboards
-include: "*.dashboard"
-
-
-explore: ga_sessions_full {
-
-    join: customDimensions {
-      sql: , UNNEST(customDimensions) as customDimensions ;;
-      relationship: one_to_many
-    }
-
-    join: hits {
-      sql: , UNNEST(hits) as hits  ;;
-      relationship: one_to_many
-    }
-
-
-  conditionally_filter: {
-    filters: {
-      field: date_suffix_date
-      value: "last 7 days"
-    }
-  }
-
-  sql_always_where: ${date_suffix_date} > "2015-01-01" ;;
-#     join: totals {
-#       sql: UNNEST(totals) ;;
+# # include all the views
+# include: "*.view"
+#
+# # include all the dashboards
+# include: "*.dashboard"
+#
+#
+# explore: ga_sessions_full {
+#
+#     join: customDimensions {
+#       sql: , UNNEST(customDimensions) as customDimensions ;;
+#       relationship: one_to_many
 #     }
-
-}
+#
+#     join: hits {
+#       sql: , UNNEST(hits) as hits  ;;
+#       relationship: one_to_many
+#     }
+#
+#
+#   conditionally_filter: {
+#     filters: {
+#       field: date_suffix_date
+#       value: "last 7 days"
+#     }
+#   }
+#
+#   sql_always_where: ${date_suffix_date} > "2015-01-01" ;;
+# #     join: totals {
+# #       sql: UNNEST(totals) ;;
+# #     }
+#
+# }
 
 
 
