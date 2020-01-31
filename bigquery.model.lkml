@@ -1,12 +1,12 @@
 connection: "bigquery"
 
-# # include all the views
-# include: "*.view"
-#
-# # include all the dashboards
-# include: "*.dashboard"
-#
-#
+# include all the views
+include: "*.view"
+
+# include all the dashboards
+include: "*.dashboard"
+
+
 # explore: ga_sessions_full {
 #
 #     join: customDimensions {
